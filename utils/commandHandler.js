@@ -4,70 +4,91 @@ const { REST, Routes, Collection, SlashCommandBuilder } = require("discord.js");
 
 async function loadCommands(client) {
     const targetDir = path.dirname(__dirname);
-    const commandsPath = path.join(targetDir, "commands");
+    let commandsPath = path.join(targetDir, "commands");
     
     client.commands = new Collection(); // Store commands
     const commands = [];
 
     // 1. Load standalone command files directly in the commands folder
-    const commandFiles = fs.readdirSync(commandsPath).filter(file => file.endsWith(".js"));
-    for (const file of commandFiles) {
-        const fullPath = path.join(commandsPath, file);
-        // If the entry is a directory, skip it (we handle directories later)
-        if (fs.lstatSync(fullPath).isDirectory()) continue;
+    // const commandFiles = fs.readdirSync(commandsPath).filter(file => file.endsWith(".js"));
+    const commandCategories = fs.readdirSync(commandsPath, {withFileTypes: true})
+        .filter(file => file.isDirectory())
+        .map(dirent => path.join(dirent.parentPath, dirent.name))
+    const commandFiles = commandCategories.flatMap(folder => {
+        return fs.readdirSync(folder).filter(file => file.endsWith(".js")).map(file => path.join(folder,file))
+    })
+    const commandFolders = commandCategories.flatMap(file =>{
+        return fs.readdirSync(file, {withFileTypes: true})
+        .filter(file => file.isDirectory())
+        .map(dirent => path.join(dirent.parentPath, dirent.name))
+    })
+    console.log(commandCategories, commandFiles, commandFolders)
+    // process.exit(0)
+    // let array_1 = [];
+    // let array_2 = [];
+    // const Array_of_commands = commandFolders.forEach(element => {
+    //     array_1.push(fs.readdirSync().filter(file => file.endsWith(".js")));
+    //     array_2.push(element.readdirSync)
+    // });
+    for (let file of commandFiles) {
+        commandsPath = file;
+        file = path.basename(file)
+        const fullPath = commandsPath;
+        // if (fs.lstatSync(fullPath).isDirectory()) continue;
         
         const command = require(fullPath);
 
-        // Call the setup function if it exists
+        // setup function just in case maybe
         if (command.setup) {
-            await command.setup(client); // Pass client if needed
+            await command.setup(client); // why are we passing the client to that function
         }
 
-        // ✅ Automatically generate the `data` object if it doesn't exist
+        // incase stupid me doesnt include data himself
         if (!command.data) {
             command.data = {
-                name: command.name || file.replace(".js", ""), // Use file name as fallback
+                name: command.name || file.replace(".js", ""),
                 description: command.description || "No description provided",
-                options: command.options || [] // Default to no options
+                options: command.options || []
             };
         }
 
-        // Validate the command structure
+        // 'pls dont crash' command block
         if (!command.data.name || !command.data.description || !command.execute) {
             console.error(`❌ Skipping "${file}": Missing required "name" or "description" or "execute" properties.`);
             continue;
         }
 
-        // Store the command using its name as the key
+        // yay bot has command now!
         client.commands.set(command.data.name, command);
         commands.push(command.data);
     }
 
-    // 2. Load subcommand folders
-    const commandFolders = fs.readdirSync(commandsPath);
-    for (const folder of commandFolders) {
-        const folderPath = path.join(commandsPath, folder);
-        // Only process directories
+    // i hate sub commands
+    // const commandFolders = fs.readdirSync(commandsPath);
+    for (let folder of commandFolders) {
+        commandsPath = folder
+        folder = path.basename(folder)
+        const folderPath = commandsPath;
+        // directories only!!
         if (!fs.lstatSync(folderPath).isDirectory()) continue;
 
-        // Create a base command for the folder (the main command)
+        // base command for the sub command
         const baseCommand = new SlashCommandBuilder()
             .setName(folder)
             .setDescription(`Main command: ${folder}`);
         let hasSubcommands = false;
 
-        // Get all .js files inside the folder
+        // fetch all js files
         const subcommandFiles = fs.readdirSync(folderPath).filter(file => file.endsWith(".js"));
         for (const file of subcommandFiles) {
             const fullPath = path.join(folderPath, file);
             const subcommand = require(fullPath);
 
-            // Call the setup function if it exists
+            // same stuff
             if (subcommand.setup) {
                 await subcommand.setup(client);
             }
 
-            // Automatically generate the data object if missing
             if (!subcommand.data) {
                 subcommand.data = {
                     name: subcommand.name || file.replace(".js", ""),
@@ -75,80 +96,77 @@ async function loadCommands(client) {
                     options: subcommand.options || []
                 };
             }
-
-            // Validate that the subcommand has a name and description
             if (!subcommand.data.name || !subcommand.data.description || !subcommand.execute) {
                 console.error(`❌ Skipping "${file}" in folder "${folder}": Missing required "name" or "description" or "execute" properties.`);
                 continue;
             }
 
-            // Add the subcommand to the base command using its builder method.
             baseCommand.addSubcommand(sub => {
                 sub = sub.setName(subcommand.data.name)
                          .setDescription(subcommand.data.description);
-                // Loop through options if any are provided
+                // big ass loop of options if it has any
                     if (Array.isArray(subcommand.data.options)) {
                         for (const option of subcommand.data.options) {
-                            // The option types here use numeric values.
+                            // this is the worst part of my code i mean hey look its a switch statement!!
                             // 3: String, 4: Integer, 5: Boolean, 6: User, 7: Channel, 8: Role, 9: Mentionable, 10: Number, 11: Attachment
                             switch (option.type) {
-                                case 3: // String option
+                                case 3: // string option
                                     sub.addStringOption(opt =>
                                         opt.setName(option.name)
                                         .setDescription(option.description)
                                         .setRequired(option.required || false)
                                     );
                                     break;
-                                case 4: // Integer option
+                                case 4: // integer option
                                     sub.addIntegerOption(opt =>
                                         opt.setName(option.name)
                                         .setDescription(option.description)
                                         .setRequired(option.required || false)
                                     );
                                     break;
-                                case 5: // Boolean option
+                                case 5: // boolean option
                                     sub.addBooleanOption(opt =>
                                         opt.setName(option.name)
                                         .setDescription(option.description)
                                         .setRequired(option.required || false)
                                     );
                                     break;
-                                case 6: // User option
+                                case 6: // user option
                                     sub.addUserOption(opt =>
                                         opt.setName(option.name)
                                         .setDescription(option.description)
                                         .setRequired(option.required || false)
                                     );
                                     break;
-                                case 7: // Channel option
+                                case 7: // channel option
                                     sub.addChannelOption(opt =>
                                         opt.setName(option.name)
                                         .setDescription(option.description)
                                         .setRequired(option.required || false)
                                     );
                                     break;
-                                case 8: // Role option
+                                case 8: // role option
                                     sub.addRoleOption(opt =>
                                         opt.setName(option.name)
                                         .setDescription(option.description)
                                         .setRequired(option.required || false)
                                     );
                                     break;
-                                case 9: // Mentionable option (can be a user or role)
+                                case 9: // mentionable option (can be a user or role)
                                     sub.addMentionableOption(opt =>
                                         opt.setName(option.name)
                                         .setDescription(option.description)
                                         .setRequired(option.required || false)
                                     );
                                     break;
-                                case 10: // Number option (floating-point number)
+                                case 10: // number option (floating-point number)
                                     sub.addNumberOption(opt =>
                                         opt.setName(option.name)
                                         .setDescription(option.description)
                                         .setRequired(option.required || false)
                                     );
                                     break;
-                                case 11: // Attachment option
+                                case 11: // attachment option
                                     sub.addAttachmentOption(opt =>
                                         opt.setName(option.name)
                                         .setDescription(option.description)
@@ -185,9 +203,7 @@ async function deploySlashCommands(client, clientId) {
     try {
         console.log("🚀 Deploying new commands...");
         await rest.put(Routes.applicationCommands(clientId), { body: commands });
-
         console.log("✅ Slash commands deployed successfully!");
-        console.log(commands)
     } catch (error) {
         console.error("❌ Error deploying commands:", error);
     }

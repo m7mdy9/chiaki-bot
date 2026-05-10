@@ -1,7 +1,7 @@
 require('dotenv').config({ path: '../.env' })
 const { SlashCommandBuilder, EmbedBuilder} = require("discord.js");
-const { logerror, logstuff } = require("../utils/utils.js");
-const { embed_info } = require("../utils/embeds.js")
+const { logerror, logstuff } = require("../../utils/utils.js");
+const { embed_info } = require("../../utils/embeds.js")
 
 const ownerId = process.env.ownerId
 module.exports = {

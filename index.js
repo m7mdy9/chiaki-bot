@@ -1,8 +1,15 @@
 require("dotenv").config();
-const { Client, GatewayIntentBits, EmbedBuilder, REST, Routes, SlashCommandBuilder, SortOrderType, parseEmoji, Collection } = require('discord.js');
+const { Client, GatewayIntentBits, EmbedBuilder, REST, Routes, SlashCommandBuilder, SortOrderType, parseEmoji, Collection, ActivityType } = require('discord.js');
 const { deploySlashCommands } = require('./utils/commandHandler.js');
 const { retry } = require("./utils/utils.js")
 const { connect_db } = require("./utils/mongodb.js")
+const rng_array = (dict) => {
+    const keys = Object.keys(dict)
+    const randKey = keys[Math.floor(Math.random() * keys.length)]
+    const value = dict[randKey]
+    const randValue = value[Math.floor(Math.random() * value.length)]
+    return [randKey, randValue]
+}
 // const { startServer } = require("./utils/server.js")
 
 const botToken = process.env.TOKEN;
@@ -31,18 +38,47 @@ client.on('interactionCreate', async interaction => {
         }
         await interaction.deferReply();
         await command.execute(interaction, client);
+        console.log(subcommand,fullCommand,command)
     } catch (error) {
         console.error(`Error executing ${fullCommand}:`, error);
         await interaction.editReply("❌ An error occurred while executing this command.");
     }
 });
+function startActivity(){
+    const activity_list = {
+        Playing:[
+            "Danganronpa: Trigger Happy Havoc",
+            "Danganronpa 2: Goodbye Despair",
+            "Danganronpa V3: Killing Harmony"
+        ],
+        Watching:[
+            "Danganronpa 3: The End of Hope's Peak High School Despair Arc",
+            "Danganronpa 3: The End of Hope's Peak High School Future Arc",
+            "Danganronpa 3: The End of Hope's Peak High School Hope Arc",
+            "Danganronpa 2.5: Nagito Komaeda and the World Destroyer"
+        ],
+        Listening:[
+            "Danganronpa 1 OST",
+            "Danganronpa 2 OST",
+            "Danganronpa V3 OST",
+        ]
+    }
+
+    setInterval(()=>{
+        let selected_array = rng_array(activity_list)
+        eval(`client.user.setActivity(\"${selected_array[1]}\", {type: ActivityType.${selected_array[0]}})`)
+        console.log(selected_array)
+    }, 60000)
+    // client.user.setActivity('', { type:})
+}
 
 client.once(`clientReady`, async () => {
     console.log(`✅ Logged in as ${client.user.tag}`);
-    await connect_db();
+    // await connect_db();
     console.log(`Successfully connected to MangoDB.`)
     await deploySlashCommands(client, clientId);
     console.log(`Slash commands successfully deployed.`)
+    startActivity()
 });
 
 client.on('rateLimit', (rateLimitInfo) => {
