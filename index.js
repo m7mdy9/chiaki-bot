@@ -75,7 +75,7 @@ function startActivity(){
 client.once(`clientReady`, async () => {
     console.log(`✅ Logged in as ${client.user.tag}`);
     // await connect_db();
-    console.log(`Successfully connected to MangoDB.`)
+    // console.log(`Successfully connected to MangoDB.`)
     await deploySlashCommands(client, clientId);
     console.log(`Slash commands successfully deployed.`)
     startActivity()
