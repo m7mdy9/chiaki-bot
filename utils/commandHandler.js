@@ -39,6 +39,7 @@ async function loadCommands(client) {
         const command = require(fullPath);
 
         // setup function just in case maybe
+        // console.log(command.setup)
         if (command.setup) {
             await command.setup(client); // why are we passing the client to that function
         }
