@@ -110,7 +110,7 @@ module.exports = {
                     //     componentType: ComponentType.Button,
                     //     time: 300_000
                     // });
-                    button.startListener(response, 10000 , async (int) =>{
+                    button.startListener(response, null , async (int) =>{
                         if (int.user.id != interaction.user.id){
                             return int.reply({ content: "You did not initiate the command.", ephemeral: true})
                         }

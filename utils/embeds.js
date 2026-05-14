@@ -37,8 +37,8 @@ function embed_builder(title, description = null, color = null){
 function embed_info(ownerId, client, result, time){
     try{
     const embed1 = embed_builder("Information", 
-        `The bot was developed and made by <@!${ownerId}> \n\nCurrent Ping: **${client.ws.ping}ms**\n\nUptime: **${result} ${time}**\n\n[Check Chiaki Bot Github Page!](https://github.com/m7mdy9/chiaki-bot)`,
-        "DarkBlue"
+        `The bot was developed and made by <@!${ownerId}> \n\nCurrent Ping: **${client.ws.ping}ms**\n\nUptime: **${result} ${time}**\n\n**[Check Chiaki Bot Github Page!](https://github.com/m7mdy9/chiaki-bot)**`,
+        "#ffdcfc"
     )
     return embed1
     } catch(error){

@@ -1,7 +1,7 @@
 const { ActionRowBuilder, ButtonBuilder,
     StringSelectMenuBuilder, StringSelectMenuOptionBuilder,
     ModalBuilder, TextInputBuilder, 
-    TextInputStyle, ComponentType, } = require("discord.js")
+    TextInputStyle, ComponentType, ButtonStyle } = require("discord.js")
 
 class buttonBuilder{
     buttons = []
