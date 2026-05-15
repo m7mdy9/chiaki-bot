@@ -17,17 +17,17 @@ module.exports = {
         const code = interaction.options.getString('code');
 
         try {
-            let evaled = eval(code); // ⚠️ DANGEROUS: Always restrict access to this!
+            let evaled = eval(code); // the evalued code
 
-            // If the result is a promise, await it
+            // waits for the promise to finish if the function is one
             if (evaled instanceof Promise) {
                 evaled = await evaled;
             }
 
-            // Convert objects to string for better readability
+            // convert to string via 'util', read about it later more pls
             const output = typeof evaled === 'string' ? evaled : require('util').inspect(evaled, { depth: 0 });
 
-            // Send the result (if too long, send in a file)
+            // convert into a file if the length exceeds discord's stupid limit
             if (output.length > 2000) {
                 return interaction.editReply({ files: [{ attachment: Buffer.from(output), name: 'output.txt' }] });
             } else {
