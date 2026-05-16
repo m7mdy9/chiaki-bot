@@ -1,6 +1,7 @@
 const fs = require("fs")
 const path = require("path")
 const { embed_builder } = require("../../utils/embeds.js");
+const { getPermissionNum } = require("../../utils/utils.js")
 const { selectorBuilder } = require("../../utils/builders.js")
 const { ButtonStyle, inlineCode } = require("discord.js");
 let categoryNames, fullCommandInfo;
@@ -53,6 +54,8 @@ module.exports ={
                     const fullSubFilePath = path.join(subFile.parentPath, subFile.name)
                     if (subFile.isDirectory(fullSubFilePath)) {
                         subFolders.push(subFile)
+                        continue;
+                    } else if (path.extname(subFile.name) == "" || !subFile.name.endsWith(".js")){
                         continue;
                     } else {
                         const data = require(fullSubFilePath)

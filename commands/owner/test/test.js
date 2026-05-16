@@ -42,7 +42,7 @@
             //     let strikedb = await StrikeDB.find({}).sort({ started_on: -1 })
             //     console.log(strikedb)
             // }
-            console.log(interaction.guild?.id)
+            console.log(interaction.guild?.id ?? interaction?.user?.id)
             await interaction.editReply(`good job`)
             setTimeout(async()=>{
                 await interaction.deleteReply()

@@ -1,5 +1,5 @@
 require('dotenv').config({ path: '../.env' })
-const { SlashCommandBuilder, EmbedBuilder } = require("discord.js")
+const { SlashCommandBuilder, EmbedBuilder, PermissionFlagsBits } = require("discord.js")
 
 async function retry(fn, maxRetries = 3, delayMs = 2000) {
     let attempts = 0;
@@ -104,10 +104,54 @@ function makedurationbigger(duration) {
 //         console.error(error)
 //     }
 // }
+/**
+ * @param {'SUB_COMMAND' | 'SUB_COMMAND_GROUP' | 'STRING' | 
+ * 'INTEGER' | 'BOOLEAN' | 'USER' | 'CHANNEL' 
+ * | 'ROLE' | 'MENTIONABLE' | 'NUMBER' | 'ATTACHMENT'} type 
+ */
+function getOptionNum(type="STRING"){
+    const discordOptionTypes = [
+        "SUB_COMMAND",       // 1
+        "SUB_COMMAND_GROUP", // 2
+        "STRING",            // 3
+        "INTEGER",           // 4
+        "BOOLEAN",           // 5
+        "USER",              // 6
+        "CHANNEL",           // 7
+        "ROLE",              // 8
+        "MENTIONABLE",       // 9
+        "NUMBER",            // 10
+        "ATTACHMENT"         // 11
+    ];
+    const output = discordOptionTypes.indexOf(type) + 1
+    if(output=0 || !discordOptionTypes.includes(type)){
+        return 3
+    }
+    return output
+}
+/**
+ * 
+ * @param {'CreateInstantInvite' | 'KickMembers' | 'BanMembers' 
+ * |'Administrator' | 'ManageChannels' | 'ManageGuild' | 'AddReactions' 
+ * | 'ViewAuditLog' | 'PrioritySpeaker' | 'Stream' | 'ViewChannel' 
+ * | 'SendMessages' | 'SendTTSMessages' | 'ManageMessages' | 'EmbedLinks' 
+ * | 'AttachFiles' | 'ReadMessageHistory' | 'MentionEveryone' | 'UseExternalEmojis' 
+ * | 'ViewGuildInsights' | 'Connect' | 'Speak' | 'MuteMembers' 
+ * | 'DeafenMembers' | 'MoveMembers' | 'UseVAD' | 'ChangeNickname' 
+ * | 'ManageNicknames' | 'ManageRoles' | 'ManageWebhooks' | 'ManageGuildExpressions' 
+ * | 'UseApplicationCommands' | 'RequestToSpeak' | 'ManageEvents' | 'ManageThreads' 
+ * | 'CreatePublicThreads' | 'CreatePrivateThreads' | 'UseExternalStickers' | 'SendMessagesInThreads'
+ * | 'ModerateMembers'} type 
+ */
+function getPermissionNum(type){
+    return PermissionFlagsBits[type].toString();
+}
 module.exports = {
     retry,
     parseDuration,
     makedurationbigger,
+    getOptionNum,
+    getPermissionNum,
     // chnlsend,
     // errsend,
     // noterrsend,

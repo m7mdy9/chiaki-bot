@@ -1,11 +1,14 @@
 const fs = require("fs");
 const path = require("path");
-const { REST, Routes, Collection, SlashCommandBuilder } = require("discord.js");
-
+const { REST, Routes, Collection, SlashCommandBuilder, PermissionsBitField, PermissionFlagsBits } = require("discord.js");
+const { getPermissionNum } = require("./utils")
+/**
+ * @param {import('discord.js').Client} client 
+ */
 async function loadCommands(client) {
     const targetDir = path.dirname(__dirname);
     let commandsPath = path.join(targetDir, "commands");
-    
+
     client.commands = new Collection(); // Store commands
     const commands = [];
 
@@ -49,7 +52,8 @@ async function loadCommands(client) {
             command.data = {
                 name: command.name || file.replace(".js", ""),
                 description: command.description || "No description provided",
-                options: command.options || []
+                options: command.options || [],
+                default_member_permissions: command?.permissions || null,
             };
         }
 
@@ -63,7 +67,7 @@ async function loadCommands(client) {
         client.commands.set(command.data.name, command);
         commands.push(command.data);
     }
-
+    
     // i hate sub commands
     // const commandFolders = fs.readdirSync(commandsPath);
     for (let folder of commandFolders) {
@@ -76,9 +80,11 @@ async function loadCommands(client) {
         // base command for the sub command
         const baseCommand = new SlashCommandBuilder()
             .setName(folder)
-            .setDescription(`Main command: ${folder}`);
+            .setDescription(`Main command: ${folder}`)
+        const permissionFile = fs.readdirSync(folderPath).filter(file => path.extname(file) === '') || null
+        baseCommand.setDefaultMemberPermissions(getPermissionNum(permissionFile))
+        console.log(permissionFile,baseCommand)
         let hasSubcommands = false;
-
         // fetch all js files
         const subcommandFiles = fs.readdirSync(folderPath).filter(file => file.endsWith(".js"));
         for (const file of subcommandFiles) {
@@ -104,7 +110,7 @@ async function loadCommands(client) {
 
             baseCommand.addSubcommand(sub => {
                 sub = sub.setName(subcommand.data.name)
-                         .setDescription(subcommand.data.description);
+                         .setDescription(subcommand.data.description)
                 // big ass loop of options if it has any
                     if (Array.isArray(subcommand.data.options)) {
                         for (const option of subcommand.data.options) {
