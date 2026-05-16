@@ -6,7 +6,7 @@
 - [ ] Add Default Permissions in the commandHandler
 
 ### Commands
-- [ ] Moderation Category
+- __Moderation Category__
   - [ ] Bans
    - [ ] Ban command
    - [ ] Unban command
@@ -31,12 +31,12 @@
   - [ ] nickname
     - [ ] nickname set
     - [ ] nickname reset
-- [ ] Misc
+- __Misc__
   - [ ] Avatars
     - [ ] Avatar (user/bot)
     - [ ] server avatar
   - [ ] member info (memberinfo)
-- [ ] Fun
+- __Fun__
   - [ ] Flip a coin
   - [ ] How\[X\]
     - [ ] create a how for each Danganronpa 1 and 2 Character.
