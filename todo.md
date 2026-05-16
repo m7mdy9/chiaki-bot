@@ -1,5 +1,5 @@
 # To-Do List for Chiaki Bot
-
+**If you have any suggestions please create an issue or contact me on discord (m7mdy9)**
 ## Features:
 
 ### Builders/Handler
