@@ -50,4 +50,4 @@
 
 
 ## Issues:
-- None at the time of writing
+- [ ] Fix Bot Crash once collector receives no interaction when it ends for reason: time.
