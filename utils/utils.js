@@ -1,5 +1,5 @@
 require('dotenv').config({ path: '../.env' })
-const { SlashCommandBuilder, EmbedBuilder, PermissionFlagsBits } = require("discord.js")
+const { SlashCommandBuilder, EmbedBuilder, PermissionFlagsBits} = require("discord.js")
 
 async function retry(fn, maxRetries = 3, delayMs = 2000) {
     let attempts = 0;
@@ -11,7 +11,7 @@ async function retry(fn, maxRetries = 3, delayMs = 2000) {
         } catch (error) {
             lastError = error;
             attempts++;
-            const waitTime = delayMs * Math.pow(2, attempts); // Exponential backoff
+            const waitTime = delayMs * Math.pow(2, attempts); // Exponential backoff (power cause im stupid and dont know what exponential means)
             console.error(`Attempt ${attempts} failed. Retrying in ${waitTime / 1000} seconds...`);
             await new Promise(resolve => setTimeout(resolve, waitTime));
         }
@@ -53,57 +53,6 @@ function makedurationbigger(duration) {
     }
     
 }
-// async function chnlsend(client, channel, message){
-//     try {
-//         if (!typeof message === 'string'){
-//             message = message.toString()
-//         }
-//         const logChannel = await client.channels.fetch(channel);
-//         return await logChannel.send(message)
-//     } catch(error){
-//         console.error(error)
-//     }
-// }
-// async function errsend(client, message){
-//         try {
-//     if (!typeof message === 'string'){
-//         message = message.toString()
-//     }
-//     if(!client.channels || !client.channels.fetch || !message){
-//         return console.error(client)
-//     }
-//     const logChannel = await client.channels.fetch("1332377984195235973");
-//     return await logChannel.send(`Error:\n\`\`\`${message}\`\`\``)
-//     } catch(error){
-//         console.error(error)
-//     }
-// }
-// async function noterrsend(client, message){
-//         try {
-//     const asds = await client.channels.fetch("1332377984195235973");
-//     return await asds.send(`\`\`\`${message}\`\`\``)
-//     } catch(error){
-//         console.error(error)
-//     }
-// }
-// async function logstuff(client, message){
-//     await noterrsend(client, message)
-//     return console.log(message)
-// }
-// async function logerror(client, message, error){
-//     try {
-//         if(message === "socket hang up"){
-//             return console.error(error)
-//         }
-//         if(!error.message || !error){
-//             return
-//         }
-//         await errsend(client,`${message}${error.message}`)
-//         return console.error(`${message}${error}`)
-//     } catch (error){
-//         console.error(error)
-//     }
-// }
 /**
  * @param {'SUB_COMMAND' | 'SUB_COMMAND_GROUP' | 'STRING' | 
  * 'INTEGER' | 'BOOLEAN' | 'USER' | 'CHANNEL' 
@@ -152,14 +101,4 @@ module.exports = {
     makedurationbigger,
     getOptionNum,
     getPermissionNum,
-    // chnlsend,
-    // errsend,
-    // noterrsend,
-    // logstuff,
-    // logerror,
-    // getUserRankIndex,
-    // fetchExecutorFromAuditLog,
-    // SlashCommandBuilder,
-    // EmbedBuilder,
-    // noblox
 }

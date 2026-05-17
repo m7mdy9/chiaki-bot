@@ -12,13 +12,12 @@ async function loadCommands(client) {
     client.commands = new Collection(); // Store commands
     const commands = [];
 
-    // 1. Load standalone command files directly in the commands folder
-    // const commandFiles = fs.readdirSync(commandsPath).filter(file => file.endsWith(".js"));
+    // get the command categories (crucial for the help command)
     const commandCategories = fs.readdirSync(commandsPath, {withFileTypes: true})
         .filter(file => file.isDirectory())
         .map(dirent => path.join(dirent.parentPath, dirent.name))
     const commandFiles = commandCategories.flatMap(folder => {
-        return fs.readdirSync(folder).filter(file => file.endsWith(".js")).map(file => path.join(folder,file))
+        return fs.readdirSync(folder, {withFileTypes: true}).filter(file => file.name.endsWith(".js") && !file.isDirectory()).map(file => path.join(file.parentPath,file.name))
     })
     const commandFolders = commandCategories.flatMap(file =>{
         return fs.readdirSync(file, {withFileTypes: true})
@@ -26,25 +25,16 @@ async function loadCommands(client) {
         .map(dirent => path.join(dirent.parentPath, dirent.name))
     })
     console.log(commandCategories, commandFiles, commandFolders)
-    // process.exit(0)
-    // let array_1 = [];
-    // let array_2 = [];
-    // const Array_of_commands = commandFolders.forEach(element => {
-    //     array_1.push(fs.readdirSync().filter(file => file.endsWith(".js")));
-    //     array_2.push(element.readdirSync)
-    // });
     for (let file of commandFiles) {
         commandsPath = file;
         file = path.basename(file)
         const fullPath = commandsPath;
-        // if (fs.lstatSync(fullPath).isDirectory()) continue;
         
         const command = require(fullPath);
 
         // setup function just in case maybe
-        // console.log(command.setup)
         if (command.setup) {
-            await command.setup(client); // why are we passing the client to that function
+            await command.setup(client); // passing the client to that function
         }
 
         // incase stupid me doesnt include data himself
@@ -72,7 +62,7 @@ async function loadCommands(client) {
     // const commandFolders = fs.readdirSync(commandsPath);
     for (let folder of commandFolders) {
         commandsPath = folder
-        folder = path.basename(folder)
+        folder = path.basename(folder).toLowerCase().replace(/[^a-z0-9_-]/g, '')
         const folderPath = commandsPath;
         // directories only!!
         if (!fs.lstatSync(folderPath).isDirectory()) continue;
@@ -82,8 +72,8 @@ async function loadCommands(client) {
             .setName(folder)
             .setDescription(`Main command: ${folder}`)
         const permissionFile = fs.readdirSync(folderPath).filter(file => path.extname(file) === '') || null
-        baseCommand.setDefaultMemberPermissions(getPermissionNum(permissionFile))
-        console.log(permissionFile,baseCommand)
+        if (permissionFile.length > 0){baseCommand.setDefaultMemberPermissions(getPermissionNum(permissionFile))};
+        /*console.log(permissionFile,baseCommand)*/
         let hasSubcommands = false;
         // fetch all js files
         const subcommandFiles = fs.readdirSync(folderPath).filter(file => file.endsWith(".js"));
@@ -190,7 +180,7 @@ async function loadCommands(client) {
             });
             hasSubcommands = true;
 
-            // Store the subcommand in client.commands with a combined key (e.g., "folder subcommand")
+            // stores the the subcommand correctly with the base command as `bc sc`
             client.commands.set(`${folder} ${subcommand.data.name}`, subcommand);
         }
 
