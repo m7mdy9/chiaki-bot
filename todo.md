@@ -3,7 +3,7 @@
 ## Features:
 
 ### Builders/Handler
-- [ ] Add Default Permissions in the commandHandler
+- [x] Add Default Permissions in the commandHandler
 
 ### Commands
 - __Moderation Category__
