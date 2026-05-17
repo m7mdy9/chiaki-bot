@@ -8,7 +8,7 @@
 ### Commands
 - __Moderation Category__
   - [ ] Bans
-    - [ ] Ban command
+    - [x] Ban command
     - [ ] Unban command
   - [ ] Kick command
   - [ ] Roles
