@@ -3,8 +3,7 @@ const { SlashCommandBuilder, EmbedBuilder, ActionRowBuilder,
     ButtonBuilder, ButtonStyle, ComponentType, 
     ModalBuilder, TextInputBuilder, TextInputStyle} = require("discord.js");
 const { buttonBuilder } = require("../../utils/builders.js")
-const { logerror, logstuff } = require("../../utils/utils.js");
-const { embed_info, embed_builder } = require("../../utils/embeds.js")
+const { embed_info, embed_builder } = require("../../utils/utils.js");
 const dr2Cast = [
   "hajime hinata",
   "nagito komaeda",
@@ -18,10 +17,10 @@ const dr2Cast = [
   "nekomaru nidai",
   "ibuki mioda",
   "hiyoko saionji",
-  "mahiru koizumi",
   "teruteru hanamura",
   "peko pekoyama",
   "ultimate imposter",
+  "ultimate impostor",
   "izuru kamukura"
 ]
 const dr2Good = [
@@ -31,6 +30,7 @@ const dr2Good = [
     "nagito komaeda",
     "mikan tsumiki",
     "ibuki mioda",
+    "mahiru koizumi",
 ].flatMap(char => char.split(" "));
 const dr2Bad = [
     "teruteru hanamura",

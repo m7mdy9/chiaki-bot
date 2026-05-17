@@ -59,6 +59,7 @@ function makedurationbigger(duration) {
  * | 'ROLE' | 'MENTIONABLE' | 'NUMBER' | 'ATTACHMENT'} type 
  */
 function getOptionNum(type="STRING"){
+    // console.log(type)
     const discordOptionTypes = [
         "SUB_COMMAND",       // 1
         "SUB_COMMAND_GROUP", // 2
@@ -72,11 +73,13 @@ function getOptionNum(type="STRING"){
         "NUMBER",            // 10
         "ATTACHMENT"         // 11
     ];
-    const output = discordOptionTypes.indexOf(type) + 1
-    if(output=0 || !discordOptionTypes.includes(type)){
+    let output = discordOptionTypes.indexOf(type) + 1
+    // console.log(output)
+    if(output == 0 || !discordOptionTypes.includes(type)){
         return 3
     }
-    return output
+    console.log(output)
+    return parseInt(output)
 }
 /**
  * 
@@ -95,10 +98,46 @@ function getOptionNum(type="STRING"){
 function getPermissionNum(type){
     return PermissionFlagsBits[type].toString();
 }
+function embed_builder(title=null, description=null, color = null){
+    try {
+    if(!title && !description) throw new Error("You must include a title or a description.");
+    const embed = new EmbedBuilder()
+    if(title){
+        embed.setTitle(title.toString())
+    }
+    if(description){
+        embed.setDescription(description.toString())
+    }
+    if(color){
+        embed.setColor(color)
+    }
+    return embed
+    } catch (error){
+    return  console.error(error)
+    }
+}
+
+function embed_info(ownerId, client, result, time){
+    try{
+    const embed1 = embed_builder("Information", 
+        `The bot was developed and made by <@!${ownerId}>
+        \n\nCurrent Ping: **${client.ws.ping}ms**
+        \n\nUptime: **${result} ${time}**
+        \n\n**[Check Chiaki Bot Github Page!](https://github.com/m7mdy9/chiaki-bot)**
+        \n\n**[Bot Invite Link](https://discord.com/oauth2/authorize?client_id=1502713354936914080&permissions=8&integration_type=0&scope=bot+applications.commands)**`,
+        "#ffdcfc"
+    )
+    return embed1
+    } catch(error){
+        console.error(error)
+    }    
+}
 module.exports = {
     retry,
     parseDuration,
     makedurationbigger,
     getOptionNum,
     getPermissionNum,
+    embed_info,
+    embed_builder,
 }

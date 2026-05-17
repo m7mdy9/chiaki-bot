@@ -33,12 +33,12 @@ client.on('interactionCreate', async interaction => {
     }
 
     try {
-        if (fullCommand === "eval" && interaction.user.id !== ownerId){
-            return interaction.reply({ content: `Only <@!${ownerId}> can run this command buddy, we don't want anyone doing bad stuff do we?`, ephemeral: true})
+        if (["eval", "test test"].includes(fullCommand) && interaction.user.id !== ownerId){
+            return interaction.reply({ content: `Only members of the Future Foundation may execute this command.`, ephemeral: true})
         }
         await interaction.deferReply();
         await command.execute(interaction, client);
-        console.log(subcommand,fullCommand,command)
+        // console.log(subcommand,fullCommand,command)
     } catch (error) {
         console.error(`Error executing ${fullCommand}:`, error);
         await interaction.editReply("❌ An error occurred while executing this command.");

@@ -44,7 +44,8 @@ async function loadCommands(client) {
                 description: command.description || "No description provided",
                 options: command.options || [],
                 default_member_permissions: command?.permissions || null,
-            };
+                dm_permission: command?.permissions ? false : true
+            }
         }
 
         // 'pls dont crash' command block
@@ -72,7 +73,10 @@ async function loadCommands(client) {
             .setName(folder)
             .setDescription(`Main command: ${folder}`)
         const permissionFile = fs.readdirSync(folderPath).filter(file => path.extname(file) === '') || null
-        if (permissionFile.length > 0){baseCommand.setDefaultMemberPermissions(getPermissionNum(permissionFile))};
+        if (permissionFile.length > 0){
+            baseCommand.setDefaultMemberPermissions(getPermissionNum(permissionFile))
+            baseCommand.setDMPermission(false)
+        };
         /*console.log(permissionFile,baseCommand)*/
         let hasSubcommands = false;
         // fetch all js files
