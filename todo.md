@@ -42,10 +42,10 @@
     - [ ] create a how for each Danganronpa 1 and 2 Character.
   - [ ] dice roll
   - [ ] Random image of an animal
-    - [ ] rps
     - [ ] cat
     - [ ] dog
     - [ ] capybara
+  - [ ] rps
   - [ ] random chiaki line
 
 
