@@ -69,7 +69,7 @@ function startActivity(){
         eval(`client.user.setActivity(\"${selected_array[1]}\", {type: ActivityType.${selected_array[0]}})`)
         console.log(selected_array)
     }, 60000)
-    // client.user.setActivity('', { type:})
+    client.user.setActivity('New World Order', { type:ActivityType.Listening})
 }
 
 client.once(`clientReady`, async () => {

@@ -7,10 +7,10 @@
 
 ### Commands
 - __Moderation Category__
-  - [ ] Bans
+  - [x] Bans
     - [x] Ban command
     - [x] Unban command
-  - [ ] Kick command
+  - [x] Kick command
   - [ ] Roles
     - [ ] Role add
     - [ ] Role remove
