@@ -31,42 +31,56 @@ module.exports = {
      */
     async execute(interaction){
         try {
-
+            const editReply = (content)=>{interaction.editReply(content)}
+            const botPerms = interaction.appPermissions.has("BanMembers")
+            
             const userToBan = interaction.options.get("member")
             const userId = userToBan.user.id
             const executor = interaction.member
-            const executorRolePos = executor.roles.highest.rawPosition;
-        const userRolePos = userToBan?.member?.roles?.highest?.rawPosition || 0 ;
-        const memberBannable = userToBan?.member?.bannable || true
 
-        const reasonOption = interaction.options.getString("reason")
-        const reason = `${reasonOption ?? "No reason provided."}\nBanned by ${executor.user.username}` 
-        if (executorRolePos <= userRolePos && executor.id != interaction.guild.ownerId){
-            return await interaction.editReply("You may not ban another student with an equivelent or higher rank to yours!")
-        } else if(!memberBannable){
-            return await interaction.editReply("I can not ban this student.")
-        }
-        console.log(executor.permissions)
-        let banText = `You have been banned from **${interaction.guild.name}**`
-        if(reasonOption) banText += ` | ${reasonOption}`
-        const embed = embed_builder(null, banText, "#ff8d8d")
-        try {
-            if(!userToBan.user.bot){
-                await userToBan.user.send({ embeds:[embed]})
+            const executorRolePos = executor.roles.highest.rawPosition;
+            const userRolePos = userToBan?.member?.roles?.highest?.rawPosition || 0;
+            
+            const reasonOption = interaction.options.getString("reason")
+            const reason = `${reasonOption ?? "No reason provided."}\nBanned by ${executor.user.username}`
+            
+            const memberBannable = userToBan?.member?.bannable || true
+            const isInServer = await interaction.guild.members.fetch(userId).catch(()=>false)
+            const isBanned = await interaction.guild.bans.fetch(userId).catch(()=> false)
+
+            if (!botPerms){
+                return await editReply("I do possess permissions to ban. If you would like to execute the ban command please add the Ban Members my permissions.")
+            } else if(userId === executor.id){
+                return await editReply("You may not ban yourself.")
+            }else if (executorRolePos <= userRolePos && executor.id != interaction.guild.ownerId) {
+                return await editReply("You may not ban another student with an equivelent or higher rank to yours!")
+            } else if (!memberBannable) {
+                return await editReply("I can not ban this student.")
+            } else if (isBanned){
+                return await editReply("This user is already banned.")
+            } else if (userId === interaction.client.user.id){
+                return await editReply("I can not do this...")
             }
-        } catch (err){
-            console.error("Error in sending ban dm", err)
+            let banText = `You have been banned from **${interaction.guild.name}**`
+            if (reasonOption) banText += ` | ${reasonOption}`
+            const embed = embed_builder(null, banText, "#ff8d8d")
+            try {
+                if (!userToBan.user.bot && isInServer) {
+                    await userToBan.user.send({ embeds: [embed] })
+                }
+            } catch (err) {
+                console.error("Error in sending ban dm", err)
+            }
+            await interaction.guild.members.ban(userId, {
+                deleteMessageSeconds: interaction.options.get("delmessages") ? 60 * 60 * 24 * 7 : 0,
+                reason
+            })
+            let outputMessage = `Banned **${userToBan.user.username}**`
+            if (reasonOption) { outputMessage += ` for \`${reasonOption}\`` }
+            await interaction.editReply(outputMessage)
+        } catch (err) {
+            console.error("Error in ban command: ", err)
+            return await interaction.editReply("An error has occured, the member most likely left the server.")
         }
-        await interaction.guild.members.ban(userId,{
-            deleteMessageSeconds: interaction.options.get("delmessages") ? 60 * 60 * 24 * 7 : 0,
-            reason
-        })
-        let outputMessage = `Banned **${userToBan.user.username}**`
-        if(reasonOption){outputMessage+= ` for \`${reasonOption}\``}
-        await interaction.editReply(outputMessage)
-    } catch (err){
-        console.error("Error in ban command: ",err)
-        return await interaction.editReply("An error has occured, the member most likely left the server.")
-    }
     }
 }

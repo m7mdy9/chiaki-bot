@@ -155,7 +155,13 @@ class modalBuilder{
         try{
             const modalInteraction = await this.interaction.awaitModalSubmit({
                 filter,time: time ?? 180_000
+            }).catch((error)=>{
+                if (error.code === "InteractionCollectorError"){
+                    this.interaction.followUp({content:"The input timed out.", ephemeral:true})
+                }
+                return null
             })
+            if(!modalInteraction) return console.log("Modal interaction ended");
             const allFields = {}
             modalInteraction.fields.fields.forEach(field =>{
                 allFields[field.customId] = field.value

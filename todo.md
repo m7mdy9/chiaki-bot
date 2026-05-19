@@ -9,7 +9,7 @@
 - __Moderation Category__
   - [ ] Bans
     - [x] Ban command
-    - [ ] Unban command
+    - [x] Unban command
   - [ ] Kick command
   - [ ] Roles
     - [ ] Role add
@@ -50,4 +50,5 @@
 
 
 ## Issues:
-- [ ] Fix Bot Crash once collector receives no interaction when it ends for reason: time.
+- [x] Fix Bot Crash once collector receives no interaction when it ends for reason: time.
+    - Presumabely fixed.

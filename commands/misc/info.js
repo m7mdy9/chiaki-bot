@@ -110,7 +110,7 @@ module.exports = {
                     //     componentType: ComponentType.Button,
                     //     time: 300_000
                     // });
-                    button.startListener(response, null , async (int) =>{
+                    button.startListener(response, null, async (int) =>{
                         if (int.user.id != interaction.user.id){
                             return int.reply({ content: "You did not initiate the command.", ephemeral: true})
                         }
@@ -122,7 +122,13 @@ module.exports = {
                             const submission = await interaction.awaitModalSubmit({
                                 filter: int => int.customId === 'modal123' && int.user.id === interaction.user.id,
                                 time: 120_000
+                            }).catch(error =>{
+                                if (error.code === "InteractionCollectorError"){
+                                    interaction.followUp({content:"Timed out!", ephemeral:true})
+                                }
+                                return null
                             })
+                            if (!submission) return;
                             const state = await interaction.fetchReply().catch(()=>null)
                             const buttonDisabled = state?.components[0]?.components.every(but => but.buttonDisabled)
                             if (buttonDisabled){
