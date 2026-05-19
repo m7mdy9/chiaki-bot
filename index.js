@@ -15,7 +15,7 @@ const rng_array = (dict) => {
 const botToken = process.env.TOKEN;
 const ownerId = process.env.ownerId;
 const clientId = process.env.clientId; 
-const client = new Client({ intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildMessages, GatewayIntentBits.MessageContent] });
+const client = new Client({ intents: [GatewayIntentBits.GuildMembers,GatewayIntentBits.Guilds, GatewayIntentBits.GuildMessages, GatewayIntentBits.MessageContent] });
 client.commands = new Collection();
 
 client.on('interactionCreate', async interaction => {

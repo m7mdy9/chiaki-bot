@@ -14,8 +14,8 @@
   - [ ] Roles
     - [x] Role add
     - [x] Role remove
-    - [ ] Role info
-    - [ ] Role members 
+    - [x] Role info
+    - [ ] Role members
   - [ ] Purge
     - [ ] normal Bulk Delete
     - [ ] Bulk Delete messages sent by specific user

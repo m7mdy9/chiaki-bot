@@ -24,11 +24,12 @@ module.exports = {
         const roleColor = targetRole.hexColor
         const roleTimeStamp = targetRole.createdAt
         const rolePos = targetRole.rawPosition
-        
+
         const roleMentionable = targetRole.mentionable ? "Yes" : "No"
         const roleHoist = targetRole.hoist ? "Yes" : "No"
         const roleManaged = targetRole.managed ? "Yes" : "No"
         const rolePermissions = targetRole.permissions.toArray().map(el => `\`${el}\``)
+        await interaction.guild.members.fetch()
         const roleMembers = targetRole?.members?.size || 0
 
         const embed = embed_builder(roleName, null, roleColor)
