@@ -39,6 +39,7 @@ module.exports = {
                 msgOutput += ` for ${reason}`
                 kickMsg += ` | ${reason}`
             } 
+            
             if(!botPerms){
                 return await editReply("I do not possess permissions to kick members.\nGrant me `Kick Members` permissions, if you would like to run this command once more.")
             } else if(!targetUser){

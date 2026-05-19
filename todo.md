@@ -12,8 +12,8 @@
     - [x] Unban command
   - [x] Kick command
   - [ ] Roles
-    - [ ] Role add
-    - [ ] Role remove
+    - [x] Role add
+    - [x] Role remove
     - [ ] Role info
     - [ ] Role members 
   - [ ] Purge
