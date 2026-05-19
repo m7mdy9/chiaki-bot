@@ -9,7 +9,7 @@
 - __Moderation Category__
   - [ ] Bans
     - [x] Ban command
-    - [x] Unban command
+    - [xg] Unban command
   - [ ] Kick command
   - [ ] Roles
     - [ ] Role add
