@@ -51,7 +51,7 @@ module.exports = {
         } else {
             await targetUser.roles.remove(targetRole.id)
             await interaction.editReply({embeds:[
-                embed_builder(null, `**${targetUser.displayName}** is no longer the Ultimate **${targetRole.name}**`)
+                embed_builder(null, `**${targetUser.user.username}** is no longer the Ultimate **${targetRole.name}**`)
             ]})
         }
     }

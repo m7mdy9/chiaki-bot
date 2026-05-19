@@ -32,8 +32,8 @@ module.exports = {
             const executorRolePos = interaction.member.roles.highest.rawPosition;
             const targetUserRolePos = targetUser.roles.highest.rawPosition;
 
-            const reasonOutput = reason ?? `No reason provided.`
-            let msgOutput = `Successfully kicked **${targetUser?.displayName}**`
+            const reasonOutput = (reason ?? `No reason provided.`)+`\nKicked by ${interaction.user.username}` 
+            let msgOutput = `Successfully kicked **${targetUser?.user?.username}**`
             let kickMsg = `You have been kicked from **${interaction?.guild?.name}**`
             if(reason){
                 msgOutput += ` for ${reason}`

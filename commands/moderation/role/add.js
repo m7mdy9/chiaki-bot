@@ -51,7 +51,7 @@ module.exports = {
         } else {
             await targetUser.roles.add(targetRole.id)
             await interaction.editReply({embeds:[
-                embed_builder(null, `**${targetUser.displayName}** is now the Ultimate **${targetRole.name}**`)
+                embed_builder(null, `**${targetUser.user.username}** is now the Ultimate **${targetRole.name}**`)
             ]})
         }
     }
