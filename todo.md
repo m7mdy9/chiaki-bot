@@ -15,14 +15,15 @@
     - [x] Role add
     - [x] Role remove
     - [x] Role info
-    - [ ] Role members
+    - [-] Role members
+      - Member count of role is viewable via role info, and in order to view the members that possess it, you can click on the role mention
   - [ ] Purge
     - [ ] normal Bulk Delete
     - [ ] Bulk Delete messages sent by specific user
     - [ ] Bulk Delete messages sent by bots
-  - [ ] Timeout
-    - [ ] Timeout
-    - [ ] untimeout (remove timeout)
+  - [x] Timeout
+    - [x] Timeout
+    - [x] untimeout (remove timeout)
   - [ ] Warnings
     - [ ] warning DB for each guild
     - [ ] warn
