@@ -2,7 +2,7 @@ const { getOptionNum, getPermissionNum, embed_builder } = require("../../../util
 
 module.exports = {
     name: "info",
-    description: "Get information regarding an ultiamte role!",
+    description: "Get information regarding an ultimate role!",
     options: [
         {
             name: "role",

@@ -11,12 +11,12 @@
     - [x] Ban command
     - [x] Unban command
   - [x] Kick command
-  - [ ] Roles
+  - [x] Roles
     - [x] Role add
     - [x] Role remove
     - [x] Role info
     - [-] Role members
-      - Member count of role is viewable via role info, and in order to view the members that possess it, you can click on the role mention
+      - Member count of role is viewable via role info, and in order to view the members that possess the role, you can click on the role mention.
   - [ ] Purge
     - [ ] normal Bulk Delete
     - [ ] Bulk Delete messages sent by specific user
@@ -29,9 +29,9 @@
     - [ ] warn
     - [ ] unwarn
     - [ ] warnings
-  - [ ] nickname
-    - [ ] nickname set
-    - [ ] nickname reset
+  - [x] nickname
+    - [x] nickname set
+    - [x] nickname reset
 - __Misc__
   - [ ] Avatars
     - [ ] Avatar (user/bot)

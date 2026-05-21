@@ -104,7 +104,7 @@ module.exports ={
                     command.options?.forEach(el => {
                         optionsNames.push(el.name)
                     });
-                    description = `${command.description}\nOptions: ${optionsNames.join(", ")}`
+                    description = `${command.description}\n**options:** ${optionsNames.join(", ")}`
                 } else {
                     description = command.description
                 }
