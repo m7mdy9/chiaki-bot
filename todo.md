@@ -33,9 +33,9 @@
     - [x] nickname set
     - [x] nickname reset
 - __Misc__
-  - [ ] Avatars
-    - [ ] Avatar (user/bot)
-    - [ ] server avatar
+  - [x] Avatars
+    - [x] Avatar (user/bot)
+    - [x] server avatar
   - [ ] member info (memberinfo)
 - __Fun__
   - [ ] Flip a coin
