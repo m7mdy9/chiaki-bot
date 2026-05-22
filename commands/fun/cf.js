@@ -1,5 +1,7 @@
+const { getOptionNum } = require("../../utils/utils.js")
+
 module.exports = {
-    name:"cf",
+    name:"coinflip",
     description:"Flips a coin!",
     options: [
         {
@@ -16,6 +18,6 @@ module.exports = {
         for (let i = 0; i < numFlips; i++) {
             results.push(Math.random() >= 0.5 ? "Heads" : "Tails")
         }
-        await interaction.reply({ content: `Flipped a coin ${numFlips} times: ${results.join(", ")}` })
+        await interaction.editReply({ content: `Flipped a coin ${numFlips} times: ${results.join(", ")}` })
     }
 }
