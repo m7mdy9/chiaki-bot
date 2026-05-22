@@ -25,7 +25,7 @@ module.exports = {
                 usedColor = palette.LightVibrant.hex
             }
         } catch(err){
-            console.error("Error in vibrant.form in avatar.js: ",err)
+            console.error("Error in vibrant.form in server avatar.js: ",err)
         }
         const embed = embed_builder(`**${guild.name}**'s Server Icon`,null,usedColor)
         .setImage(avatarURL_default)

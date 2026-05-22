@@ -45,7 +45,7 @@ module.exports = {
             {name: `Role Created At:`, value: `<t:${Math.floor(roleTimeStamp.getTime()/1000)}>`, inline: true},
         )
         if(targetRole.permissions.toArray().length > 0){
-            embed.addFields({name: `Role Permissions:`, value: `${rolePermissions.join(", ")}`, inline: false},)
+            embed.addFields({name: `Role Permissions:`, value: `${rolePermissions.join(",")}`, inline: false},)
         }
         embed.setThumbnail("https://m7mdy9.github.io/images/chiaki_index_finger_up.png")
         embed.setFooter({text:`The Ultimate Role Information of '${roleName}'`,

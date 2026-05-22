@@ -2,7 +2,7 @@ require("dotenv").config();
 const { Client, GatewayIntentBits, EmbedBuilder, REST, Routes, SlashCommandBuilder, SortOrderType, parseEmoji, Collection, ActivityType } = require('discord.js');
 const { deploySlashCommands } = require('./utils/commandHandler.js');
 const { retry } = require("./utils/utils.js")
-const { connect_db } = require("./utils/mongodb.js")
+const { connectDB } = require("./database/connect.js")
 const rng_array = (dict) => {
     const keys = Object.keys(dict)
     const randKey = keys[Math.floor(Math.random() * keys.length)]
@@ -74,8 +74,7 @@ function startActivity(){
 
 client.once(`clientReady`, async () => {
     console.log(`✅ Logged in as ${client.user.tag}`);
-    // await connect_db();
-    // console.log(`Successfully connected to MangoDB.`)
+    await connectDB();
     await deploySlashCommands(client, clientId);
     console.log(`Slash commands successfully deployed.`)
     startActivity()

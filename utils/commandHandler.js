@@ -72,9 +72,10 @@ async function loadCommands(client) {
         const baseCommand = new SlashCommandBuilder()
             .setName(folder)
             .setDescription(`Main command: ${folder}`)
-        const permissionFile = fs.readdirSync(folderPath).filter(file => path.extname(file) === '') || null
+        const permissionFile = fs.readdirSync(folderPath).filter(file => path.extname(file) === '' && file.startsWith("!")) || null
+        console.log(permissionFile)
         if (permissionFile.length > 0){
-            baseCommand.setDefaultMemberPermissions(getPermissionNum(permissionFile))
+            baseCommand.setDefaultMemberPermissions(getPermissionNum(permissionFile[0].slice(1)))
             baseCommand.setDMPermission(false)
         };
         /*console.log(permissionFile,baseCommand)*/

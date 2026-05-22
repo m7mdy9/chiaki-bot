@@ -25,10 +25,10 @@
     - [x] Timeout
     - [x] untimeout (remove timeout)
   - [ ] Warnings
-    - [ ] warning DB for each guild
-    - [ ] warn
-    - [ ] unwarn
-    - [ ] warnings
+    - [x] warning DB for each guild
+    - [x] warn (implemented as /warning add)
+    - [x] unwarn (implemented as /warning remove)
+    - [ ] warnings (implemented as /warning view)
   - [x] nickname
     - [x] nickname set
     - [x] nickname reset
@@ -36,7 +36,7 @@
   - [x] Avatars
     - [x] Avatar (user/bot)
     - [x] server avatar
-  - [ ] member info (memberinfo)
+  - [x] member info (memberinfo)
 - __Fun__
   - [ ] Flip a coin
   - [ ] How\[X\]
