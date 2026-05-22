@@ -38,7 +38,7 @@
     - [x] server avatar
   - [x] member info (memberinfo)
 - __Fun__
-  - [ ] Flip a coin
+  - [X] Flip a coin
   - [ ] How\[X\]
     - [ ] create a how for each Danganronpa 1 and 2 Character.
   - [ ] dice roll
