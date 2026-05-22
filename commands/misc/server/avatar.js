@@ -3,7 +3,7 @@ const { Vibrant } = require('node-vibrant/node');
 
 module.exports = {
     name:"avatar",
-    description:"Preview the avatar of a student.",
+    description:"Preview the icon of a server.",
     /**
      * @param {import('discord.js').ChatInputCommandInteraction} interaction 
      */
@@ -27,7 +27,7 @@ module.exports = {
         } catch(err){
             console.error("Error in vibrant.form in avatar.js: ",err)
         }
-        const embed = embed_builder(`**${guild.name}**'s Server Avatar`,null,usedColor)
+        const embed = embed_builder(`**${guild.name}**'s Server Icon`,null,usedColor)
         .setImage(avatarURL_default)
         await interaction.editReply({ embeds:[embed] })
     }
