@@ -6,7 +6,7 @@ module.exports = {
             name:'N',
             description: 'Number of times to flip the coin.',
             type: getOptionNum("INTEGER"),
-            required: true,
+            required: false,
         },
     ],
 
