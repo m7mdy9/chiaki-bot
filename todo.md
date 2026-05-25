@@ -17,10 +17,11 @@
     - [x] Role info
     - [-] Role members
       - Member count of role is viewable via role info, and in order to view the members that possess the role, you can click on the role mention.
-  - [ ] Purge
-    - [ ] normal Bulk Delete
-    - [ ] Bulk Delete messages sent by specific user
-    - [ ] Bulk Delete messages sent by bots
+  - [x] Purge
+    - [x] normal Bulk Delete
+    - [x] Bulk Delete messages sent by specific user
+    - [x] Bulk Delete messages sent by bots
+    + [x] Bulk Delete messages sent by humans
   - [x] Timeout
     - [x] Timeout
     - [x] untimeout (remove timeout)
