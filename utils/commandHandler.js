@@ -24,7 +24,7 @@ async function loadCommands(client) {
         .filter(file => file.isDirectory())
         .map(dirent => path.join(dirent.parentPath, dirent.name))
     })
-    console.log(commandCategories, commandFiles, commandFolders)
+    // console.log(commandCategories, commandFiles, commandFolders)
     for (let file of commandFiles) {
         commandsPath = file;
         file = path.basename(file)
@@ -73,7 +73,7 @@ async function loadCommands(client) {
             .setName(folder)
             .setDescription(`Main command: ${folder}`)
         const permissionFile = fs.readdirSync(folderPath).filter(file => path.extname(file) === '' && file.startsWith("!")) || null
-        console.log(permissionFile)
+        // console.log(permissionFile)
         if (permissionFile.length > 0){
             baseCommand.setDefaultMemberPermissions(getPermissionNum(permissionFile[0].slice(1)))
             baseCommand.setDMPermission(false)

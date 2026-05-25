@@ -78,7 +78,7 @@ module.exports ={
                 }
             }
             fullCommandInfo.set(categoryName, commands)
-            console.log(fullCommandInfo)
+            // console.log(fullCommandInfo)
         }
         // console.log((ButtonStyle))
         // console.log(categoriesPaths,categories)

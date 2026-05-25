@@ -78,7 +78,7 @@ function getOptionNum(type="STRING"){
     if(output == 0 || !discordOptionTypes.includes(type)){
         return 3
     }
-    console.log(output)
+    // console.log(output)
     return parseInt(output)
 }
 /**
