@@ -9,6 +9,7 @@ module.exports = {
             required: true
         }
     ],
+    hidden: true,
     async execute(interaction) {
         if (interaction.user.id !== ownerId) {
             return interaction.editReply("❌");

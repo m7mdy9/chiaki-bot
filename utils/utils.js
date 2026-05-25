@@ -124,7 +124,7 @@ function embed_info(ownerId, client, result, time){
         \nCurrent Ping: **${client.ws.ping}ms**
         \nUptime: **${result} ${time}**
         \n**[Check Chiaki Bot Github Page!](https://github.com/m7mdy9/chiaki-bot)**
-        \n**[Bot Invite Link](https://discord.com/oauth2/authorize?client_id=1502713354936914080&permissions=8&integration_type=0&scope=bot+applications.commands)**`,
+        \n**[Bot Invite Link](${process.env.INVITE})**`,
         "#ffdcfc"
     )
     return embed1

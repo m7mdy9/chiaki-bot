@@ -1,9 +1,9 @@
-require("dotenv").config();
-const { Client, GatewayIntentBits, EmbedBuilder, REST, Routes, SlashCommandBuilder, SortOrderType, parseEmoji, Collection, ActivityType } = require('discord.js');
+require("dotenv").config({quiet:true});
+const { Client, GatewayIntentBits, EmbedBuilder, REST, Routes, SlashCommandBuilder, SortOrderType, parseEmoji, Collection, ActivityType, MessageFlags } = require('discord.js');
 const { deploySlashCommands } = require('./utils/commandHandler.js');
 const { retry } = require("./utils/utils.js")
 const { connectDB } = require("./database/connect.js")
-let fullCommandInfo;
+let fullCommandInfo, ephemeralCommands;
 const rng_array = (dict) => {
     const keys = Object.keys(dict)
     const randKey = keys[Math.floor(Math.random() * keys.length)]
@@ -41,14 +41,14 @@ client.on('interactionCreate', async interaction => {
     const isServerOnly = modCmds.includes(fullCommand) || specialServerOnly.includes(fullCommand);
     try {
         if (["eval", "test test"].includes(fullCommand) && interaction.user.id !== ownerId){
-            return interaction.reply({ content: `Only members of the Future Foundation may execute this command.`, ephemeral: true})
+            return interaction.reply({ content: `Only members of the Future Foundation may execute this command.`, flags:[MessageFlags.Ephemeral]})
         } // prevents server-only commands to run in dms or a guild that the bot doesnt reside in 
         else if(isServerOnly && !interaction.guild){
             return interaction.reply({ content:`You can not run this commnad outside of servers that the bot is in.
-                \nIf you would like this command to work, invite **[Chiaki Nanami](https://discord.com/oauth2/authorize?client_id=1502713354936914080&permissions=8&integration_type=0&scope=bot+applications.commands)** to the server or ask an administrator to do so.`,
-            ephemeral: true})
+                \nIf you would like this command to work, invite **[Chiaki Nanami](${process.env.INVITE})** to the server or ask an administrator to do so.`,
+            flags:[MessageFlags.Ephemeral]})
         }
-        fullCommand == "eval" ? await interaction.deferReply({ephemeral: true}) : await interaction.deferReply();
+        ephemeralCommands.includes(fullCommand) ? await interaction.deferReply({flags:[MessageFlags.Ephemeral]}) : await interaction.deferReply();
         await command.execute(interaction, client);
         // console.log(subcommand,fullCommand,command)
     } catch (error) {
@@ -85,7 +85,7 @@ function startActivity(){
 }
 
 client.once(`clientReady`, async () => {
-    fullCommandInfo = await require('./commands/misc/help.js').setup().catch(()=>null)
+    [fullCommandInfo, ephemeralCommands] = await require('./commands/misc/help.js').setup().catch(()=>null)
     console.log(`✅ Logged in as ${client.user.tag}`);
     await connectDB();
     await deploySlashCommands(client, clientId);

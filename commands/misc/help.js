@@ -6,13 +6,14 @@ const { ButtonStyle, inlineCode } = require("discord.js");
 let categoryNames, fullCommandInfo;
 const chiakiColor = '#ffdcfc';
 
-async function getCommands(){
+async function getCommands(type){
         const mainPath = path.dirname(__dirname);
         const categoryPaths = fs.readdirSync(mainPath, { withFileTypes: true}).flatMap(el =>{
             if (el.isDirectory()) return path.join(el.parentPath, el.name) 
         })
         categoryNames = categoryPaths.flatMap(el => path.basename(el))
         fullCommandInfo = new Map();
+        let ephemeralCommands = [];
         for (const category of categoryPaths){
             // console.log(category)
             const categoryName = path.basename(category)
@@ -40,7 +41,9 @@ async function getCommands(){
                         description: data.description || "No description provided.",
                         options: formattedOptions || null,
                     }
-                    // console.log(commandInfo)
+                    if(data.hidden){
+                        ephemeralCommands.push(commandInfo.name)
+                    }
                     commands.push(commandInfo)
                 }
             }
@@ -70,6 +73,9 @@ async function getCommands(){
                             description: data.description || "No description provided.",
                             options: formattedOptions || null,
                         }
+                        if(data.hidden){
+                            ephemeralCommands.push(commandInfo.name)
+                        }
                         // console.log(commandInfo)
                         commands.push(commandInfo)
                     }
@@ -78,7 +84,7 @@ async function getCommands(){
             fullCommandInfo.set(categoryName, commands)
             // console.log(fullCommandInfo)
         }
-        return fullCommandInfo
+        return [fullCommandInfo, ephemeralCommands];
 }
 
 module.exports ={
