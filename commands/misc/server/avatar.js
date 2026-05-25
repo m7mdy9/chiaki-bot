@@ -8,10 +8,6 @@ module.exports = {
      * @param {import('discord.js').ChatInputCommandInteraction} interaction 
      */
     async execute(interaction){
-        const guild = interaction.guild
-        if(!guild){
-            return interaction.editReply("You can not run this commnad outside of servers.")
-        }
         let avatarURL_default = interaction.guild.iconURL({
             extension: 'webp',
             size: 512,

@@ -5,10 +5,8 @@ const { selectorBuilder } = require("../../utils/builders.js")
 const { ButtonStyle, inlineCode } = require("discord.js");
 let categoryNames, fullCommandInfo;
 const chiakiColor = '#ffdcfc';
-module.exports ={
-    name: "help",
-    description: "Shows information about commands relating to the bot.",
-    setup: async function(client){
+
+async function getCommands(){
         const mainPath = path.dirname(__dirname);
         const categoryPaths = fs.readdirSync(mainPath, { withFileTypes: true}).flatMap(el =>{
             if (el.isDirectory()) return path.join(el.parentPath, el.name) 
@@ -80,9 +78,13 @@ module.exports ={
             fullCommandInfo.set(categoryName, commands)
             // console.log(fullCommandInfo)
         }
-        // console.log((ButtonStyle))
-        // console.log(categoriesPaths,categories)
-    },
+        return fullCommandInfo
+}
+
+module.exports ={
+    name: "help",
+    description: "Shows information about commands relating to the bot.",
+    setup: getCommands,
     /** @param {import('discord.js').ChatInputCommandInteraction} interaction */
     async execute(interaction){
         // const formattedCategoryNames = categoryNames.map(w => w[0].toUpperCase() + w.slice(1))
