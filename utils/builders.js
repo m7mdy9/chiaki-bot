@@ -14,15 +14,21 @@ class buttonBuilder{
     /**
      * @param {'Primary' | 'Secondary' | 'Success' | 'Danger' | 'Link'} style - cool button style from discord!!
     */
-    addButton(customId=null, label, style='Primary', url=null, emoji=null){
+    addButton(customId=null, label=null, style='Primary', url=null, emoji=null){
         if(!Object.keys(ButtonStyle).includes(style)){
             style = ButtonStyle.Primary
         } else {
             style = ButtonStyle[style]
         }
+        if(!label && !emoji){
+            throw new TypeError(`[Button Builder Error] There must atleast a label or an emoji set to any button.
+                \nButton where error resides: ${customId}`)
+        }
         const button = new ButtonBuilder()
-            .setLabel(label)
             .setStyle(style)
+        if(label){
+            button.setLabel(label)
+        }
         if(customId){
             button.setCustomId(customId)
         }
@@ -33,12 +39,13 @@ class buttonBuilder{
             button.setURL(url)
         }
         this.buttons.push(button)
+        return this
     }
     getRow(){
         this.row = new ActionRowBuilder().addComponents(...this.buttons)
         return this.row
     }
-    startListener(response, selectedTime=180_000, func){
+    startListener(response, selectedTime=60_000, func){
         const collector = response.createMessageComponentCollector({ 
             componentType: ComponentType.Button,
             idle: selectedTime, 
@@ -70,6 +77,7 @@ class selectorBuilder{
         if(placeHolder){
             this.selector.setPlaceholder(placeHolder)
         }
+        return this
     }
     addOption(label, value, description=null, emoji=null, selectedByDefault=false){
         const option = new StringSelectMenuOptionBuilder()
@@ -80,12 +88,13 @@ class selectorBuilder{
         if(emoji){option.setEmoji(emoji)}
         
         this.selector.addOptions(option)
+        return this
     }
     getRow(){
         this.row = new ActionRowBuilder().addComponents(this.selector) 
         return this.row
     }
-    startListener(response, selectedTime=180_000, func){
+    startListener(response, selectedTime=60_000, func){
         const collector = response.createMessageComponentCollector({ 
             componentType: ComponentType.StringSelect,
             idle: selectedTime, 
@@ -141,6 +150,7 @@ class modalBuilder{
     }
     addComponents(...args){
         this.modal.addComponents(...args)
+        return this
     }
     /**
      * @param {Function} func 
@@ -154,7 +164,7 @@ class modalBuilder{
         const filter = (i) => this.modal.data.custom_id === i.customId && i.user.id == this.interaction.user.id
         try{
             const modalInteraction = await this.interaction.awaitModalSubmit({
-                filter,time: time ?? 180_000
+                filter,time: time ?? 900_000
             }).catch((error)=>{
                 if (error.code === "InteractionCollectorError"){
                     this.interaction.followUp({content:"The input timed out.", ephemeral:true})

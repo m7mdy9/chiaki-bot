@@ -57,12 +57,16 @@ module.exports = {
                     caseNum: (currentCase+1),
                     timestamp: Date.now(),
                 })
-                await targetMember.send({
-                    embeds:[embed_builder(null, `You have been warned in **${interaction.guild.name}** for **${reason}**`, '#ff9494').setTimestamp()]
-                })
                 await interaction.editReply({
                     embeds:[embed_builder(null, `Successfully warned **${targetMember.user.username}** for **${reason}**`)]
                 })
+                try {
+                    targetMember.send({
+                    embeds:[embed_builder(null, `You have been warned in **${interaction.guild.name}** for **${reason}**`, '#ff9494').setTimestamp()]
+                })
+                } catch(err){
+                    console.error(`Couldn't message user in warning add.js`,err)
+                }
             } catch(err){
                 console.error("Error in warning add: ",err)
                 editReply("Couldn't warn this student, they most likely left the server.\n-# If you believe this is an error please report it to my developer.")

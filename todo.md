@@ -24,11 +24,11 @@
   - [x] Timeout
     - [x] Timeout
     - [x] untimeout (remove timeout)
-  - [ ] Warnings
+  - [x] Warnings
     - [x] warning DB for each guild
     - [x] warn (implemented as /warning add)
     - [x] unwarn (implemented as /warning remove)
-    - [ ] warnings (implemented as /warning view)
+    - [x] warnings (implemented as /warning view)
   - [x] nickname
     - [x] nickname set
     - [x] nickname reset
