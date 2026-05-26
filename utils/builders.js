@@ -48,18 +48,16 @@ class buttonBuilder{
     startListener(response, selectedTime=60_000, func){
         const collector = response.createMessageComponentCollector({ 
             componentType: ComponentType.Button,
-            idle: selectedTime, 
+            idle: selectedTime ?? 60_000, 
         });
         collector.on('collect', func)
         collector.on('end', async (collected, reason)=>{
-            if (reason == 'idle'){
-                this.row.components.forEach(el => {
-                    el.setDisabled(true)
-                });
-                await this.interaction.editReply({
-                    components: [this.row]
-                })
-            }
+            this.row.components.forEach(el => {
+                el.setDisabled(true)
+            });
+            await this.interaction.editReply({
+                components: [this.row]
+            })
         })
     }
     
@@ -97,18 +95,16 @@ class selectorBuilder{
     startListener(response, selectedTime=60_000, func){
         const collector = response.createMessageComponentCollector({ 
             componentType: ComponentType.StringSelect,
-            idle: selectedTime, 
+            idle: selectedTime ?? 60_000,  
         });
         collector.on('collect', func)
         collector.on('end', async (collected, reason)=>{
-            if (reason == 'idle'){
-                this.row.components.forEach(el => {
-                    el.setDisabled(true)
-                });
-                await this.interaction.editReply({
-                    components: [this.row]
-                })
-            }
+            this.row.components.forEach(el => {
+                el.setDisabled(true)
+            });
+            await this.interaction.editReply({
+                components: [this.row]
+            })
         })
     }
 }
@@ -155,7 +151,7 @@ class modalBuilder{
     /**
      * @param {Function} func 
      */
-    async showModal(time=null,func){
+    async showModal(time=900_000,func){
         await this.interaction.showModal(this.modal)
         const array = this.textInputList.flatMap(txt =>
             txt.data.customId
