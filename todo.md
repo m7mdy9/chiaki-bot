@@ -40,8 +40,8 @@
   - [x] member info (memberinfo)
 - __Fun__
   - [X] Flip a coin
-  - [ ] How\[X\]
-    - [ ] create a how for each Danganronpa 1 and 2 Character.
+  - [x] How\[X\]
+    - [x] create a how for each Danganronpa 1 and 2 Character.
   - [ ] dice roll
   - [ ] Random image of an animal
     - [ ] cat
