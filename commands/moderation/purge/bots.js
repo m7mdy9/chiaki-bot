@@ -7,7 +7,7 @@ module.exports = {
         {
             name: "count",
             description: "The number of messages to search in for bots, the maximum is 100 messages.",
-            type: getOptionNum("NUMBER"),
+            type: getOptionNum("INTEGER"),
             required: true
         }
     ],
@@ -21,7 +21,7 @@ module.exports = {
         if(!interaction.appPermissions.has("ManageMessages")){
             return interaction.editReply("I can not delete messages as I do not have the `ManageMessages` permission.")
         }
-        const delCount = interaction.options.getNumber("count")
+        const delCount = interaction.options.getInteger("count")
         if(delCount < 1){
             return interaction.editReply("The given number must be between 1 and 100")
         }
