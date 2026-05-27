@@ -47,7 +47,7 @@
     - [x] cat
     - [x] dog
     - [x] capybara
-  - [ ] rps
+  - [x] rps
   - [x] random chiaki line
 
 
