@@ -53,6 +53,8 @@ class buttonBuilder{
         collector.on('collect', func)
         const defaultTimeout = async (collected,reason)=>{
             try {
+                const lastReply = await this.interaction.fetchReply()
+                if(!lastReply?.components || lastReply?.components?.length < 1) return;
                 this.row.components.forEach(el => {
                     el.setDisabled(true)
                 });
@@ -159,7 +161,7 @@ class modalBuilder{
     async showModal(time=900_000,func){
         await this.interaction.showModal(this.modal)
         const array = this.textInputList.flatMap(txt =>
-            txt.data.customId
+            txt.data.custom_id
         )
         console.log(array)
         const filter = (i) => this.modal.data.custom_id === i.customId && i.user.id == this.interaction.user.id
