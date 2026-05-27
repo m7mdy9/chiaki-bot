@@ -20,11 +20,13 @@ module.exports = {
         const lastReport = await reportsModel.findOne({ userId }).sort({timestamp: -1})
         const guildId = interaction?.guild?.id
 
-        const cdTS = Date.parse(lastReport.timestamp) + 5 * 60 * 1000
-        if(cdTS > Date.now() && userId != process.env.ownerId){
-            return interaction.editReply({embeds:[embed_builder(null,
-                `There's a 5 minute cooldown between bug reports, sorry!
-                \nYou can try again <t:${Math.floor(cdTS/1000)}:R>`,process.env.red)]})
+        if(lastReport){
+            const cdTS = Date.parse(lastReport.timestamp) + 5 * 60 * 1000
+            if(cdTS > Date.now() && userId != process.env.ownerId){
+                return interaction.editReply({embeds:[embed_builder(null,
+                    `There's a 5 minute cooldown between bug reports, sorry!
+                    \nYou can try again <t:${Math.floor(cdTS/1000)}:R>`,process.env.red)]})
+            }
         }
         const embed = embed_builder("Report a Bug", "Press the button to input your report.",process.env.red)
         const resultEmbed = embed_builder("Report Sent!", "Thank you for your report!", process.env.green)
