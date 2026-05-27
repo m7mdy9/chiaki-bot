@@ -1,5 +1,5 @@
 const { embed_builder } = require('../../../utils/utils.js')
-const { Vibrant } = require('node-vibrant/node');
+const { Vibrant } = require('node-vibrant');
 
 module.exports = {
     name:"avatar",
