@@ -1,5 +1,5 @@
 const ownerId = '966205214308847626'
-
+const { embed_builder } = require("../../utils/utils.js")
 module.exports = {
     options: [
         {
