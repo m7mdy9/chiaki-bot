@@ -38,7 +38,7 @@
     - [x] Avatar (user/bot)
     - [x] server avatar
   - [x] member info (memberinfo)
-  - [ ] Add a report bugs command
+  - [x] Add a report bugs command
 - __Fun__
   - [X] Flip a coin
   - [x] How\[X\]
@@ -58,4 +58,4 @@
 
 ## Misc:
 - [ ] Create a support server.
-- [ ] Create different production and testing bots.
+- [x] Create different production and testing bots.
