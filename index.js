@@ -85,7 +85,7 @@ function startActivity(){
 }
 
 client.once(`clientReady`, async () => {
-    [fullCommandInfo, ephemeralCommands] = await require('./commands/misc/help.js').setup().catch(()=>null)
+    [fullCommandInfo, ephemeralCommands] = await require('./commands/misc/help.js').setup().catch((err)=>console.error(err))
     console.log(`✅ Logged in as ${client.user.tag}`);
     await connectDB();
     await deploySlashCommands(client, clientId);

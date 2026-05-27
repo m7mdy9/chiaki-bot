@@ -17,7 +17,7 @@ module.exports = {
     async execute(interaction){
         const numFlips = interaction.options.getInteger('flips') || null
         let output;
-        if (numFlips && numFlips != 1){
+        if (numFlips && numFlips > 1){
             let results = []
             for (let i = 0; i < numFlips; i++) {    
                 results.push(Math.random() >= 0.5 ? "Heads" : "Tails")

@@ -3,7 +3,7 @@ const { chiaki_half_body_sprites, chiaki_quotes } = require("../../../utils/conf
 
 module.exports = {
     name: "chiaki",
-    description: "Get a random chiaki sprite and line!",
+    description: "Get a random chiaki sprite and quote!",
     /** @param {import("discord.js").ChatInputCommandInteraction} interaction */
     async execute(interaction){
         const site = `https://m7mdy9.github.io/images/chiaki_half_body_sprites/`
@@ -12,7 +12,7 @@ module.exports = {
         const ChiakiSprite = `${site}${randomChiaki}`
 
         const embed = embed_builder("Random Chiaki Image!",
-        `"${randomQuote}" **- Chiaki Nanami**`
+        `"${randomQuote}"\n**\\- Chiaki Nanami**`
         ).setImage(ChiakiSprite).setFooter({text:"Images from danganronpa.fandom.com"})
         return interaction.editReply({embeds:[embed]})
     }
