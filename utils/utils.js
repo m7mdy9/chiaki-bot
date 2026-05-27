@@ -1,5 +1,5 @@
 require('dotenv').config({ path: '../.env' })
-const { SlashCommandBuilder, EmbedBuilder, PermissionFlagsBits} = require("discord.js")
+const { SlashCommandBuilder, EmbedBuilder, PermissionFlagsBits, MessageFlags} = require("discord.js")
 
 async function retry(fn, maxRetries = 3, delayMs = 2000) {
     let attempts = 0;
@@ -18,41 +18,7 @@ async function retry(fn, maxRetries = 3, delayMs = 2000) {
     }
 
     throw lastError; // Rethrow the last error after max retries
-}
-
-function parseDuration(duration) {
-    const regex = /^(\d+)([dhm])$/; // Matches formats like "1d", "3h", "15m"
-    const match = duration.match(regex);
-
-    if (!match) return null;
-
-    const value = parseInt(match[1], 10);
-    const unit = match[2];
-
-    switch (unit) {
-        case 'd': return value * 24 * 60 * 60 * 1000; // Days to milliseconds
-        case 'h': return value * 60 * 60 * 1000;      // Hours to milliseconds
-        case 'm': return value * 60 * 1000;          // Minutes to milliseconds
-        default: return null;
-    }
-}
-function makedurationbigger(duration) {
-    const regex = /^(\d+)([dhm])$/; // Matches formats like "1d", "3h", "15m"
-    const match = duration.match(regex);
-    
-    if (!match) return null;
-    
-    const value = parseInt(match[1], 10);
-    const unit = match[2];
-    
-    switch (unit) {
-        case 'd': return value + " day(s)" // Days to milliseconds
-        case 'h': return value +  " hour(s)"   // Hours to milliseconds
-        case 'm': return value + " minute(s)"        // Minutes to milliseconds
-        default: throw new Error("Invalid usage");
-    }
-    
-}
+} 
 /**
  * @param {'SUB_COMMAND' | 'SUB_COMMAND_GROUP' | 'STRING' | 
  * 'INTEGER' | 'BOOLEAN' | 'USER' | 'CHANNEL' 
@@ -132,12 +98,13 @@ function embed_info(ownerId, client, result, time){
         console.error(error)
     }    
 }
+const hiddenFlag = MessageFlags.Ephemeral 
+
 module.exports = {
     retry,
-    parseDuration,
-    makedurationbigger,
     getOptionNum,
     getPermissionNum,
     embed_info,
     embed_builder,
+    hiddenFlag,
 }

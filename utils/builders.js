@@ -45,20 +45,25 @@ class buttonBuilder{
         this.row = new ActionRowBuilder().addComponents(...this.buttons)
         return this.row
     }
-    startListener(response, selectedTime=60_000, func){
+    startListener(response, selectedTime=60_000, func, timeoutFunc=null){
         const collector = response.createMessageComponentCollector({ 
             componentType: ComponentType.Button,
             idle: selectedTime ?? 60_000, 
         });
         collector.on('collect', func)
-        collector.on('end', async (collected, reason)=>{
-            this.row.components.forEach(el => {
-                el.setDisabled(true)
-            });
-            await this.interaction.editReply({
-                components: [this.row]
-            })
-        })
+        const defaultTimeout = async (collected,reason)=>{
+            try {
+                this.row.components.forEach(el => {
+                    el.setDisabled(true)
+                });
+                await this.interaction.editReply({
+                    components: [this.row]
+                })
+            } catch(err){
+                console.error("Failed to disable buttons in buttonBuilder: ",err)
+            }
+        }
+        collector.on('end', timeoutFunc ? timeoutFunc : defaultTimeout)
     }
     
 }
