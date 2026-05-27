@@ -3,6 +3,16 @@ const { Client, GatewayIntentBits, EmbedBuilder, REST, Routes, SlashCommandBuild
 const { deploySlashCommands } = require('./utils/commandHandler.js');
 const { retry } = require("./utils/utils.js")
 const { connectDB } = require("./database/connect.js")
+const { execSync } = require("child_process")
+let currentBranch = "main"
+try {
+    currentBranch = execSync("git branch --show-current").toString().trim()
+} catch(err){
+    console.error("Couldn't detect branch, auto set to main.", err)
+}
+
+const botToken = currentBranch == "main" ? process.env.TOKEN : process.env.TESTING_TOKEN
+const clientId = currentBranch == "main" ? process.env.clientId : process.env.TESTING_clientId
 let fullCommandInfo, ephemeralCommands;
 const rng_array = (dict) => {
     const keys = Object.keys(dict)
@@ -13,9 +23,7 @@ const rng_array = (dict) => {
 }
 // const { startServer } = require("./utils/server.js")
 
-const botToken = process.env.TOKEN;
 const ownerId = process.env.ownerId;
-const clientId = process.env.clientId; 
 const client = new Client({ intents: [GatewayIntentBits.GuildMembers,GatewayIntentBits.Guilds, GatewayIntentBits.GuildMessages, GatewayIntentBits.MessageContent] });
 client.commands = new Collection();
 
@@ -88,7 +96,7 @@ client.once(`clientReady`, async () => {
     [fullCommandInfo, ephemeralCommands] = await require('./commands/misc/help.js').setup().catch((err)=>console.error(err))
     console.log(`✅ Logged in as ${client.user.tag}`);
     await connectDB();
-    await deploySlashCommands(client, clientId);
+    await deploySlashCommands(client, clientId, botToken);
     console.log(`Slash commands successfully deployed.`)
     startActivity()
 });

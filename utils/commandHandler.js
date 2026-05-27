@@ -198,9 +198,9 @@ async function loadCommands(client) {
     return commands;
 }
 
-async function deploySlashCommands(client, clientId) {
+async function deploySlashCommands(client, clientId, token) {
     const commands = await loadCommands(client);
-    const rest = new REST({ version: "10" }).setToken(process.env.TOKEN);
+    const rest = new REST({ version: "10" }).setToken(token);
 
     try {
         console.log("🚀 Deploying new commands...");
