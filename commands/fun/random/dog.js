@@ -14,7 +14,7 @@ module.exports = {
         const dogFact = await (await fetch(`https://random-dog-facts.p.rapidapi.com/api/dogs`,{headers}))?.json()
 
         const image = response[0]?.url || altImage
-        const embed = embed_builder("Random Capybara Image", `Random dog fact: ${dogFact?.fact || "No facts for today :("}`).setImage(image).setFooter({text: "Powered by thedogapi.com and rapidapi.com"})
+        const embed = embed_builder("Random Dog Image", `Random dog fact: ${dogFact?.fact || "No facts for today :("}`).setImage(image).setFooter({text: "Powered by thedogapi.com and rapidapi.com"})
         return interaction.editReply({embeds:[embed]})
     }
 }
