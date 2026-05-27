@@ -42,13 +42,13 @@
   - [X] Flip a coin
   - [x] How\[X\]
     - [x] create a how for each Danganronpa 1 and 2 Character.
-  - [ ] dice roll
+  - [x] dice roll
   - [x] Random image of an animal
     - [x] cat
     - [x] dog
     - [x] capybara
   - [ ] rps
-  - [ ] random chiaki line
+  - [x] random chiaki line
 
 
 ## Issues:
