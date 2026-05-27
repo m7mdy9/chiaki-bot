@@ -3,6 +3,7 @@ const path = require("path")
 const { embed_builder, getPermissionNum } = require("../../utils/utils.js")
 const { selectorBuilder } = require("../../utils/builders.js")
 const { ButtonStyle, inlineCode } = require("discord.js");
+const { options } = require("./report/bug.js");
 let categoryNames, fullCommandInfo;
 const chiakiColor = '#ffdcfc';
 
@@ -103,6 +104,7 @@ module.exports ={
             const embed = embed_builder(formattedName,null,chiakiColor)
             const commands = fullCommandInfo.get(categ)
             
+            let EmbedDesc = "";
             if (!commands || commands.length === 0) continue;
             selector.addOption(formattedName, categ)
             for (const command of commands){
@@ -112,14 +114,16 @@ module.exports ={
                     command.options?.forEach(el => {
                         optionsNames.push(el.name)
                     });
-                    description = `${command.description}\n**options:** ${optionsNames.join(", ")}`
+                    description = `${command.description}\n\u200b**options:** ${optionsNames.join(", ")}`
                 } else {
                     description = command.description
                 }
-                embed.addFields(
-                    {name:`\`/${command.name}\``, value: description, inline: false}
-                )
+                // embed.addFields(
+                //     {name:`\`/${command.name}\``, value: description, inline: false}
+                // )
+                EmbedDesc +=`**\`/${command.name}\`**: ${description}\n`
             }
+            embed.setDescription(EmbedDesc)
             Embeds.set(categ, embed)
         }
         // console.log(Embeds)

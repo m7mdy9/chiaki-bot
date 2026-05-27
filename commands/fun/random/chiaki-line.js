@@ -12,7 +12,7 @@ module.exports = {
     
         const embed = embed_builder("Random Chiaki Line!", `"${chiakiLine}"\n**\\- Chiaki Nanami**`)
             .setThumbnail(site+chiakiSprite)
-            .setFooter({text: "Powered by voicelines.fandom.com\nFor more filtered quotes, do /random chiaki"})
+            .setFooter({text: "Powered by voicelines.fandom.com\nFor filtered quotes, do /random chiaki"})
         return interaction.editReply({embeds:[embed]})
     }
 }
