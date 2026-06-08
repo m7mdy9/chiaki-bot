@@ -23,17 +23,19 @@ module.exports = {
      */
     async execute(interaction){
         try{
-            const targetUser = interaction.options.get("student")?.member || interaction.options.get("student")?.user || interaction.user
-            const avatarPath = targetUser.displayAvatarURL();
-            const username = targetUser.user.username
-    
+            const targetUser = interaction.options.getMember("student") || interaction.options.getUser("student") || interaction.user
+            const avatarPath = targetUser.displayAvatarURL({size:128});
+            const username = targetUser.username
+            
+            const startTime = performance.now()
             const gifBuffer = await worker.run({avatarPath, username})
             const formattedGifBuffer = Buffer.from(gifBuffer)
             console.log(formattedGifBuffer)
             const gifAttachment = new AttachmentBuilder(formattedGifBuffer, { name: 'execute-avatar.gif'})
-    
-            interaction.editReply({
-                files: [gifAttachment]
+            const timeTakenToExecute = ((performance.now() - startTime)/1000).toFixed(2)
+            return interaction.editReply({
+                files: [gifAttachment],
+                content:`-# Generated in ${timeTakenToExecute}s`
             })
         } catch(err){
             interaction.editReply("Could not generate an execution gif.")
