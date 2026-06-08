@@ -1,5 +1,4 @@
-require('dotenv').config({ path: '../.env' })
-const { SlashCommandBuilder, EmbedBuilder, PermissionFlagsBits, MessageFlags} = require("discord.js")
+ const { SlashCommandBuilder, EmbedBuilder, PermissionFlagsBits, MessageFlags} = require("discord.js")
 
 async function retry(fn, maxRetries = 3, delayMs = 2000) {
     let attempts = 0;
