@@ -4,6 +4,11 @@ const { ActionRowBuilder, ButtonBuilder,
     TextInputStyle, ComponentType, ButtonStyle, 
 } = require("discord.js")
 
+const RED = '\x1b[31m';
+const YELLOW = '\x1b[33m';
+const RESET = '\x1b[0m';
+
+
 class buttonBuilder{
     buttons = []
     components = null;
@@ -62,6 +67,9 @@ class buttonBuilder{
                     components: [this.row]
                 })
             } catch(err){
+                if(err.code === 10008) {
+                    return console.warn(YELLOW+"Failed to disable buttons due to interaction deletion."+RESET)
+                }
                 console.error("Failed to disable buttons in buttonBuilder: ",err)
             }
         }
@@ -99,20 +107,30 @@ class selectorBuilder{
         this.row = new ActionRowBuilder().addComponents(this.selector) 
         return this.row
     }
-    startListener(response, selectedTime=60_000, func){
+    startListener(response, selectedTime=60_000, func, timeoutFunc=null){
         const collector = response.createMessageComponentCollector({ 
             componentType: ComponentType.StringSelect,
             idle: selectedTime ?? 60_000,  
         });
         collector.on('collect', func)
-        collector.on('end', async (collected, reason)=>{
-            this.row.components.forEach(el => {
-                el.setDisabled(true)
-            });
-            await this.interaction.editReply({
-                components: [this.row]
-            })
-        })
+        const defaultTimeout = async (collected,reason)=>{
+            try {
+                const lastReply = await this.interaction.fetchReply()
+                if(!lastReply?.components || lastReply?.components?.length < 1) return;
+                this.row.components.forEach(el => {
+                    el.setDisabled(true)
+                });
+                await this.interaction.editReply({
+                    components: [this.row]
+                })
+            } catch(err){
+                if(err.code === 10008) {
+                    return console.warn(YELLOW+"Failed to disable buttons due to interaction deletion."+RESET)
+                }
+                console.error("Failed to disable buttons in buttonBuilder: ",err)
+            }
+        }
+        collector.on('end', timeoutFunc ? timeoutFunc : defaultTimeout)
     }
 }
 class modalBuilder{
