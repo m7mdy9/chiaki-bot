@@ -50,7 +50,7 @@
     - [x] capybara
   - [x] rps
   - [x] random chiaki line
-  - [ ] Execute (Animation w/ PFP as the Sprite)
+  - [x] Execute (Animation w/ PFP as the Sprite)
 
 
 ## Issues:
