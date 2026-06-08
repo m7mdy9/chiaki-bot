@@ -21,6 +21,7 @@ Make sure you have [node.js](https://nodejs.org/) downloaded before going furthe
     ownerId=owner_id_goes_here
     clientId=client_id_used_if_branchName_is_main
     INVITE=bot_invite_link
+    secretUser=id_used_for_specific_odds_in_howdangareyou_(pretty much rigged odds against a friend of mine)
     dogAPIKey=api_used_from_thedogapi.com_for_dog_pictures
     dogFactAPIKey=api_used_for_dog_facts_link_for_api:https://rapidapi.com/maketest-1YGgU5ZOtA/api/random-dog-facts/pricing
     pink="#ffdcfc"
@@ -29,6 +30,9 @@ Make sure you have [node.js](https://nodejs.org/) downloaded before going furthe
     reportChannelId=channel_id_where_results_of_bug_reports_will_be_sent
     TESTING_TOKEN=discord_bot_token_here_this_token_will_be_used_if_branchName_is_testing
     TESTING_clientId=client_id_used_if_branchName_is_testing
+    RED='\x1b[31m'
+    YELLOW='\x1b[33m'
+    RESET='\x1b[0m'
     ```
     * Create your .gitignore and make sure the following (DO NOT COMMIT YOUR `.env` OR `node_modules/`)
     ```.gitignore

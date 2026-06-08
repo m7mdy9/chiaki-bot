@@ -1,7 +1,7 @@
 const fs = require("fs")
 const path = require("path")
 const { embed_builder, getPermissionNum } = require("../../utils/utils.js")
-const { selectorBuilder } = require("../../utils/builders.js")
+const { selectorTextBuilder } = require("../../utils/builders.js")
 const { ButtonStyle, inlineCode } = require("discord.js");
 const { options } = require("./report/bug.js");
 let categoryNames, fullCommandInfo;
@@ -97,7 +97,7 @@ module.exports ={
         // const formattedCategoryNames = categoryNames.map(w => w[0].toUpperCase() + w.slice(1))
         const Embeds = new Map()
         const helpEmbed = embed_builder("Help", "Please select the category of commands that you need help with", chiakiColor)
-        const selector = new selectorBuilder(interaction)
+        const selector = new selectorTextBuilder(interaction)
         selector.createSelector("chosenCategory", "Choose a category")
         for (const categ of categoryNames){
             const formattedName = categ[0].toUpperCase()+categ.slice(1)

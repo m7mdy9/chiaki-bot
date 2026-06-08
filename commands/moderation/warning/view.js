@@ -1,6 +1,6 @@
 const { getOptionNum, getPermissionNum, embed_builder } = require("../../../utils/utils.js")
 const { warningModel } = require("../../../database/models/warnings.js")
-const { buttonBuilder,selectorBuilder } = require("../../../utils/builders.js")
+const { buttonBuilder,selectorTextBuilder } = require("../../../utils/builders.js")
 const { EmbedBuilder } = require("discord.js")
 
 module.exports = {

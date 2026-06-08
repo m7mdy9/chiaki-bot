@@ -1,7 +1,8 @@
 const { ActionRowBuilder, ButtonBuilder,
     StringSelectMenuBuilder, StringSelectMenuOptionBuilder,
-    ModalBuilder, TextInputBuilder, 
-    TextInputStyle, ComponentType, ButtonStyle, 
+    UserSelectMenuBuilder, ModalBuilder, 
+    TextInputBuilder, TextInputStyle, 
+    ComponentType, ButtonStyle, 
 } = require("discord.js")
 
 const RED = '\x1b[31m';
@@ -78,7 +79,7 @@ class buttonBuilder{
     
 }
 
-class selectorBuilder{
+class selectorTextBuilder{
     constructor(interaction){
         this.interaction = interaction
     }
@@ -92,6 +93,7 @@ class selectorBuilder{
         }
         return this
     }
+
     addOption(label, value, description=null, emoji=null, selectedByDefault=false){
         const option = new StringSelectMenuOptionBuilder()
             .setLabel(label)
@@ -125,14 +127,64 @@ class selectorBuilder{
                 })
             } catch(err){
                 if(err.code === 10008) {
-                    return console.warn(YELLOW+"Failed to disable buttons due to interaction deletion."+RESET)
+                    return console.warn(YELLOW+"Failed to disable selector due to interaction deletion."+RESET)
                 }
-                console.error("Failed to disable buttons in buttonBuilder: ",err)
+                console.error("Failed to disable selector: ",err)
             }
         }
         collector.on('end', timeoutFunc ? timeoutFunc : defaultTimeout)
     }
 }
+
+class selectorUserBuilder{
+    constructor(interaction){
+        this.interaction = interaction
+    }
+
+    createUserSelector(customId, placeHolder=null, [min,max]=[]){
+        this.selector = new UserSelectMenuBuilder()
+            .setCustomId(customId)
+        if(placeHolder){
+            this.selector.setPlaceholder(placeholder)
+        }
+        if(min && max){
+            this.selector.setMinValues(min)
+                .setMaxValues(max)
+        }
+        return this
+    }
+
+    getRow(){
+        this.row = new ActionRowBuilder().addComponents(this.selector);
+        return this.row
+    }
+    startListener(response, selectedTime=60_000, func, timeoutFunc=null){
+        const collector = response.createMessageComponentCollector({ 
+            componentType: ComponentType.UserSelect,
+            idle: selectedTime ?? 60_000,  
+        });
+        collector.on('collect', func)
+        const defaultTimeout = async (collected,reason)=>{
+            try {
+                const lastReply = await this.interaction.fetchReply()
+                if(!lastReply?.components || lastReply?.components?.length < 1) return;
+                this.row.components.forEach(el => {
+                    el.setDisabled(true)
+                });
+                await this.interaction.editReply({
+                    components: [this.row]
+                })
+            } catch(err){
+                if(err.code === 10008) {
+                    return console.warn(YELLOW+"Failed to disable selector due to interaction deletion."+RESET)
+                }
+                console.error("Failed to disable selector: ",err)
+            }
+        }
+        collector.on('end', timeoutFunc ? timeoutFunc : defaultTimeout)
+    }
+}
+
 class modalBuilder{
     textInputList = [];
     /**
@@ -207,6 +259,7 @@ class modalBuilder{
 
 module.exports = {
     buttonBuilder,
-    selectorBuilder,
-    modalBuilder
+    selectorTextBuilder,
+    selectorUserBuilder,
+    modalBuilder,
 }
