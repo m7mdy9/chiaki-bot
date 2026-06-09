@@ -5,7 +5,7 @@ const Piscina = require("piscina")
 
 
 const worker = new Piscina({
-    filename: resolve(process.cwd(), "utils/gifWorker.js")
+    filename: resolve(process.cwd(), "./workers/gifWorker.js")
 })
 module.exports = {
     name: "execute",
