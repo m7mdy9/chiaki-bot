@@ -6,7 +6,7 @@ const warningSchema = new Schema({
     modId: {type: String, required: true},
     reason: {type: String, default: null},
     caseNum: {type: Number, required: true},
-    timestamp: { type: Date, default: Date.now()}
+    timestamp: { type: Date, default: Date.now}
 })
 
 warningSchema.index({ guildId: 1, userId: 1, timestamp:-1})

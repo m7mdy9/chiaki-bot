@@ -6,7 +6,7 @@ const reportSchema = new Schema({
     reason: {type: String, required: true},
     caseNum: {type: Number, required: true},
     attachment: {type: Object, required: false},
-    timestamp: { type: Date, default: Date.now()}
+    timestamp: { type: Date, default: Date.now}
 })
 
 reportSchema.index({timestamp:-1})

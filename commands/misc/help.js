@@ -2,8 +2,8 @@ const fs = require("fs")
 const path = require("path")
 const { embed_builder, getPermissionNum } = require("../../utils/utils.js")
 const { selectorTextBuilder } = require("../../utils/builders.js")
-const { ButtonStyle, inlineCode } = require("discord.js");
-const { options } = require("./report/bug.js");
+const { ButtonStyle } = require("discord.js");
+
 let categoryNames, fullCommandInfo;
 const chiakiColor = '#ffdcfc';
 
