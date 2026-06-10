@@ -1,6 +1,8 @@
 {
   "dependencies": {
+    "@agendajs/mongo-backend": "^4.0.2",
     "@napi-rs/canvas": "^1.0.0",
+    "agenda": "^6.2.5",
     "discord.js": "^14.26.4",
     "dotenv": "^17.4.2",
     "gif-encoder-2": "^1.0.5",
