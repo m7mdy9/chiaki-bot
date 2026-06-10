@@ -61,8 +61,10 @@ module.exports = {
     name:"command_name",
     description:"command description",
     // Options for your command
-    setup: function(){ // OPTIONAL
-        // Your setup function, this code runs at the bot's intilization.
+    setup: async function(){ // OPTIONAL
+        /* Your setup function, this code runs at the bot's intilization.
+        Usually code that goes here is code that includes promises that must be called and fulfilled when the bot first starts
+        You mostly will put variables before module.exports and you will change them inside here and you would use them in the main execute() for your command */
     },
     options: [
         {
