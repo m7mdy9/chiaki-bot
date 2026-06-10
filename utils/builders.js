@@ -5,15 +5,59 @@ const { ActionRowBuilder, ButtonBuilder,
     ComponentType, ButtonStyle, 
 } = require("discord.js")
 
-const RED = '\x1b[31m';
-const YELLOW = '\x1b[33m';
-const RESET = '\x1b[0m';
+const RED = process.env.RED
+const YELLOW = process.env.YELLOW
+const RESET = process.env.RESET
 
+/**
+ * @param {any} context - The class instance of ('this'), must contain interaction and row
+ * @param {string} className - The name of the class executing the function 
+ * @returns {(collected: any, reason: string) => Promise<void>} The Default Timeout function, and it will log with the specified name in ('className') 
+ */
+function returnDefaultTimeout(context, className) {
+    const defaultTimeout = async (collected, reason) => {
+        try {
+            // fetching the last reply sent by the interaction
+            const lastReply = await context.interaction.fetchReply()
+
+            // customId of components the last reply sent by the interaction
+            const lastReply_customId = lastReply?.components[0]?.components[0]?.data.custom_id || "none"
+            
+            // customId of components in the row inside the class
+            const thisRow_customId = context.row.components[0]?.data.custom_id || null
+
+            // checking if both customIds match
+            const isSameComponents = lastReply_customId === thisRow_customId
+            
+            console.log(lastReply_customId, thisRow_customId, isSameComponents)
+            // if there are no components or they don't match we exit this function
+            if (!isSameComponents || lastReply?.components?.length < 1) return;
+            
+            // otherwise, we disable the components and edit the interaction to have the disabled components
+            context.row.components.forEach(el => {
+                el.setDisabled(true)
+            });
+            await context.interaction.editReply({
+                components: [context.row]
+            })
+
+        } catch (err) {
+            if (err.code === 10008) {
+                return console.warn(YELLOW + `Failed to disable components in ${className} due to interaction deletion.` + RESET)
+            }
+            console.error(`Failed to disable components in ${className}: `, err)
+        }
+    }
+    return defaultTimeout
+}
 
 class buttonBuilder{
     buttons = []
     components = null;
     row = null;
+    /**
+     * @param {import('discord.js').Interaction} interaction 
+     */
     constructor(interaction){
         this.interaction = interaction;
     }
@@ -57,24 +101,7 @@ class buttonBuilder{
             idle: selectedTime ?? 60_000, 
         });
         collector.on('collect', func)
-        const defaultTimeout = async (collected,reason)=>{
-            try {
-                const lastReply = await this.interaction.fetchReply()
-                if(!lastReply?.components || lastReply?.components?.length < 1) return;
-                this.row.components.forEach(el => {
-                    el.setDisabled(true)
-                });
-                await this.interaction.editReply({
-                    components: [this.row]
-                })
-            } catch(err){
-                if(err.code === 10008) {
-                    return console.warn(YELLOW+"Failed to disable buttons due to interaction deletion."+RESET)
-                }
-                console.error("Failed to disable buttons in buttonBuilder: ",err)
-            }
-        }
-        collector.on('end', timeoutFunc ? timeoutFunc : defaultTimeout)
+        collector.on('end', timeoutFunc ? timeoutFunc : returnDefaultTimeout(this, this.constructor.name))
     }
     
 }
@@ -115,24 +142,7 @@ class selectorTextBuilder{
             idle: selectedTime ?? 60_000,  
         });
         collector.on('collect', func)
-        const defaultTimeout = async (collected,reason)=>{
-            try {
-                const lastReply = await this.interaction.fetchReply()
-                if(!lastReply?.components || lastReply?.components?.length < 1) return;
-                this.row.components.forEach(el => {
-                    el.setDisabled(true)
-                });
-                await this.interaction.editReply({
-                    components: [this.row]
-                })
-            } catch(err){
-                if(err.code === 10008) {
-                    return console.warn(YELLOW+"Failed to disable selector due to interaction deletion."+RESET)
-                }
-                console.error("Failed to disable selector: ",err)
-            }
-        }
-        collector.on('end', timeoutFunc ? timeoutFunc : defaultTimeout)
+        collector.on('end', timeoutFunc ? timeoutFunc : returnDefaultTimeout(this, this.constructor.name))
     }
 }
 
@@ -145,7 +155,7 @@ class selectorUserBuilder{
         this.selector = new UserSelectMenuBuilder()
             .setCustomId(customId)
         if(placeHolder){
-            this.selector.setPlaceholder(placeholder)
+            this.selector.setPlaceholder(placeHolder)
         }
         if(min && max){
             this.selector.setMinValues(min)
@@ -164,24 +174,7 @@ class selectorUserBuilder{
             idle: selectedTime ?? 60_000,  
         });
         collector.on('collect', func)
-        const defaultTimeout = async (collected,reason)=>{
-            try {
-                const lastReply = await this.interaction.fetchReply()
-                if(!lastReply?.components || lastReply?.components?.length < 1) return;
-                this.row.components.forEach(el => {
-                    el.setDisabled(true)
-                });
-                await this.interaction.editReply({
-                    components: [this.row]
-                })
-            } catch(err){
-                if(err.code === 10008) {
-                    return console.warn(YELLOW+"Failed to disable selector due to interaction deletion."+RESET)
-                }
-                console.error("Failed to disable selector: ",err)
-            }
-        }
-        collector.on('end', timeoutFunc ? timeoutFunc : defaultTimeout)
+        collector.on('end', timeoutFunc ? timeoutFunc : returnDefaultTimeout(this, this.constructor.name))
     }
 }
 

@@ -1,4 +1,4 @@
- const { SlashCommandBuilder, EmbedBuilder, PermissionFlagsBits, MessageFlags} = require("discord.js")
+ const { SlashCommandBuilder, EmbedBuilder, PermissionFlagsBits, MessageFlags, ActivityType} = require("discord.js")
 
 async function retry(fn, maxRetries = 3, delayMs = 2000) {
     let attempts = 0;
@@ -97,6 +97,44 @@ function embed_info(ownerId, client, result, time){
         console.error(error)
     }    
 }
+
+const rng_activity = (dict) => {
+    const keys = Object.keys(dict)
+    const randKey = keys[Math.floor(Math.random() * keys.length)]
+    const value = dict[randKey]
+    const randValue = value[Math.floor(Math.random() * value.length)]
+    return [randKey, randValue]
+}
+
+/** @param {import("discord.js").Client} client  */
+function startActivity(client){
+    const activity_list = {
+        Playing:[
+            "Danganronpa: Trigger Happy Havoc",
+            "Danganronpa 2: Goodbye Despair",
+            "Danganronpa V3: Killing Harmony"
+        ],
+        Watching:[
+            "Danganronpa 3: The End of Hope's Peak High School Despair Arc",
+            "Danganronpa 3: The End of Hope's Peak High School Future Arc",
+            "Danganronpa 3: The End of Hope's Peak High School Hope Arc",
+            "Danganronpa 2.5: Nagito Komaeda and the World Destroyer"
+        ],
+        Listening:[
+            "Danganronpa 1 OST",
+            "Danganronpa 2 OST",
+            "Danganronpa V3 OST",
+        ]
+    }
+
+    setInterval(()=>{
+        let selected_array = rng_activity(activity_list)
+        eval(`client.user.setActivity(\"${selected_array[1]}\", {type: ActivityType.${selected_array[0]}})`)
+        console.log(selected_array)
+    }, 60000)
+    client.user.setActivity('New World Order', { type:ActivityType.Listening})
+}
+
 const hiddenFlag = MessageFlags.Ephemeral 
 
 module.exports = {
@@ -106,4 +144,6 @@ module.exports = {
     embed_info,
     embed_builder,
     hiddenFlag,
+    rng_activity,
+    startActivity,
 }
