@@ -33,6 +33,7 @@ Make sure you have [node.js](https://nodejs.org/) downloaded before going furthe
     RED='\x1b[31m'
     YELLOW='\x1b[33m'
     RESET='\x1b[0m'
+    GREEN='\x1b[32m'
     ```
     * Create your .gitignore and make sure the following (DO NOT COMMIT YOUR `.env` OR `node_modules/`)
     ```.gitignore
