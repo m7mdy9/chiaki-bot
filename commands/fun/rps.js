@@ -120,9 +120,9 @@ module.exports = {
             }
             const lastEmbed = embed_builder(
                 "RPS Result",
-                `<@!${intUser.id}> vs <@!${targetUser.id}>
-                **${formattedUserChoice}** vs **${formattedOppChoice}**\n
-                ${endOutput}`
+                `<@!${intUser.id}> vs <@!${targetUser.id}>`
+                +`\n**${formattedUserChoice}** vs **${formattedOppChoice}**`
+                +`\n${endOutput}`
             )
             alreadyTimed = true;
             return interaction.followUp({content:`<@!${intUser.id}><@!${targetUser.id}>`,embeds:[lastEmbed]})

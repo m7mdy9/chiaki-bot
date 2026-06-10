@@ -1,3 +1,5 @@
+// Special thanks to LibellantBrit for suggesting this command idea to me!
+
 const { getOptionNum } = require("../../utils/utils.js")
 const { AttachmentBuilder } = require("discord.js")
 const { resolve } = require("path")

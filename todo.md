@@ -51,7 +51,9 @@
   - [x] rps
   - [x] random chiaki line
   - [x] Execute (Animation w/ PFP as the Sprite)
+    - Special thanks to LibellantBrit for suggesting this idea!
   - [ ] Voting Time! (make a voting like the one in danganronpa games for the blackened)
+    - Special thanks to LibellantBrit for suggesting this idea!
 
 ## Issues:
 - [x] Fix Bot Crash once collector receives no interaction when it ends for reason: time.

@@ -38,8 +38,7 @@ module.exports = {
         const output = ChiakiSquare + BlackSquare
         const embed = embed_builder(
             `How ${charChoice} ${isUser ? `is ${targetUser.username}?` : `are you?`}`,
-            `${isUser ? `${targetUser.username} is` : `You are`} **${RNG}%** **${charChoice}**\n
-            ${output} **${RNG}%**`
+            `${isUser ? `${targetUser.username} is` : `You are`} **${RNG}%** **${charChoice}**\n\n${output} **${RNG}%**`
         ).setFooter({ text:`${targetUser.username}`, iconURL:targetUser.displayAvatarURL() })
 
         return interaction.editReply({embeds:[embed]})
