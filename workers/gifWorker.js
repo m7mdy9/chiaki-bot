@@ -61,8 +61,7 @@ async function dissectGif(){
     return extractedFrames    
 }
 async function fullProcess({avatarPath, username}){
-    console.log(avatarPath, username)
-    console.time()
+
     const extractedFrames = await dissectGif()
     const fontPath2 = path.join(process.cwd(), "media/pixel-danganronpa.otf")
     GlobalFonts.registerFromPath(fontPath2, "dang")
@@ -97,7 +96,7 @@ async function fullProcess({avatarPath, username}){
     }
     encoder.finish()
     const finalBuffer = Buffer.concat(gifChunks)
-    console.timeEnd()
+    
     return finalBuffer
 }
 
