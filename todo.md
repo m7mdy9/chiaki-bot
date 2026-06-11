@@ -52,7 +52,8 @@
   - [x] random chiaki line
   - [x] Execute (Animation w/ PFP as the Sprite)
     - Special thanks to LibellantBrit for suggesting this idea!
-  - [ ] Voting Time! (make a voting like the one in danganronpa games for the blackened)
+  - [x] Voting Time! (make a voting like the one in danganronpa games for the blackened)
+    - [ ] Add a slots machine video of DR1 vote results with the avatar of the blackened
     - Special thanks to LibellantBrit for suggesting this idea!
 
 ## Issues:

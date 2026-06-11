@@ -30,10 +30,17 @@ Make sure you have [node.js](https://nodejs.org/) downloaded before going furthe
     reportChannelId=channel_id_where_results_of_bug_reports_will_be_sent
     TESTING_TOKEN=discord_bot_token_here_this_token_will_be_used_if_branchName_is_testing
     TESTING_clientId=client_id_used_if_branchName_is_testing
+    
+    # colors for terminal
     RED='\x1b[31m'
     YELLOW='\x1b[33m'
     RESET='\x1b[0m'
     GREEN='\x1b[32m'
+    DARK_GREY='\x1b[1;30m'
+
+    # IDs of emojis!
+    DARK_RED_SQUARE=1513974012085145732
+    BLACK_SQUARE=1514386438701977600
     ```
     * Create your .gitignore and make sure the following (DO NOT COMMIT YOUR `.env` OR `node_modules/`)
     ```.gitignore
