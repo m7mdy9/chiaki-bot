@@ -5,7 +5,7 @@ const path = require("path")
  * @param {import('discord.js').Client} client 
  */
 module.exports = async (client) =>{
-    const eventsPath = path.join(process.cwd(), "events/")
+    const eventsPath = path.join(process.cwd(), "src/events/")
     const eventFiles = fs.readdirSync(eventsPath).filter(file => file.endsWith(".js"))
 
     for (const file of eventFiles){

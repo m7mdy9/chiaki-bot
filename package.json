@@ -13,6 +13,6 @@
     "piscina": "^5.1.4"
   },
   "scripts": {
-    "start": "DOTENV_CONFIG_QUIET=true node ."
+    "start": "DOTENV_CONFIG_QUIET=true node src/index.js"
   }
 }
