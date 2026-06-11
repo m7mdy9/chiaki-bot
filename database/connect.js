@@ -1,4 +1,5 @@
 const mongoose = require('mongoose')
+const { RED, GREEN, RESET } = process.env
 
 async function connectDB(){
     if(!process.env.mongo){
@@ -7,7 +8,7 @@ async function connectDB(){
     }
     
     mongoose.connection.on("connected", ()=>{
-        console.log("Connected to the Database")
+        console.log("Connected to the Database!")
     })
     mongoose.connection.on("error", (err)=>{console.error("An error has occured within the DB: ",err)})
     mongoose.connection.on("disconnected", ()=>{console.warn("DB disconnected.")})
@@ -17,7 +18,7 @@ async function connectDB(){
             serverSelectionTimeoutMS: 5000,
         })
     } catch(err){
-        console.error("MongoDB connection failed.\nError:", err)
+        console.error(RED+`MongoDB connection failed.${RESET}\nError:`, err)
         process.exit(1)
     }
 }
