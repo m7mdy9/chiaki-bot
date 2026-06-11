@@ -2,6 +2,7 @@ const fs = require("fs");
 const path = require("path");
 const { REST, Routes, Collection, SlashCommandBuilder, PermissionsBitField, PermissionFlagsBits } = require("discord.js");
 const { getPermissionNum } = require("../utils/utils")
+const { YELLOW, RED, DARK_GREY, GREEN, RESET } = process.env
 /**
  * @param {import('discord.js').Client} client 
  */
@@ -50,7 +51,7 @@ async function loadCommands(client) {
 
         // 'pls dont crash' command block
         if (!command.data.name || !command.data.description || !command.execute) {
-            console.error(`❌ Skipping "${file}": Missing required "name" or "description" or "execute" properties.`);
+            console.warn(YELLOW+`❌ Skipping "${file}": Missing required "name" or "description" or "execute" properties.`+RESET);
             continue;
         }
 
@@ -99,7 +100,7 @@ async function loadCommands(client) {
                 };
             }
             if (!subcommand.data.name || !subcommand.data.description || !subcommand.execute) {
-                console.error(`❌ Skipping "${file}" in folder "${folder}": Missing required "name" or "description" or "execute" properties.`);
+                console.warn(YELLOW+`❌ Skipping "${file}" in folder "${folder}": Missing required "name" or "description" or "execute" properties.`+RESET);
                 continue;
             }
 
@@ -203,11 +204,11 @@ async function deploySlashCommands(client, clientId, token) {
     const rest = new REST({ version: "10" }).setToken(token);
 
     try {
-        console.log("🚀 Deploying new commands...");
+        console.log(DARK_GREY+"Deploying new commands..."+RESET);
         await rest.put(Routes.applicationCommands(clientId), { body: commands });
-        console.log("✅ Slash commands deployed successfully!");
+        console.log(DARK_GREY+"Slash commands deployed successfully!"+RESET);
     } catch (error) {
-        console.error("❌ Error deploying commands:", error);
+        console.error(RED+"❌ Error deploying commands:"+RESET, error);
     }
 }
 

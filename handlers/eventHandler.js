@@ -12,7 +12,6 @@ module.exports = async (client) =>{
         const filePath = path.join(eventsPath, file)
 
         const event = require(filePath)
-        console.log(file,event)
         
         if(event.setup){
             event.setup(client)
