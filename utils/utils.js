@@ -1,4 +1,7 @@
- const { SlashCommandBuilder, EmbedBuilder, PermissionFlagsBits, MessageFlags, ActivityType} = require("discord.js")
+const { SlashCommandBuilder, EmbedBuilder, PermissionFlagsBits, MessageFlags, ActivityType, ActionRowBuilder, AttachmentBuilder} = require("discord.js")
+const { resolve } = require('path') 
+const Piscina = require("piscina")
+const { dark_red, RED, YELLOW, RESET, DARK_GREY } = process.env
 
 async function retry(fn, maxRetries = 3, delayMs = 2000) {
     let attempts = 0;
@@ -130,13 +133,75 @@ function startActivity(client){
     setInterval(()=>{
         let selected_array = rng_activity(activity_list)
         eval(`client.user.setActivity(\"${selected_array[1]}\", {type: ActivityType.${selected_array[0]}})`)
-        console.log(selected_array)
-    }, 60000)
+        // console.log(selected_array)
+    }, 90_000)
     client.user.setActivity('New World Order', { type:ActivityType.Listening})
 }
 
 const hiddenFlag = MessageFlags.Ephemeral 
 
+/**
+ * @param {import('discord.js').Message} message 
+ * @returns Array of components of a message you have sent but they are all *disabled*. 
+ */
+function disableAllComponents(message) {
+    if(!message.components || message.components.length === 0){
+        return [];
+    }
+
+    const updatedRows = message.components.map(row =>{
+
+        const newRow = ActionRowBuilder.from(row)
+
+        newRow.components.forEach(component =>{
+            component.setDisabled(true)
+        })
+
+        return newRow
+    })
+    return updatedRows
+}
+
+/**
+ * @param {import('discord.js').Message} message 
+ * @returns Array of embeds of the chosen ('message'). 
+ */
+function extractEmbedsFromMessage(message){
+    if (!message.embeds || message.embeds.length === 0){
+        return []
+    }
+    const constructedEmbeds = message.embeds.map(embed =>{
+        return EmbedBuilder.from(embed)
+    })
+
+    return constructedEmbeds;
+}
+
+
+const gifWorker = new Piscina({
+    filename: resolve(process.cwd(), "./workers/gifWorker.js")
+})
+
+async function makeExecutionGif(avatarPath, username){
+    // measuring how long it has been since the process started
+    const startTime = performance.now()
+
+    // running our gifWorker.js as a threaded gifWorker to avoid blocking and performance drops and it returns a Uint8Array Buffer
+    const gifBuffer = await gifWorker.run({avatarPath, username})
+
+    // transfers the gifBuffer into the Buffer class so discord actually doesnt break the gif!
+    const formattedGifBuffer = Buffer.from(gifBuffer)
+
+    // creating the gif attachment that will be sent in discord
+    const gifAttachment = new AttachmentBuilder(formattedGifBuffer, { name: 'execute-avatar.gif'})
+    
+    // measuring how long it took for the process in seconds and allowing 2 decimal points 
+    const timeTakenToExecute = ((performance.now() - startTime)/1000).toFixed(2)
+
+    console.log(DARK_GREY+`Time taken to finish execution gif: ${timeTakenToExecute}s`+RESET)
+
+    return [gifAttachment, timeTakenToExecute]
+}
 module.exports = {
     retry,
     getOptionNum,
@@ -146,4 +211,8 @@ module.exports = {
     hiddenFlag,
     rng_activity,
     startActivity,
+    disableAllComponents,
+    extractEmbedsFromMessage,
+    gifWorker,
+    makeExecutionGif,
 }

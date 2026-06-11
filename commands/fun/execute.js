@@ -1,14 +1,10 @@
 // Special thanks to LibellantBrit for suggesting this command idea to me!
 
-const { getOptionNum } = require("../../utils/utils.js")
+const { getOptionNum, makeExecutionGif, } = require("../../utils/utils.js")
 const { AttachmentBuilder } = require("discord.js")
 const { resolve } = require("path")
-const Piscina = require("piscina")
 
 
-const worker = new Piscina({
-    filename: resolve(process.cwd(), "./workers/gifWorker.js")
-})
 module.exports = {
     name: "execute",
     description: "Punish a guilty student..Let's Give It Everything We Got! It's Punishment Time!",
@@ -35,22 +31,8 @@ module.exports = {
             // username of the user or author
             const username = targetUser.username
             
-            // measuring how long it has been since the process started
-            const startTime = performance.now()
+            const [gifAttachment, timeTakenToExecute] = await makeExecutionGif(avatarPath, username)
 
-            // running our gifWorker.js as a threaded worker to avoid blocking and performance drops and it returns a Uint8Array Buffer
-            const gifBuffer = await worker.run({avatarPath, username})
-
-            // transfers the gifBuffer into the Buffer class so discord actually doesnt break the gif!
-            const formattedGifBuffer = Buffer.from(gifBuffer)
-            console.log(formattedGifBuffer)
-
-            // creating the gif attachment that will be sent in discord
-            const gifAttachment = new AttachmentBuilder(formattedGifBuffer, { name: 'execute-avatar.gif'})
-            
-            // measuring how long it took for the process in seconds and allowing 2 decimal points 
-            const timeTakenToExecute = ((performance.now() - startTime)/1000).toFixed(2)
-            
             // sending the gif with the timeTakenToExecute
             return interaction.editReply({
                 files: [gifAttachment],

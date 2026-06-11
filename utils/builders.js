@@ -29,7 +29,6 @@ function returnDefaultTimeout(context, className) {
             // checking if both customIds match
             const isSameComponents = lastReply_customId === thisRow_customId
             
-            console.log(lastReply_customId, thisRow_customId, isSameComponents)
             // if there are no components or they don't match we exit this function
             if (!isSameComponents || lastReply?.components?.length < 1) return;
             

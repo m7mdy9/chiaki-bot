@@ -11,7 +11,7 @@ try {
     console.error("Couldn't detect branch, auto set to main.", err)
 }
 
-['RED', 'YELLOW', 'GREEN', 'RESET'].forEach(key => {
+['RED', 'YELLOW', 'GREEN', 'RESET', 'DARK_GREY'].forEach(key => {
     if (process.env[key]) {
         process.env[key] = process.env[key].replace(/\\x1b/g, '\x1b');
     }
