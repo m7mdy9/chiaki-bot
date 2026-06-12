@@ -6,7 +6,7 @@ module.exports = {
     options: [
         {
             name:'rolls',
-            description: 'Number of roll the dice.',
+            description: 'Number of times to roll the dice.',
             type: getOptionNum("INTEGER"),
             required: false,
         },
