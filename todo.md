@@ -55,6 +55,7 @@
   - [x] Voting Time! (make a voting like the one in danganronpa games for the blackened)
     - [ ] Add a slots machine video of DR1 vote results with the avatar of the blackened
     - Special thanks to LibellantBrit for suggesting this idea!
+  - [x] /report card (creates a report card in the danganronpa 2 style, with ability to edit the fields)
 
 ## Issues:
 - [x] Fix Bot Crash once collector receives no interaction when it ends for reason: time.

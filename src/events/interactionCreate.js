@@ -1,5 +1,6 @@
 const { hiddenFlag } = require("../utils/utils.js")
 let fullCommandInfo, ephemeralCommands
+const { ownerId } = process.env
 
 module.exports = {
     name: "interactionCreate",
