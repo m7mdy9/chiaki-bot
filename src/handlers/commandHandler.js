@@ -1,7 +1,8 @@
 const fs = require("fs");
 const path = require("path");
 const { REST, Routes, Collection, SlashCommandBuilder, PermissionsBitField, PermissionFlagsBits } = require("discord.js");
-const { getPermissionNum } = require("../utils/utils")
+const { getPermissionNum } = require("../utils/utils");
+const { description } = require("../commands/fun/report/card");
 const { YELLOW, RED, DARK_GREY, GREEN, RESET } = process.env
 /**
  * @param {import('discord.js').Client} client 
@@ -70,19 +71,31 @@ async function loadCommands(client) {
         if (!fs.lstatSync(folderPath).isDirectory()) continue;
 
         // base command for the sub command
-        const baseCommand = new SlashCommandBuilder()
-            .setName(folder)
-            .setDescription(`Main command: ${folder}`)
+        
+        const baseCommandExists = commands.find(cmd => cmd.name === folder)
+
+        let baseCommand;
+        
+        if(baseCommandExists){
+            baseCommand = baseCommandExists
+            baseCommand.options = baseCommand.options || []
+        } else {
+            baseCommand = {
+                name: folder,
+                description: `Main command: ${folder}`,
+                options: []
+            }
+        }
         const permissionFile = fs.readdirSync(folderPath).filter(file => path.extname(file) === '' && file.startsWith("!")) || null
         // console.log(permissionFile)
         if (permissionFile.length > 0){
-            baseCommand.setDefaultMemberPermissions(getPermissionNum(permissionFile[0].slice(1)))
-            baseCommand.setDMPermission(false)
+            baseCommand.default_member_permissions = getPermissionNum(permissionFile[0].slice(1))
+            baseCommand.dm_permission = false
         };
-        /*console.log(permissionFile,baseCommand)*/
-        let hasSubcommands = false;
-        // fetch all js files
+        
         const subcommandFiles = fs.readdirSync(folderPath).filter(file => file.endsWith(".js"));
+        let hasSubcommands = false;
+
         for (const file of subcommandFiles) {
             const fullPath = path.join(folderPath, file);
             const subcommand = require(fullPath);
@@ -104,102 +117,31 @@ async function loadCommands(client) {
                 continue;
             }
 
-            baseCommand.addSubcommand(sub => {
-                sub = sub.setName(subcommand.data.name)
-                         .setDescription(subcommand.data.description)
-                // big ass loop of options if it has any
-                    if (Array.isArray(subcommand.data.options)) {
-                        for (const option of subcommand.data.options) {
-                            // this is the worst part of my code i mean hey look its a switch statement!!
-                            // 3: String, 4: Integer, 5: Boolean, 6: User, 7: Channel, 8: Role, 9: Mentionable, 10: Number, 11: Attachment
-                            switch (option.type) {
-                                case 3: // string option
-                                    sub.addStringOption(opt =>
-                                        opt.setName(option.name)
-                                        .setDescription(option.description)
-                                        .setRequired(option.required || false)
-                                    );
-                                    break;
-                                case 4: // integer option
-                                    sub.addIntegerOption(opt =>
-                                        opt.setName(option.name)
-                                        .setDescription(option.description)
-                                        .setRequired(option.required || false)
-                                    );
-                                    break;
-                                case 5: // boolean option
-                                    sub.addBooleanOption(opt =>
-                                        opt.setName(option.name)
-                                        .setDescription(option.description)
-                                        .setRequired(option.required || false)
-                                    );
-                                    break;
-                                case 6: // user option
-                                    sub.addUserOption(opt =>
-                                        opt.setName(option.name)
-                                        .setDescription(option.description)
-                                        .setRequired(option.required || false)
-                                    );
-                                    break;
-                                case 7: // channel option
-                                    sub.addChannelOption(opt =>
-                                        opt.setName(option.name)
-                                        .setDescription(option.description)
-                                        .setRequired(option.required || false)
-                                    );
-                                    break;
-                                case 8: // role option
-                                    sub.addRoleOption(opt =>
-                                        opt.setName(option.name)
-                                        .setDescription(option.description)
-                                        .setRequired(option.required || false)
-                                    );
-                                    break;
-                                case 9: // mentionable option (can be a user or role)
-                                    sub.addMentionableOption(opt =>
-                                        opt.setName(option.name)
-                                        .setDescription(option.description)
-                                        .setRequired(option.required || false)
-                                    );
-                                    break;
-                                case 10: // number option (floating-point number)
-                                    sub.addNumberOption(opt =>
-                                        opt.setName(option.name)
-                                        .setDescription(option.description)
-                                        .setRequired(option.required || false)
-                                    );
-                                    break;
-                                case 11: // attachment option
-                                    sub.addAttachmentOption(opt =>
-                                        opt.setName(option.name)
-                                        .setDescription(option.description)
-                                        .setRequired(option.required || false)
-                                    );
-                                    break;
-                                default:
-                                    console.warn(`Unknown option type ${option.type} for option ${option.name}`);
-                                    break;
-                        }
-                    }
-                }
-                return sub;
-            });
-            hasSubcommands = true;
+            const subcommandJSON = {
+                type: 1,
+                name: subcommand.data.name,
+                description: subcommand.data.description,
+                options: subcommand.data.options || []
+            }
+
+            baseCommand.options.push(subcommandJSON)
+            hasSubcommands = true
 
             // stores the the subcommand correctly with the base command as `bc sc`
             client.commands.set(`${folder} ${subcommand.data.name}`, subcommand);
         }
 
         // If any subcommands were added, register the base command
-        if (hasSubcommands) {
-            commands.push(baseCommand.toJSON());
+        if (hasSubcommands && !baseCommandExists) {
+            commands.push(baseCommand);
         }
     }
-
+    
     return commands;
 }
 
 async function deploySlashCommands(client, clientId, token) {
+    
     const commands = await loadCommands(client);
     const rest = new REST({ version: "10" }).setToken(token);
 
