@@ -4,6 +4,7 @@ const { ActionRowBuilder, ButtonBuilder,
     TextInputBuilder, TextInputStyle, 
     ComponentType, ButtonStyle, 
 } = require("discord.js")
+const { intAuthorValidate } = require("./utils")
 
 const RED = process.env.RED
 const YELLOW = process.env.YELLOW
@@ -50,6 +51,14 @@ function returnDefaultTimeout(context, className) {
     return defaultTimeout
 }
 
+function validateUser(mainInt, func){
+    return async(int)=>{
+        if (!intAuthorValidate(mainInt, int)) return;
+    
+        await func(int)
+    }
+}
+
 class buttonBuilder{
     buttons = []
     components = null;
@@ -87,19 +96,36 @@ class buttonBuilder{
         if(url){
             button.setURL(url)
         }
+        
         this.buttons.push(button)
         return this
     }
     getRow(){
         this.row = new ActionRowBuilder().addComponents(...this.buttons)
+        
+        this.customIds = this.buttons.flatMap(button => button.data.custom_id) 
+        
         return this.row
-    }
+    }    
+    /**
+     * @param {import('discord.js').InteractionResponse} response 
+     * @param {Number} selectedTime 
+     * @param {Function} func 
+     * @param {Function} timeoutFunc 
+     */
     startListener(response, selectedTime=60_000, func, timeoutFunc=null){
-        const collector = response.createMessageComponentCollector({ 
+
+        const filter = (int) => this.customIds.includes(int.customId) 
+
+        const collector = response.createMessageComponentCollector({
+            filter, 
             componentType: ComponentType.Button,
             idle: selectedTime ?? 60_000, 
         });
-        collector.on('collect', func)
+
+        this.collector = collector;
+        
+        collector.on('collect', validateUser(this.interaction, func))
         collector.on('end', timeoutFunc ? timeoutFunc : returnDefaultTimeout(this, this.constructor.name))
     }
     
@@ -110,6 +136,9 @@ class selectorTextBuilder{
         this.interaction = interaction
     }
     createSelector(customId, placeHolder=null, min=1,max=1){
+        
+        this.customId = customId
+
         this.selector = new StringSelectMenuBuilder()
             .setCustomId(customId)
             .setMinValues(min)
@@ -135,12 +164,25 @@ class selectorTextBuilder{
         this.row = new ActionRowBuilder().addComponents(this.selector) 
         return this.row
     }
+
+    /**
+     * @param {import('discord.js').InteractionResponse} response 
+     * @param {Number} selectedTime 
+     * @param {Function} func 
+     * @param {Function} timeoutFunc 
+     */
     startListener(response, selectedTime=60_000, func, timeoutFunc=null){
-        const collector = response.createMessageComponentCollector({ 
+        const filter = (int) => this.customId === int.customId
+
+        const collector = response.createMessageComponentCollector({
+            filter, 
             componentType: ComponentType.StringSelect,
             idle: selectedTime ?? 60_000,  
         });
-        collector.on('collect', func)
+
+        this.collector = collector;
+
+        collector.on('collect', validateUser(this.interaction, func))
         collector.on('end', timeoutFunc ? timeoutFunc : returnDefaultTimeout(this, this.constructor.name))
     }
 }
@@ -151,6 +193,9 @@ class selectorUserBuilder{
     }
 
     createUserSelector(customId, placeHolder=null, [min,max]=[]){
+
+        this.customId = customId
+        
         this.selector = new UserSelectMenuBuilder()
             .setCustomId(customId)
         if(placeHolder){
@@ -166,13 +211,25 @@ class selectorUserBuilder{
     getRow(){
         this.row = new ActionRowBuilder().addComponents(this.selector);
         return this.row
-    }
+    } 
+        
+    /**
+     * @param {import('discord.js').InteractionResponse} response 
+     * @param {Number} selectedTime 
+     * @param {Function} func 
+     * @param {Function} timeoutFunc 
+     */
     startListener(response, selectedTime=60_000, func, timeoutFunc=null){
-        const collector = response.createMessageComponentCollector({ 
+
+        const filter = (int) => this.customId === int.customId
+
+        const collector = response.createMessageComponentCollector({
+            filter,
             componentType: ComponentType.UserSelect,
             idle: selectedTime ?? 60_000,  
         });
-        collector.on('collect', func)
+
+        collector.on('collect', validateUser(this.interaction, func))
         collector.on('end', timeoutFunc ? timeoutFunc : returnDefaultTimeout(this, this.constructor.name))
     }
 }
