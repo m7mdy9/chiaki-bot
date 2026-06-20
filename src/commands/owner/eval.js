@@ -1,5 +1,6 @@
-const ownerId = '966205214308847626'
 const { embed_builder } = require("../../utils/utils.js")
+const { ownerId } = process.env
+
 module.exports = {
     options: [
         {

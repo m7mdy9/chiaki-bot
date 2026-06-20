@@ -27,11 +27,11 @@ module.exports = {
             const targetUser = interaction.options.getUser("student") || interaction.user
             
             // fetching display avatar URL from either the member, user or the author
-            const avatarPath = targetMember.displayAvatarURL({size:128});
+            const avatarURL = targetMember.displayAvatarURL({size:128});
             // username of the user or author
             const username = targetUser.username
             
-            const [gifAttachment, timeTakenToExecute] = await makeExecutionGif(avatarPath, username)
+            const [gifAttachment, timeTakenToExecute] = await makeExecutionGif(avatarURL, username)
 
             // sending the gif with the timeTakenToExecute
             return interaction.editReply({
