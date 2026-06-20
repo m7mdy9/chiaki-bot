@@ -2,29 +2,13 @@ const { SlashCommandBuilder, EmbedBuilder, PermissionFlagsBits, MessageFlags, Ac
 const { resolve } = require('path') 
 const Piscina = require("piscina")
 const { dark_red, RED, YELLOW, RESET, DARK_GREY } = process.env
+const chrono = require("chrono-node")
 
-async function retry(fn, maxRetries = 3, delayMs = 2000) {
-    let attempts = 0;
-    let lastError;
-
-    while (attempts < maxRetries) {
-        try {
-            return await fn();
-        } catch (error) {
-            lastError = error;
-            attempts++;
-            const waitTime = delayMs * Math.pow(2, attempts); // Exponential backoff (power cause im stupid and dont know what exponential means)
-            console.error(`Attempt ${attempts} failed. Retrying in ${waitTime / 1000} seconds...`);
-            await new Promise(resolve => setTimeout(resolve, waitTime));
-        }
-    }
-
-    throw lastError; // Rethrow the last error after max retries
-} 
 /**
  * @param {'SUB_COMMAND' | 'SUB_COMMAND_GROUP' | 'STRING' | 
  * 'INTEGER' | 'BOOLEAN' | 'USER' | 'CHANNEL' 
- * | 'ROLE' | 'MENTIONABLE' | 'NUMBER' | 'ATTACHMENT'} type 
+ * | 'ROLE' | 'MENTIONABLE' | 'NUMBER' | 'ATTACHMENT'} type
+ * @returns {Number} Integer that corresponds to the type of the Discord given option
  */
 function getOptionNum(type="STRING"){
     // console.log(type)
@@ -42,11 +26,11 @@ function getOptionNum(type="STRING"){
         "ATTACHMENT"         // 11
     ];
     let output = discordOptionTypes.indexOf(type) + 1
-    // console.log(output)
+
     if(output == 0 || !discordOptionTypes.includes(type)){
         return 3
     }
-    // console.log(output)
+
     return parseInt(output)
 }
 /**
@@ -62,10 +46,12 @@ function getOptionNum(type="STRING"){
  * | 'UseApplicationCommands' | 'RequestToSpeak' | 'ManageEvents' | 'ManageThreads' 
  * | 'CreatePublicThreads' | 'CreatePrivateThreads' | 'UseExternalStickers' | 'SendMessagesInThreads'
  * | 'ModerateMembers'} type 
- */
+ * @returns {string} Stringified Permission Bitfield
+*/
 function getPermissionNum(type){
     return PermissionFlagsBits[type].toString();
 }
+
 function embed_builder(title=null, description=null, color ='#ffdcfc'){
     try {
         if (!title && !description) throw new Error("You must include a title or a description.");
@@ -109,7 +95,7 @@ const rng_activity = (dict) => {
     return [randKey, randValue]
 }
 
-/** @param {import("discord.js").Client} client  */
+/** @param {import("discord.js").Client} client - Client of the Discord Bot*/
 function startActivity(client){
     const activity_list = {
         Playing:[
@@ -163,8 +149,8 @@ function disableAllComponents(message) {
 }
 
 /**
- * @param {import('discord.js').Message} message 
- * @returns Array of embeds of the chosen ('message'). 
+ * @param {import('discord.js').Message} message - The Discord Message which you would like to fetch its Embeds.
+ * @returns {import('discord.js').EmbedBuilder[]} Array of embeds that belong to the chosen `message`.
  */
 function extractEmbedsFromMessage(message){
     if (!message.embeds || message.embeds.length === 0){
@@ -177,17 +163,30 @@ function extractEmbedsFromMessage(message){
     return constructedEmbeds;
 }
 
-
+// gifWorker that is used in the makeExecutionGif() function
 const gifWorker = new Piscina({
     filename: resolve(process.cwd(), "src/workers/gifWorker.js")
 })
 
-async function makeExecutionGif(avatarPath, username){
+/**
+ * Details of the function:
+ * 1. Fetches the uptime of the node process.
+ * 2. Runs the gifWorker with the given parameters
+ * 3. Converts the gifBuffer from Uint8Array into Buffer
+ * 4. Creates a discord AttachmentBuilder from the Buffer, with the name `execute-avatar.gif`
+ * 5. Measures the current uptime and subtracts the uptime fetched at the beginning from it (approximated to nearest 2 decimals)
+ * 6. Logs how long it took to finish the process
+ * 7. Finally, it returns an array of [gifAttachment, timeTakenToExecute]
+ * @param {URL} avatarURL - The URL of the avatar that will be displayed on the execution gif.
+ * @param {String} username - Username of the user that will be animated on the execution gif.
+ * @returns {[import('discord.js').AttachmentBuilder, String]} Returns discordjs AttachmentBuilder of newly made gif and the time taken in the order as follows [gifAttachment, time]
+ */
+async function makeExecutionGif(avatarURL, username){
     // measuring how long it has been since the process started
     const startTime = performance.now()
 
     // running our gifWorker.js as a threaded gifWorker to avoid blocking and performance drops and it returns a Uint8Array Buffer
-    const gifBuffer = await gifWorker.run({avatarPath, username})
+    const gifBuffer = await gifWorker.run({avatarURL, username})
 
     // transfers the gifBuffer into the Buffer class so discord actually doesnt break the gif!
     const formattedGifBuffer = Buffer.from(gifBuffer)
@@ -202,8 +201,51 @@ async function makeExecutionGif(avatarPath, username){
 
     return [gifAttachment, timeTakenToExecute]
 }
+
+function createAttachment(buffer, name){
+    if(!name){
+        name = 'output.png'
+    }
+    return new AttachmentBuilder(buffer, {name})
+}
+
+/**
+ * @param {import('discord.js').Interaction} mainInt 
+ * @param {import('discord.js').Interaction} secondaryInt 
+ */
+function intAuthorValidate(mainInt, secondaryInt){
+    if(mainInt.user.id === secondaryInt.user.id){
+        return true
+    } else {
+        secondaryInt.reply({content:"You didn't initiate this interaction.", flags:[hiddenFlag]})
+        return false
+    }
+}
+
+
+function formatDate(input){
+    
+    const parsedDate = chrono.en.GB.parseDate(input) // formats in DD/MM/YYYY (usually default is MM/DD/YYYY)
+    
+    if(!parsedDate) return null;
+
+    const month = parsedDate.toLocaleString('en-US', { month: "long" }) 
+
+    const day = parsedDate.getDate()
+
+    let suffix = "th"
+    if(day < 11 || day > 13){
+        switch(day % 10){
+            case 1: suffix = "st"; break;
+            case 2: suffix = "nd"; break;
+            case 3: suffix = "rd"; break;
+        }
+    }
+
+    return `${month} ${day}${suffix}` // returns stuff like 'April 28th'
+}
+
 module.exports = {
-    retry,
     getOptionNum,
     getPermissionNum,
     embed_info,
@@ -215,4 +257,7 @@ module.exports = {
     extractEmbedsFromMessage,
     gifWorker,
     makeExecutionGif,
+    createAttachment,
+    intAuthorValidate,
+    formatDate
 }
