@@ -97,6 +97,6 @@ module.exports = {
                 console.log(process.env.RED+"Error in voting button event!"+process.env.RESET)
                 console.error(err)
             }
-        }
+        } else return;
     }
 }

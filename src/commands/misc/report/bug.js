@@ -1,6 +1,7 @@
 const { getOptionNum, embed_builder, hiddenFlag } = require("../../../utils/utils.js")
 const { buttonBuilder, modalBuilder } = require("../../../utils/builders.js")
 const { reportsModel } = require("../../../database/models/reports.js")
+const { RED, RESET } = process.env
 
 module.exports = {
     name: "bug",
@@ -51,6 +52,7 @@ module.exports = {
                     reason,
                     attachment: attachment?.url
                 })
+
                 const reportEmbed = embed_builder(`New Bug Report by ${interaction.user.username}`).addFields(
                     { name: `User ID`, value: `\`${userId}\``, inline: true },
                     { name: `Guild ID`, value: `${guildId ? `\`${guildId}\`` : "No Guild ID"}`, inline: true },
@@ -64,8 +66,27 @@ module.exports = {
                 if (attachment?.contentType?.startsWith("image")) {
                     reportEmbed.setImage(attachment.url)
                 }
-                (await interaction.client.channels.fetch(process.env.reportChannelId)).send({ embeds: [reportEmbed] })
-                return console.log(attachment, fields)
+
+                const reportEmbedButtons = new buttonBuilder(int)
+                    .addButton('reportBugFixed:'+caseNum, 'Issue fixed',"Success", null, "✅")
+                    .addButton('reportBugMesssage:'+caseNum, 'Message User', "Secondary", null, "🗣️")
+                    .addButton('reportBugBL:'+caseNum, 'Strike/BL reporter', "Danger", null, "⚠️");
+
+                const reportChannel = await interaction.client.channels.fetch(process.env.reportChannelId)
+                
+                const messageOptions = { embeds: [reportEmbed], components:[reportEmbedButtons.getRow()] }
+
+                if(reportChannel){
+                    reportChannel.send(messageOptions)
+                } else {
+                    console.error(RED+"Failed to find the report channel"+RESET)
+
+                    const ownerIdDM = await interaction.client.users.fetch(process.env.ownerId)
+                    ownerIdDM.send("Failed to find the report channel")
+                    ownerIdDM.send({content:"Report:", ...messageOptions})
+                }
+                
+                return console.log(attachment ?? "No attachment", fields)
             })
         }, undefined)
     }

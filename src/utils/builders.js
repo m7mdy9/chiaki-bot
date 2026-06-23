@@ -53,8 +53,11 @@ function returnDefaultTimeout(context, className) {
 
 function validateUser(mainInt, func){
     return async(int)=>{
+        if(!mainInt){
+            await func(int)
+        }
         if (!intAuthorValidate(mainInt, int)) return;
-    
+        
         await func(int)
     }
 }
@@ -113,7 +116,9 @@ class buttonBuilder{
      * @param {Function} func 
      * @param {Function} timeoutFunc 
      */
-    startListener(response, selectedTime=60_000, func, timeoutFunc=null){
+    startListener(response, selectedTime=60_000, func, timeoutFunc=null, validateUserBoolean=true){
+
+        const collectFunction = validateUserBoolean ? validateUser(this.interaction, func) : validateUser(null ,func)
 
         const filter = (int) => this.customIds.includes(int.customId) 
 
@@ -125,7 +130,7 @@ class buttonBuilder{
 
         this.collector = collector;
         
-        collector.on('collect', validateUser(this.interaction, func))
+        collector.on('collect', collectFunction)
         collector.on('end', timeoutFunc ? timeoutFunc : returnDefaultTimeout(this, this.constructor.name))
     }
     
@@ -171,8 +176,11 @@ class selectorTextBuilder{
      * @param {Function} func 
      * @param {Function} timeoutFunc 
      */
-    startListener(response, selectedTime=60_000, func, timeoutFunc=null){
-        const filter = (int) => this.customId === int.customId
+    startListener(response, selectedTime=60_000, func, timeoutFunc=null, validateUserBoolean=true){
+        
+        const collectFunction = validateUserBoolean ? validateUser(this.interaction, func) : validateUser(null ,func)
+        
+        const filter = (int) => this.customId === int.customId  
 
         const collector = response.createMessageComponentCollector({
             filter, 
@@ -182,7 +190,7 @@ class selectorTextBuilder{
 
         this.collector = collector;
 
-        collector.on('collect', validateUser(this.interaction, func))
+        collector.on('collect', collectFunction)
         collector.on('end', timeoutFunc ? timeoutFunc : returnDefaultTimeout(this, this.constructor.name))
     }
 }
@@ -219,7 +227,9 @@ class selectorUserBuilder{
      * @param {Function} func 
      * @param {Function} timeoutFunc 
      */
-    startListener(response, selectedTime=60_000, func, timeoutFunc=null){
+    startListener(response, selectedTime=60_000, func, timeoutFunc=null, validateUserBoolean=true){
+
+        const collectFunction = validateUserBoolean ? validateUser(this.interaction, func) : validateUser(null ,func)
 
         const filter = (int) => this.customId === int.customId
 
@@ -229,7 +239,7 @@ class selectorUserBuilder{
             idle: selectedTime ?? 60_000,  
         });
 
-        collector.on('collect', validateUser(this.interaction, func))
+        collector.on('collect', collectFunction)
         collector.on('end', timeoutFunc ? timeoutFunc : returnDefaultTimeout(this, this.constructor.name))
     }
 }
