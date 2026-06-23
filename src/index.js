@@ -23,7 +23,7 @@ const botToken = currentBranch == "main" ? process.env.TOKEN : process.env.TESTI
 const clientId = currentBranch == "main" ? process.env.clientId : process.env.TESTING_clientId
 
 // creating our client with our needed intents and initializing an empty discordjs Collection to save our commands in, via the commandHandler.js 
-const client = new Client({ intents: [GatewayIntentBits.GuildMembers,GatewayIntentBits.Guilds, GatewayIntentBits.GuildMessages, GatewayIntentBits.MessageContent] });
+const client = new Client({ intents: [GatewayIntentBits.GuildMembers,GatewayIntentBits.Guilds, GatewayIntentBits.GuildMessages, GatewayIntentBits.MessageContent, GatewayIntentBits.DirectMessages] });
 client.commands = new Collection();
 client.clientId = clientId
 client.botToken = botToken
