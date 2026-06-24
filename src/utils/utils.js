@@ -1,4 +1,4 @@
-const { SlashCommandBuilder, EmbedBuilder, PermissionFlagsBits, MessageFlags, ActivityType, ActionRowBuilder, AttachmentBuilder} = require("discord.js")
+const { SlashCommandBuilder, EmbedBuilder, PermissionFlagsBits, MessageFlags, ActivityType, ActionRowBuilder, AttachmentBuilder, ChannelType} = require("discord.js")
 const { resolve } = require('path') 
 const Piscina = require("piscina")
 const { dark_red, RED, YELLOW, RESET, DARK_GREY } = process.env
@@ -245,6 +245,27 @@ function formatDate(input){
     return `${month} ${day}${suffix}` // returns stuff like 'April 28th'
 }
 
+/**
+
+ * @param {String} name - Channel Name 
+ * @param {import('discord.js').CategoryChannel} category - Discord Category
+ * @param {String} reason - Reason for channel creation
+ * @returns {import('discord.js').TextChannel} Discord Channel
+ */
+async function createChannelInCategory(channelName, category, reason=null){
+    try {
+        const createdChannel = await category.guild.channels.create({
+            name: channelName,
+            type: ChannelType.GuildText,
+            parent: category.id,
+            reason,
+        })
+        return createdChannel
+    } catch(err){
+        console.error(`Couldn't create channel in category: ${category?.name}\nError: `,err)
+    }
+}
+
 module.exports = {
     getOptionNum,
     getPermissionNum,
@@ -259,5 +280,6 @@ module.exports = {
     makeExecutionGif,
     createAttachment,
     intAuthorValidate,
-    formatDate
+    formatDate,
+    createChannelInCategory,
 }
