@@ -48,7 +48,12 @@ module.exports = {
             // console.log(subcommand,fullCommand,command)
         } catch (error) {
             console.error(`Error executing ${fullCommand}:`, error);
-            await interaction.editReply("❌ An error occurred while executing this command.");
+            try {
+                await interaction.editReply("❌ An error occurred while executing this command.");
+            } catch(err){
+                console.error('Error with sending the fail message. Error name: ',err.name)
+                return;
+            }
         }
     }
 }

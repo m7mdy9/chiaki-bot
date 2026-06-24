@@ -100,6 +100,9 @@ module.exports ={
         const selector = new selectorTextBuilder(interaction)
         selector.createSelector("chosenCategory", "Choose a category")
         for (const categ of categoryNames){
+
+            if(categ == "owner") continue;
+            
             const formattedName = categ[0].toUpperCase()+categ.slice(1)
             const embed = embed_builder(formattedName,null,chiakiColor)
             const commands = fullCommandInfo.get(categ)
