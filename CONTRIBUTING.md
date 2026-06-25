@@ -16,20 +16,41 @@ Make sure you have [node.js](https://nodejs.org/) downloaded before going furthe
     * Create your `.env` file in the root directory.
     * Add the following and replace the values with actual values from your testing environment.
     ```env
+    # Main Tokens and DB URI
     TOKEN=discord_bot_token_here_this_token_will_be_used_if_branchName_is_main
     mongo=mongodb_cluster_login_here
+
+    # Owner Id and Client ID
     ownerId=owner_id_goes_here
     clientId=client_id_used_if_branchName_is_main
+
+    # Testing Token & Client ID if the branch is not `main` (OPTIONAL, IF NOT SET THE BOT WILL JUST USE THE MAIN TOKEN AND CLIENTID)
+    TESTING_TOKEN=testing_bot_token
+    TESTING_clientId=testing_bot_clientId
+    
+    # Bot Invite Link.
     INVITE=bot_invite_link
+
+
     secretUser=id_used_for_specific_odds_in_howdangareyou_(pretty much rigged odds against a friend of mine)
+
+    # Dog Fact API & API Key
     dogAPIKey=api_used_from_thedogapi.com_for_dog_pictures
     dogFactAPIKey=api_used_for_dog_facts_link_for_api:https://rapidapi.com/maketest-1YGgU5ZOtA/api/random-dog-facts/pricing
+
+
+    # categories for reports
+    bugReportCategoryId=categoryId_where_bugReports_are_made
+    bugReportArchiveCategoryId=categoryId_of_bugReports_archives
+
+    userReportCategoryId=categoryId_where_userReports_are_made
+    userReportArchiveCategoryId="categoryId_where_userReports_are_archived
+
+    # Some hex colors used inside the bot.
     pink="#ffdcfc"
     red="#ff8d8d"
     green='#97ff94'
-    reportChannelId=channel_id_where_results_of_bug_reports_will_be_sent
-    TESTING_TOKEN=discord_bot_token_here_this_token_will_be_used_if_branchName_is_testing
-    TESTING_clientId=client_id_used_if_branchName_is_testing
+    dark_red="#a80000"
     
     # colors for terminal
     RED='\x1b[31m'
@@ -38,9 +59,9 @@ Make sure you have [node.js](https://nodejs.org/) downloaded before going furthe
     GREEN='\x1b[32m'
     DARK_GREY='\x1b[1;30m'
 
-    # IDs of emojis!
-    DARK_RED_SQUARE=1513974012085145732
-    BLACK_SQUARE=1514386438701977600
+    # IDs of emojis! (you can set emoji ids inside your bot via dev portal)
+    DARK_RED_SQUARE=replace_with_emoji_id_of_a_dark_red_square
+    BLACK_SQUARE=replace_with_emoji_id_of_a_black/dark_grey_square
     ```
     * Create your .gitignore and make sure the following (DO NOT COMMIT YOUR `.env` OR `node_modules/`)
     ```.gitignore
