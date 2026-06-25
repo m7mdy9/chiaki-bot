@@ -1,7 +1,7 @@
-const { getOptionNum, embed_builder, hiddenFlag } = require("../../../utils/utils.js")
+const { getOptionNum, embed_builder, hiddenFlag, createChannelInCategory } = require("../../../utils/utils.js")
 const { buttonBuilder, modalBuilder } = require("../../../utils/builders.js")
-const { reportsModel } = require("../../../database/models/reports.js")
-const { RED, RESET } = process.env
+const { reportsModel, reportBugBLModel } = require("../../../database/models")
+const { RED, RESET, bugReportCategoryId } = process.env
 
 module.exports = {
     name: "bug",
@@ -14,6 +14,7 @@ module.exports = {
             required: false,
         },
     ],
+    hidden: true,
     /** @param {import('discord.js').ChatInputCommandInteraction} interaction */
     async execute(interaction){
         const attachment = interaction.options.getAttachment("attachment")
@@ -21,6 +22,21 @@ module.exports = {
         const lastReport = await reportsModel.findOne({ userId }).sort({timestamp: -1})
         const guildId = interaction?.guild?.id
 
+        const blacklistedDoc = await reportBugBLModel.findOne({ userId, }).sort({ _id: -1 })
+        if(blacklistedDoc && blacklistedDoc?.expiryDate){
+            console.log(blacklistedDoc)
+            const expiryDateMS = blacklistedDoc.expiryDate.getTime()
+            const expiryDateTimestamp = Math.floor(expiryDateMS / 1000)
+            if(expiryDateMS > Date.parse(new Date("2098"))){
+                await interaction.editReply({ content:`You are blacklisted from using \`/report bug\` permanently.\n\nReason: ${blacklistedDoc.reason}` ,flags:[hiddenFlag]})
+                return;
+            }
+            if(expiryDateMS > Date.now()){
+                await interaction.editReply({ content:`You are blacklisted from using \`/report bug\`\nYour blacklist expires <t:${expiryDateTimestamp}:R>\n\nReason: ${blacklistedDoc.reason}` ,flags:[hiddenFlag]})
+                return;
+            }
+        }
+        
         if(lastReport){
             const cdTS = Date.parse(lastReport.timestamp) + 5 * 60 * 1000
             if(cdTS > Date.now() && userId != process.env.ownerId){
@@ -57,7 +73,7 @@ module.exports = {
                     { name: `User ID`, value: `\`${userId}\``, inline: true },
                     { name: `Guild ID`, value: `${guildId ? `\`${guildId}\`` : "No Guild ID"}`, inline: true },
                     { name: `\u200b`, value: `\u200b`, inline: true },
-                    { name: `caseNum`, value: caseNum.toString(), inline: true },
+                    { name: `caseNum`, value: `**\`${caseNum.toString()}\`**`, inline: true },
                     { name: `attachment URL`, value: `${attachment?.url ?? "None"}`, inline: true },
                     { name: `\u200b`, value: `\u200b`, inline: true },
                     { name: `reason`, value: reason, inline: false },
@@ -72,12 +88,14 @@ module.exports = {
                     .addButton('reportBugMesssage:'+caseNum, 'Message User', "Secondary", null, "🗣️")
                     .addButton('reportBugBL:'+caseNum, 'Strike/BL reporter', "Danger", null, "⚠️");
 
-                const reportChannel = await interaction.client.channels.fetch(process.env.reportChannelId)
+                const reportCategory = await interaction.client.channels.fetch(bugReportCategoryId)
+                const reportChannel = await createChannelInCategory(`bug-case-${caseNum}`, reportCategory, `report channel for case: ${caseNum}`)
                 
                 const messageOptions = { embeds: [reportEmbed], components:[reportEmbedButtons.getRow()] }
 
                 if(reportChannel){
-                    reportChannel.send(messageOptions)
+                    const reportMessage = await reportChannel.send(messageOptions);
+                    reportMessage.pin();
                 } else {
                     console.error(RED+"Failed to find the report channel"+RESET)
 
