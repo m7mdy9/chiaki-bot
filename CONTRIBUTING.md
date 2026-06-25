@@ -44,7 +44,7 @@ Make sure you have [node.js](https://nodejs.org/) downloaded before going furthe
     bugReportArchiveCategoryId=categoryId_of_bugReports_archives
 
     userReportCategoryId=categoryId_where_userReports_are_made
-    userReportArchiveCategoryId="categoryId_where_userReports_are_archived
+    userReportArchiveCategoryId=categoryId_where_userReports_are_archived
 
     # Some hex colors used inside the bot.
     pink="#ffdcfc"
