@@ -50,16 +50,20 @@ module.exports = {
 
         const button = new buttonBuilder(interaction)
             .addButton("report", "Report", "Danger", null, "⚠️")
+
         const response = await interaction.editReply({ embeds: [embed], components: [button.getRow()] })
+        
         button.startListener(response, undefined, (int) => {
             const modal = new modalBuilder(int, "report_modal", "Bug Report")
             const modalRow = modal.createTextInput("report_input", "Input your report.", "Paragraph", "What is the bug? How is it Caused? What would be the correct output?", true, null, [20, 1000])
             modal.addComponents(modalRow)
             if (int.user.id != userId) return int.reply({ content: "You did not initiate the command.", flags: [hiddenFlag] });
             modal.showModal(undefined, async (fields, modalInteraction) => {
-                await modalInteraction.deferUpdate();
-                interaction.editReply({ embeds: [resultEmbed], components: [] });
-                const caseNum = (await reportsModel.countDocuments()) + 1
+                
+                const lastDocCaseNum = (await reportsModel.findOne().sort({ caseNum: -1 }))?.caseNum
+
+                const caseNum = lastDocCaseNum ? lastDocCaseNum + 1 : 1
+
                 const reason = fields.report_input
                 reportsModel.create({
                     userId,
@@ -68,6 +72,25 @@ module.exports = {
                     reason,
                     attachment: attachment?.url
                 })
+
+                modalInteraction.update({ embeds: [resultEmbed], components: [] });
+                try {
+                    const reportEmbedToReporter = embed_builder(`Created Bug Report Case: ${caseNum}`, null, process.env.green)
+                            .addFields(
+                            { name: `Report Info`, value: reason, inline: false },
+                            { name: `attachment URL`, value: `${attachment?.url ?? "None"}` }
+                        )
+                        .setTimestamp().setAuthor({ name: interaction.user.username, iconURL: interaction.user.displayAvatarURL() })
+                        .setFooter({ text: "Thank you for your report! We will get back to you as soon as possible!"})
+
+                    if (attachment?.contentType?.startsWith("image")) {
+                        reportEmbedToReporter.setImage(attachment.url)
+                    }
+                    interaction.user.send({ embeds:[reportEmbedToReporter]})
+                } catch (err) {
+                    interaction.followUp({ content:"Could not DM you the Report Information.\nIf you would like to keep DMs closed and receive such DMs, add the bot to your apps. (you can do so by opening the bot profile, clicking add app and choosing add to my apps)",flags:[hiddenFlag]})
+                    console.error(`Couldn't DM Reporter in report bug.js,Error name: `, err)
+                }
 
                 const reportEmbed = embed_builder(`New Bug Report by ${interaction.user.username}`).addFields(
                     { name: `User ID`, value: `\`${userId}\``, inline: true },
@@ -83,10 +106,11 @@ module.exports = {
                     reportEmbed.setImage(attachment.url)
                 }
 
-                const reportEmbedButtons = new buttonBuilder(int)
-                    .addButton('reportBugFixed:'+caseNum, 'Issue fixed',"Success", null, "✅")
-                    .addButton('reportBugMesssage:'+caseNum, 'Message User', "Secondary", null, "🗣️")
-                    .addButton('reportBugBL:'+caseNum, 'Strike/BL reporter', "Danger", null, "⚠️");
+                const reportEmbedButtons = new buttonBuilder()
+                    .addButton(`reportBugFixed:${caseNum}`, 'Issue fixed',"Success", null, "✅")
+                    .addButton(`reportBugMesssage:${caseNum}`, 'Message User', "Secondary", null, "🗣️")
+                    .addButton(`reportBugBL:${caseNum}`, 'Strike/BL reporter', "Danger", null, "⚠️")
+                    .addButton(`reportBugDismiss:${caseNum}`, `Dismiss`, `Secondary`, null, '❌');
 
                 const reportCategory = await interaction.client.channels.fetch(bugReportCategoryId)
                 const reportChannel = await createChannelInCategory(`bug-case-${caseNum}`, reportCategory, `report channel for case: ${caseNum}`)
@@ -104,7 +128,8 @@ module.exports = {
                     ownerIdDM.send({content:"Report:", ...messageOptions})
                 }
                 
-                return console.log(attachment ?? "No attachment", fields)
+                console.log(`Report added, Case: ${caseNum}. Attachment?: ${Boolean(attachment)}`)
+                return; 
             })
         }, undefined)
     }
