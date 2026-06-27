@@ -8,18 +8,16 @@ module.exports = {
     /** @param {import('discord.js').ButtonInteraction} interaction */
     async execute(interaction){
         
-
         if (interaction.isChatInputCommand()) return;
         if(!interaction.isButton()) return;
+
+        if(!interaction.memberPermissions?.has("Administrator")) return;
 
         const customId = interaction.customId;
         const originalMsgId = interaction.message.id
         let fetchedOriginalMsg;
 
-        //.addButton('reportBugFixed:'+caseNum, 'Issue fixed',"Success", null, "✅")
-        //.addButton('reportBugMesssage:'+caseNum, 'Message User', "Secondary", null, "🗣️")
-        //.addButton('reportBugBL:'+caseNum, 'Strike/BL reporter', "Danger", null, "⚠️");
-        const prefixes = ['reportBugFixed', 'reportBugMesssage','reportBugBL']
+        const prefixes = ['reportBugFixed', 'reportBugMesssage','reportBugBL', "reportBugDismiss"]
         const customIdPrefix = customId.split(":")[0]
         const customIdCaseNum = customId.split(":")[1]
         
@@ -30,13 +28,13 @@ module.exports = {
         }
         
         async function archiveReport(text, embedColor=null){
-            let embeds = [];    
+            let embeds = fetchedOriginalMsg.embeds;    
             if(embedColor){
                     embeds = fetchedOriginalMsg.embeds.map(el =>{
                         el.data.color = parseInt(embedColor, 16)
                         return el;
                     })
-                }
+            }
             await fetchedOriginalMsg.channel.setParent(process.env.bugReportArchiveCategoryId)
             const updatedRows = disableAllComponents(fetchedOriginalMsg)
             fetchedOriginalMsg.edit({ content:text, embeds, components:updatedRows })
@@ -44,13 +42,13 @@ module.exports = {
         }
 
         if(customIdPrefix == 'reportBugFixed'){
-            
             const messageModal = new modalBuilder(interaction, 'fixModal', "Fix Message")
-            const bugFixInput = messageModal.createTextInput("bugFixInput", "Input the message to the user.", "Paragraph", "Message goes here!", true, null, [5,2000]);
+            const bugFixInput = messageModal.createTextInput("bugFixInput", "Input the message to the user", "Paragraph", "Message goes here!", true, null, [5,2000]);
             messageModal.addComponents(bugFixInput)
             messageModal.showModal(null, async (allFields, modalInteraction)=>{
+                if(!interaction.memberPermissions?.has("Administrator")) return;
 
-                const fixTextGiven = allFields.bugFixInput
+                const textGiven = allFields.bugFixInput
                 const reportDoc = await reportsModel.findOneAndUpdate({ caseNum: customIdCaseNum },
                     { fixed: true }
                 )
@@ -69,10 +67,14 @@ module.exports = {
                 try {
                     const userDM = await interaction.client.users.fetch(userId)
                     
-                    const fixEmbed = embed_builder(`Results of Bug Report Case: ${customIdCaseNum}`, `**Bug Fixed!**\n\n**Message from us:**\n${fixTextGiven}`,process.env.green)
+                    const fixEmbed = embed_builder(`Results of Bug Report Case: ${customIdCaseNum}`, `**Bug Fixed!**\n\n**Message from us:**\n${textGiven}`,process.env.green)
                     
                     await userDM.send({ embeds:[fixEmbed] })
-                    modalInteraction.reply({content: `Successfully sent message to \`${userDM.username}\``})
+
+                    const inChannelMessageEmbed = embed_builder("Message sent:", textGiven)
+                    interaction.channel.send({content:`Message sent by **<@!${interaction.user.id}>** to **${userDM.username}**`,embeds: [inChannelMessageEmbed]})
+
+                    modalInteraction.reply({content: `Successfully sent message to \`${userDM.username}\``, flags:[hiddenFlag]})
                 } catch(err){
                     console.error(`Couldn't send DM in reportBugButtons.js, err: `, err)
                     modalInteraction.reply({content: `Couldn't send message to user of id: \`${userId}\``})
@@ -84,10 +86,12 @@ module.exports = {
         if(customIdPrefix == 'reportBugMesssage'){
 
             const messageModal = new modalBuilder(interaction, 'replyMessageModal', "Fix Message")
-            const replyBugMessageInput = messageModal.createTextInput("replyBugMessageInput", "Input the message to the user.", "Paragraph", "Message goes here!", true, null, [5,2000]);
+            const replyBugMessageInput = messageModal.createTextInput("replyBugMessageInput", "Input the message to the user", "Paragraph", "Message goes here!", true, null, [5,2000]);
             messageModal.addComponents(replyBugMessageInput)
 
             messageModal.showModal(null, async (allFields, modalInteraction) => {
+                if(!interaction.memberPermissions?.has("Administrator")) return;
+
                 const textGiven = allFields.replyBugMessageInput
                 
                 const reportDoc = await reportsModel.findOne({caseNum: customIdCaseNum})
@@ -103,8 +107,11 @@ module.exports = {
                       .addButton(`replyBug:${customIdCaseNum}:${fetchedOriginalMsg.channelId}:${fetchedOriginalMsg.id}`,"Reply to us", "Secondary", null, "🗣️")
                     const components = [replyButton.getRow()]
 
+                    const inChannelMessageEmbed = embed_builder("Message sent:", textGiven)
+                    interaction.channel.send({content:`Message sent by **<@!${interaction.user.id}>** to **${userDM.username}**`,embeds: [inChannelMessageEmbed]})
+
                     await userDM.send({ embeds:[messageEmbed], components})
-                    return modalInteraction.reply({content: `Successfully sent message to \`${userDM.username}\``})
+                    return modalInteraction.reply({content: `Successfully sent message to \`${userDM.username}\``, flags:[hiddenFlag]})
                 } catch(err){
                     console.error(`Couldn't send DM in reportBugButtons.js, err: `, err)
                     return modalInteraction.reply({content: `Couldn't send message to user of id: \`${userId}\``})
@@ -118,6 +125,8 @@ module.exports = {
             messageModal.addComponents(reportBugBlacklistInput)
 
             messageModal.showModal(null, async (allFields, modalInteraction) => {
+                if(!interaction.memberPermissions?.has("Administrator")) return;
+                
                 const textGiven = allFields.reportBugBlacklistInput
                 
                 const reportDoc = await reportsModel.findOne({caseNum: customIdCaseNum})
@@ -133,10 +142,13 @@ module.exports = {
                     try {
                         const userDM = await interaction.client.users.fetch(userId)
                     
-                        const blacklistEmbed = embed_builder('Bug Report Flagged', `Your bug report of case: **${customIdCaseNum}** got flagged.\n**Reason:** ${textGiven}\n\nIf you create a troll/inappropriate bug report again you will be blacklisted from using \`/report bug\` command.`, process.env.red)
-                        
-                        await userDM.send({ embeds: [blacklistEmbed]})
-                        modalInteraction.reply({content: `Successfully sent message to \`${userDM.username}\`\nUser was added to the report blacklist database on strike 1.`})
+                    const blacklistEmbed = embed_builder('Bug Report Flagged', `Your bug report of case **${customIdCaseNum}** got flagged.\n**Reason:** ${textGiven}\n\nIf you create a troll/inappropriate bug report again you will be blacklisted from using \`/report bug\` command.`, process.env.red)
+                    
+                    await userDM.send({ embeds: [blacklistEmbed]})
+                    const inChannelMessageEmbed = embed_builder("Blacklist Message sent:", textGiven).setFooter({ text: `Strike ${blacklistCaseNum ? blacklistCaseNum+1: 0}`}).setTimestamp();
+                    interaction.channel.send({content:`Blacklist Message sent by **<@!${interaction.user.id}>** to **${userDM.username}**`,embeds: [inChannelMessageEmbed]})
+
+                    modalInteraction.reply({content: `Successfully sent message to \`${userDM.username}\`\nUser was added to the report blacklist database on strike 1.`})
                     } catch(err){
                         console.error(`Couldn't send DM in reportBugButtons.js, err: `, err)
                         modalInteraction.reply({content: `Couldn't send message to user of id: \`${userId}\`\nUser was added to the report blacklist database on strike 1.`})
@@ -159,9 +171,12 @@ module.exports = {
                     try {
                         const userDM = await interaction.client.users.fetch(userId)
                     
-                        const blacklistEmbed = embed_builder('Bug Report Flagged', `Your bug report of case: **${customIdCaseNum}** got flagged.\n**Reason:** ${textGiven}\n\nSince this is your second infraction, you are blacklisted from running \`/report bug\` for the next 6 months.\nExpiry Date: <t:${expiryDateDiscordTS}>`, process.env.red)
+                        const blacklistEmbed = embed_builder('Bug Report Flagged', `Your bug report of case **${customIdCaseNum}** got flagged.\n**Reason:** ${textGiven}\n\nSince this is your second infraction, you are blacklisted from running \`/report bug\` for the next 6 months.\nExpiry Date: <t:${expiryDateDiscordTS}>`, process.env.red)
                         
                         await userDM.send({ embeds: [blacklistEmbed]})
+                        const inChannelMessageEmbed = embed_builder("Blacklist Message sent:", textGiven).setFooter({ text: `Strike ${blacklistCaseNum ? blacklistCaseNum+1: 0}`}).setTimestamp();
+                        interaction.channel.send({content:`Blacklist Message sent by **<@!${interaction.user.id}>** to **${userDM.username}**`,embeds: [inChannelMessageEmbed]})
+
                         modalInteraction.reply({content: `Successfully sent message to \`${userDM.username}\`\nUser was blacklisted from using \`/report bug\` for 6 months. (expires on <t:${expiryDateDiscordTS}>)`})
                     } catch(err){
                         console.error(`Couldn't send DM in reportBugButtons.js, err: `, err)
@@ -184,17 +199,77 @@ module.exports = {
                     try {
                         const userDM = await interaction.client.users.fetch(userId)
 
-                        const blacklistEmbed = embed_builder('Bug Report Flagged', `Your bug report of case: **${customIdCaseNum}** got flagged.\n**Reason:** ${textGiven}\n\nSince this is your third infraction, you are blacklisted from running **\`/report bug\` permanently**.\nYou may use other features or bot commands.`, process.env.red)
+                        const blacklistEmbed = embed_builder('Bug Report Flagged', `Your bug report of case **${customIdCaseNum}** got flagged.\n**Reason:** ${textGiven}\n\nSince this is your third infraction, you are blacklisted from running **\`/report bug\` permanently**.\nYou may use other features or bot commands.`, process.env.red)
 
                         await userDM.send({ embeds: [blacklistEmbed] })
-                        modalInteraction.reply({ content: `Successfully sent message to \`${userDM.username}\`\nUser was blacklisted from using **\`/report bug\` permanently**.` })
+                        const inChannelMessageEmbed = embed_builder("Blacklist Message sent:", textGiven).setFooter({ text: `Strike ${blacklistCaseNum ? blacklistCaseNum+1: 0}`}).setTimestamp();
+                        interaction.channel.send({content:`Blacklist Message sent by **<@!${interaction.user.id}>** to **${userDM.username}**`,embeds: [inChannelMessageEmbed]})
+
+                        modalInteraction.reply({ content: `Successfully sent message to \`${userDM.username}\`\nUser was blacklisted from using **\`/report bug\` permanently**.`, flags:[hiddenFlag]})
                     } catch (err) {
                         console.error(`Couldn't send DM in reportBugButtons.js, err: `, err)
                         modalInteraction.reply({ content: `Couldn't send message to user of id: \`${userId}\`\nUser was blacklisted from using **\`/report bug\` permanently**.` })
                     };
                     return archiveReport(`Closed by <@!${interaction.user.id}>`, process.env.red.slice(1))
                 }
+                
             })
+        }
+
+        if(customIdPrefix == "reportBugDismiss"){
+            
+            const dismissEmbed = embed_builder(`Dismiss Report Case: ${customIdCaseNum}`, "Would you like to dismiss the report with or without notifying the user who reported?");
+
+            const dismissEmbedButtons = new buttonBuilder(interaction)
+                .addButton("dismissWithMessage", "Message & Dismiss", "Primary")
+                .addButton("dismissOnly", "Dismiss Only", "Secondary")
+
+            const dismissRows = [dismissEmbedButtons.getRow()]
+
+            const dismissEmbedResponse = await interaction.reply({ embeds:[dismissEmbed], components:dismissRows, flags:[hiddenFlag], withResponse: true})
+            const dismissEmbedMessage = dismissEmbedResponse.resource.message
+
+            dismissEmbedButtons.startListener(dismissEmbedMessage, null,
+                /** @param {import('discord.js').ButtonInteraction} buttonInt */
+                async (buttonInt) => {
+                    const reportDoc = await reportsModel.findOneAndUpdate({ caseNum: customIdCaseNum }, { fixed: true })
+
+                    if (buttonInt.customId == "dismissWithMessage") {
+                        const messageModal = new modalBuilder(buttonInt, 'replyMessageModal', "Fix Message")
+                        const dismissBugMessage = messageModal.createTextInput("dismissBugMessage", "Input dismiss message to user", "Paragraph", "Message goes here!", true, null, [5, 2000]);
+                        messageModal.addComponents(dismissBugMessage)
+
+                        if (!reportDoc) { console.error(RED + `The report of caseNum ${customIdCaseNum} is not found. STUPID` + RESET) }
+
+                        messageModal.showModal(null, async (allFields, modalInteraction) => {
+                            if(!interaction.memberPermissions?.has("Administrator")) return;
+
+                            const textGiven = allFields.dismissBugMessage
+                            if (!reportDoc) return;
+                            const userId = reportDoc.userId;
+                            try {
+                                const userDM = await interaction.client.users.fetch(userId)
+
+                                const dismissEmbedToUser = embed_builder('Bug Report Dismissed', `Your bug report of case **${customIdCaseNum}** has been dismissed.\n**Reason:** ${textGiven}.`, process.env.green).setFooter({ text: 'Thank you for your report regardless!' })
+                                const inChannelMessageEmbed = embed_builder("Message sent:", textGiven)
+                                buttonInt.channel.send({content:`Message sent by **<@!${buttonInt.user.id}>** to **${userDM.username}**`,embeds: [inChannelMessageEmbed]})
+
+                                await userDM.send({ embeds: [dismissEmbedToUser] })
+                                modalInteraction.reply({ content: `Successfully sent message to \`${userDM.username}\``, flags:[hiddenFlag] })
+                            } catch (err) {
+                                console.error(`Couldn't send DM in reportBugButtons.js, err: `, err)
+                                modalInteraction.reply({ content: `Couldn't send message to user of id: \`${userId}\`` })
+                            };
+                            interaction.deleteReply();
+                            archiveReport(`Dismissed by <@!${interaction.user.id}>`);
+                        })
+                    } else {
+                        buttonInt.deferUpdate();
+                        interaction.deleteReply();
+                        archiveReport(`Dismissed by <@!${interaction.user.id}>`);
+                    }
+                })
+
         }
     },
 };

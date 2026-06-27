@@ -9,7 +9,7 @@ module.exports = {
     async execute(interaction) {
         if (interaction.isChatInputCommand()) return;
         if (!interaction.isButton()) return;
-
+        
         const customId = interaction.customId;
         const originalMsgId = interaction.message.id
         let OriginalBugReportMessage, DMMessage;
