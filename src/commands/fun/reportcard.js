@@ -1,10 +1,10 @@
-const { embed_builder, getOptionNum, createAttachment, hiddenFlag, formatDate } = require("../../../utils/utils.js")
-const { buttonBuilder, modalBuilder, selectorTextBuilder } = require("../../../utils/builders.js")
-const { reportCardModel } = require("../../../database/models/reportCard.js")
-const { createReportCard } = require("../../../workers/reportCardMaker.js")
+const { embed_builder, getOptionNum, createAttachment, hiddenFlag, formatDate } = require("../../utils/utils.js")
+const { buttonBuilder, modalBuilder, selectorTextBuilder } = require("../../utils/builders.js")
+const { reportCardModel } = require("../../database/models/reportCard.js")
+const { createReportCard } = require("../../workers/reportCardMaker.js")
 
 module.exports = {
-    name: "card",
+    name: "reportcard",
     description: "Generate a Danganronpa 2 Report Card for a Student!",
     options: [
         {

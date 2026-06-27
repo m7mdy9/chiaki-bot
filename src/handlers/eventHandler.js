@@ -38,7 +38,7 @@ module.exports = async (client) =>{
             }
             eventCounter++
         } catch(err){
-            console.error(`❌ Couldn't load event ${path.basename(filePath)}, skipping.`)
+            console.error(`❌ Couldn't load event ${path.basename(filePath)}, skipping.\nError: `,err)
         }
     }
 
