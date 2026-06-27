@@ -254,7 +254,7 @@ class modalBuilder{
     constructor(interaction, customId, title){
         this.interaction = interaction
         this.modal = new ModalBuilder()
-        .setCustomId(customId)
+        .setCustomId(`${customId}:${interaction.id}`)
         .setTitle(title.substring(0,45))
     }
     /**

@@ -2,7 +2,6 @@ const fs = require("fs");
 const path = require("path");
 const { REST, Routes, Collection, SlashCommandBuilder, PermissionsBitField, PermissionFlagsBits } = require("discord.js");
 const { getPermissionNum } = require("../utils/utils");
-const { description } = require("../commands/fun/report/card");
 const { YELLOW, RED, DARK_GREY, GREEN, RESET } = process.env
 /**
  * @param {import('discord.js').Client} client 
