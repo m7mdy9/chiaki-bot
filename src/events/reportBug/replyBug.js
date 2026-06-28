@@ -26,7 +26,15 @@ module.exports = {
         if (customIdPrefix != replyBugPrefix) {
             return;
         } else {
-            OriginalBugReportMessage = await (await interaction.client.channels.fetch(customIdChannelId)).messages.fetch(customIdMessageId);
+            try {
+                OriginalBugReportMessage = await (await interaction.client.channels.fetch(customIdChannelId)).messages.fetch(customIdMessageId);
+                const isFixed = (await reportsModel.findOne({ caseNum: customIdCaseNum }))?.fixed || false
+                if(isFixed){
+                    return interaction.reply("This report bug has been marked as fixed!\nIf the bug persists please create another report!")
+                }
+            } catch(err){
+                return interaction.reply("This report bug has been removed!\nIf the bug persists please create another report!")
+            }
             DMMessage = interaction.message;
             console.log(customId)
         }
