@@ -29,8 +29,8 @@ module.exports = {
             const botPerms = interaction.appPermissions.has("KickMembers")
             const reason = interaction.options.getString('reason')
 
-            const executorRolePos = interaction.member.roles.highest.rawPosition;
-            const targetUserRolePos = targetUser.roles.highest.rawPosition;
+            const executorRolePos = interaction.member.roles?.highest?.rawPosition || 0;
+            const targetUserRolePos = targetUser?.roles?.highest?.rawPosition || 0;
 
             const reasonOutput = (reason ?? `No reason provided.`)+`\nKicked by ${interaction.user.username}` 
             let msgOutput = `Successfully kicked **${targetUser?.user?.username}**`
@@ -44,6 +44,8 @@ module.exports = {
                 return await editReply("I do not possess permissions to kick members.\nGrant me `Kick Members` permissions, if you would like to run this command once more.")
             } else if(!targetUser){
                 return await editReply("This user is not in the server.")
+            } else if (targetUser.id === interaction.user.id){
+                return await editReply("You may not kick yourself.")
             } else if(executorRolePos <= targetUserRolePos && interaction.member.id != interaction.guild.ownerId){
                 return await editReply("You can not kick someone who has a role higher or equal to yours.")
             } else if(targetUser.id == interaction.guild.ownerId){
@@ -52,11 +54,10 @@ module.exports = {
                 return await editReply("I can not do it...")
             } else if (!targetUser?.kickable){
                 return await editReply("I can not kick this user.") 
-            } else if (targetUser.id === interaction.user.id){
-                return await editReply("You may not kick yourself.")
             } else {
                 const isInServer = await interaction.guild.members.fetch(targetUser.user.id).catch(()=>null)
-                if(isInServer){
+
+                if(!targetUser.user.bot && isInServer){
                     await targetUser.send({embeds:[embed_builder(null, kickMsg,'#ff8d8d')]})
                 }
                 await targetUser.kick(reasonOutput)

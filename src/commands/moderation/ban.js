@@ -38,7 +38,7 @@ module.exports = {
             const userId = userToBan.user.id
             const executor = interaction.member
 
-            const executorRolePos = executor.roles.highest.rawPosition;
+            const executorRolePos = executor.roles?.highest?.rawPosition || 0;
             const userRolePos = userToBan?.member?.roles?.highest?.rawPosition || 0;
             
             const reasonOption = interaction.options.getString("reason")
@@ -49,7 +49,7 @@ module.exports = {
             const isBanned = await interaction.guild.bans.fetch(userId).catch(()=> false)
 
             if (!botPerms){
-                return await editReply("I do possess permissions to ban. If you would like to execute the ban command please add the Ban Members my permissions.")
+                return await editReply("I do not possess permissions to ban. If you would like to execute the ban command please add the Ban Members my permissions.")
             } else if(userId === executor.id){
                 return await editReply("You may not ban yourself.")
             }else if (executorRolePos <= userRolePos && executor.id != interaction.guild.ownerId) {
