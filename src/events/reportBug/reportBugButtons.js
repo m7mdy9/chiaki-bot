@@ -135,6 +135,7 @@ module.exports = {
                 const userId = reportDoc.userId
 
                 const blacklistedDoc = await reportBugBLModel.findOne({ userId, })?.sort({ _id: -1 })
+                const blacklistCaseNum = blacklistedDoc?.caseNum;
                 console.log(blacklistedDoc)
                 if(!blacklistedDoc){
                     await reportBugBLModel.create({ userId, caseNum: 1, blacklistedBy: interaction.user.id,reason: textGiven})
@@ -155,7 +156,6 @@ module.exports = {
                     }
                     return archiveReport(`Closed by <@!${interaction.user.id}>`, process.env.red.slice(1))
                 }
-                const blacklistCaseNum = blacklistedDoc?.caseNum;
                 
                 if(blacklistCaseNum == 1){
                     const expiryDate = Date.now() + 6*30*24*60*60*1000
@@ -221,8 +221,8 @@ module.exports = {
             const dismissEmbed = embed_builder(`Dismiss Report Case: ${customIdCaseNum}`, "Would you like to dismiss the report with or without notifying the user who reported?");
 
             const dismissEmbedButtons = new buttonBuilder(interaction)
-                .addButton("dismissWithMessage", "Message & Dismiss", "Primary")
-                .addButton("dismissOnly", "Dismiss Only", "Secondary")
+                .addButton("bugReport_dismissWithMessage", "Message & Dismiss", "Primary")
+                .addButton("bugReport_dismissOnly", "Dismiss Only", "Secondary")
 
             const dismissRows = [dismissEmbedButtons.getRow()]
 
@@ -234,7 +234,7 @@ module.exports = {
                 async (buttonInt) => {
                     const reportDoc = await reportsModel.findOneAndUpdate({ caseNum: customIdCaseNum }, { fixed: true })
 
-                    if (buttonInt.customId == "dismissWithMessage") {
+                    if (buttonInt.customId == "bugReport_dismissWithMessage") {
                         const messageModal = new modalBuilder(buttonInt, 'replyMessageModal', "Fix Message")
                         const dismissBugMessage = messageModal.createTextInput("dismissBugMessage", "Input dismiss message to user", "Paragraph", "Message goes here!", true, null, [5, 2000]);
                         messageModal.addComponents(dismissBugMessage)

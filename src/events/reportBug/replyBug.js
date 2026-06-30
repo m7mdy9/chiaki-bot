@@ -39,7 +39,7 @@ module.exports = {
             console.log(customId)
         }
         const messageModal = new modalBuilder(interaction, 'bugReplyModal', "Your Reply")
-        const bugReportDMInput = messageModal.createText1Input("bugReportDMInput", "Enter your messages to us!", "Paragraph", "Message goes here!", true, null, [5, 1000]);
+        const bugReportDMInput = messageModal.createTextInput("bugReportDMInput", "Enter your messages to us!", "Paragraph", "Message goes here!", true, null, [5, 1000]);
         messageModal.addComponents(bugReportDMInput)
 
         messageModal.showModal(null, 
