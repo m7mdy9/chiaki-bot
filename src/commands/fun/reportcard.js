@@ -1,6 +1,6 @@
 const { embed_builder, getOptionNum, createAttachment, hiddenFlag, formatDate } = require("../../utils/utils.js")
 const { buttonBuilder, modalBuilder, selectorTextBuilder } = require("../../utils/builders.js")
-const { reportCardModel } = require("../../database/models/reportCard.js")
+const { reportCardModel, reportCardBLModel } = require("../../database/models")
 const { createReportCard } = require("../../workers/reportCardMaker.js")
 
 module.exports = {
@@ -25,7 +25,12 @@ module.exports = {
 
         const flags = [hiddenFlag]
 
-        const reportCardDocument = await reportCardModel.findOne({ userId })
+        let blacklistedDoc;
+        if(isAuthor){
+            blacklistedDoc = await reportCardBLModel.findOne({ userId }).sort({ caseNum: -1 })
+        }
+
+        const reportCardDocument = await reportCardModel.findOne({ userId }).sort({ caseNum: -1 })
 
         let finalProfile;
 
@@ -94,6 +99,18 @@ module.exports = {
                 /** @param {import('discord.js').ButtonInteraction} int  */
                 async (int) => {
 
+                    if (blacklistedDoc && blacklistedDoc?.expiryDate) {
+                        const expiryDateMS = blacklistedDoc.expiryDate.getTime()
+                        const expiryDateTimestamp = Math.floor(expiryDateMS / 1000)
+                        if (expiryDateMS > Date.parse(new Date("2098"))) {
+                            await int.reply({ content: `You are blacklisted from using \`/report card\` permanently.\n\nReason: ${blacklistedDoc.reason}`, flags: [hiddenFlag] })
+                            return;
+                        }
+                        if (expiryDateMS > Date.now()) {
+                            await int.reply({ content: `You are blacklisted from using \`/report card\`\nYour blacklist expires <t:${expiryDateTimestamp}:R>\n\nReason: ${blacklistedDoc.reason}`, flags: [hiddenFlag] })
+                            return;
+                        }
+                    }
                     // Resets the selection choice
                     const resetSelectChoice = async()=>{ await int.editReply({components:[editSelectorRow]})};
                     
