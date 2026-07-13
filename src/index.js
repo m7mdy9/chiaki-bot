@@ -18,6 +18,7 @@ try {
 } catch(err){
     console.error("Couldn't detect branch, auto set to main.", err)
 }
+module.exports = {currentBranch}
 
 // Assigning token and clientId based on whether the current branch is main or not
 const botToken = (currentBranch != "main") && process.env.TESTING_TOKEN ? process.env.TESTING_TOKEN : process.env.TOKEN 

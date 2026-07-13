@@ -51,6 +51,10 @@ function returnDefaultTimeout(context, className) {
     return defaultTimeout
 }
 
+/**
+ * @param {import('discord.js').Interaction} mainInt - The Interaction you would like to validate it's user by.
+ * @param {Function} func - The function that will run if the user is validated.
+ */
 function validateUser(mainInt, func){
     return async(int)=>{
         if(!mainInt){

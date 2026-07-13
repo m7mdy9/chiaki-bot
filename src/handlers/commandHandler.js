@@ -3,6 +3,13 @@ const path = require("path");
 const { REST, Routes, Collection, SlashCommandBuilder, PermissionsBitField, PermissionFlagsBits } = require("discord.js");
 const { getPermissionNum } = require("../utils/utils");
 const { YELLOW, RED, DARK_GREY, GREEN, RESET } = process.env
+const { currentBranch } = require("../")
+
+let ignoreCategories = [];
+if(currentBranch == "main"){
+    ignoreCategories.push("owner")
+}
+
 /**
  * @param {import('discord.js').Client} client 
  */
@@ -15,7 +22,7 @@ async function loadCommands(client) {
 
     // get the command categories (crucial for the help command)
     const commandCategories = fs.readdirSync(commandsPath, {withFileTypes: true})
-        .filter(file => file.isDirectory())
+        .filter(file => file.isDirectory() && !ignoreCategories.includes(file.name) )
         .map(dirent => path.join(dirent.parentPath, dirent.name))
     const commandFiles = commandCategories.flatMap(folder => {
         return fs.readdirSync(folder, {withFileTypes: true}).filter(file => file.name.endsWith(".js") && !file.isDirectory()).map(file => path.join(file.parentPath,file.name))
