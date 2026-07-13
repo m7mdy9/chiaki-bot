@@ -62,6 +62,9 @@ Make sure you have [node.js](https://nodejs.org/) downloaded before going furthe
     # IDs of emojis! (you can set emoji ids inside your bot via dev portal)
     DARK_RED_SQUARE=replace_with_emoji_id_of_a_dark_red_square
     BLACK_SQUARE=replace_with_emoji_id_of_a_black/dark_grey_square
+
+    # slur blacklist words, include words in the following format:
+    WORD_BLACKLIST=badWord1,badWord2,badWord3,badWord4...and so on.
     ```
     * Create your .gitignore and make sure the following (DO NOT COMMIT YOUR `.env` OR `node_modules/`)
     ```.gitignore

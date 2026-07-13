@@ -2,6 +2,10 @@ const { embed_builder, getOptionNum, createAttachment, hiddenFlag, formatDate } 
 const { buttonBuilder, modalBuilder, selectorTextBuilder } = require("../../utils/builders.js")
 const { reportCardModel, reportCardBLModel } = require("../../database/models")
 const { createReportCard } = require("../../workers/reportCardMaker.js")
+const { isSlurPresent } = require("../../utils/slurfilter.js")
+
+const warningMessage = `Adding offensive words or breakage of the Discord & Chiaki Bot's ToS may result in a **blacklist** from using this command.`
+const reportMessage = `If you see anyone with an offensive report card, please report them via /report user`
 
 module.exports = {
     name: "reportcard",
@@ -80,12 +84,16 @@ module.exports = {
         if (!isAuthor) {
             if(!reportCardDocument){
                 embed.setFooter({ text: "This user did not set a report card, defaulting to Nagito's Card Info" })
-            };
+            } else {
+                embed.setFooter({ text: reportMessage })
+            }
             return interaction.editReply({ embeds: [embed], files: [attachment] })
         } else {
             if(!reportCardDocument){
                 embed.setFooter({ text: "You didn't set a report card, defaulting to Nagito's Card Info" })
-            };
+            } else {
+                embed.setFooter({ text: reportMessage })
+            }
 
             // creating the edit button
             const editCardButton = new buttonBuilder(interaction).addButton("edit", "Edit Profile", "Secondary", null, "✏️")
@@ -118,12 +126,12 @@ module.exports = {
                     const updateReportCard = async ()=>{
                         await resetSelectChoice()
                         const updatedAttachment = createAttachment(await createReportCard(avatarPath, username, finalProfile))
-                        return interaction.editReply({embeds:[embed], files:[updatedAttachment]})
+                        return interaction.editReply({embeds:[embed.setFooter({ text: reportMessage })], files:[updatedAttachment]})
                     }
 
                     // embed to be sent once the button is clicked
                     const editingEmbed = embed_builder('Edit Your Report Card',
-                        'Please select what you would like to edit')
+                        'Please select what you would like to edit.\n\n'+warningMessage)
                     
                     // creating the selector and setting a field for each key in the finalProfile Object
                     const editSelector = new selectorTextBuilder(int)
@@ -166,6 +174,14 @@ module.exports = {
 
                                     let outputValue = allFields[selectedOption]
                                     
+                                    const { isSlur, censoredMatch } = isSlurPresent(outputValue) 
+                                    if(isSlur){
+                                        await resetSelectChoice();
+                                        return modalInteraction.reply({ content: `:x: **Response Flagged:** An offensive word was found. **Match: **||${censoredMatch}||`+
+                                            `\nAny attempt to evade the censor may result in a **blacklist** from using this command.`+
+                                            `\n-# If you think that is a mistake, please report it via /report bug and provide word you put.`, flags:[hiddenFlag]})
+                                    }
+
                                     let isDateWrong = false;
 
                                     // if the selected option is birthday, we format, and if the input is wrong we just set the birthday as ??? 
