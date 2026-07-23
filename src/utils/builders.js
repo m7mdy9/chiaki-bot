@@ -1,8 +1,10 @@
-const { ActionRowBuilder, ButtonBuilder,
+const { 
+    ActionRowBuilder, ButtonBuilder,
     StringSelectMenuBuilder, StringSelectMenuOptionBuilder,
-    UserSelectMenuBuilder, ModalBuilder, 
-    TextInputBuilder, TextInputStyle, 
-    ComponentType, ButtonStyle, 
+    UserSelectMenuBuilder, RoleSelectMenuBuilder,
+    ModalBuilder, TextInputBuilder, 
+    TextInputStyle, ComponentType, 
+    ButtonStyle, 
 } = require("discord.js")
 const { intAuthorValidate } = require("./utils")
 
@@ -204,7 +206,7 @@ class selectorUserBuilder{
         this.interaction = interaction
     }
 
-    createUserSelector(customId, placeHolder=null, [min,max]=[]){
+    createUserSelector(customId, placeHolder=null, [min,max]=[undefined, undefined], defaultSelect=[]){
 
         this.customId = customId
         
@@ -213,9 +215,12 @@ class selectorUserBuilder{
         if(placeHolder){
             this.selector.setPlaceholder(placeHolder)
         }
-        if(min && max){
+        if(!isNaN(min) && !isNaN(max)){
             this.selector.setMinValues(min)
                 .setMaxValues(max)
+        }
+        if(defaultSelect.length > 0){
+            this.selector.addDefaultUsers(...defaultSelect)
         }
         return this
     }
@@ -240,6 +245,58 @@ class selectorUserBuilder{
         const collector = response.createMessageComponentCollector({
             filter,
             componentType: ComponentType.UserSelect,
+            idle: selectedTime ?? 60_000,  
+        });
+
+        collector.on('collect', collectFunction)
+        collector.on('end', timeoutFunc ? timeoutFunc : returnDefaultTimeout(this, this.constructor.name))
+    }
+}
+
+class selectorRoleBuilder{
+    constructor(interaction){
+        this.interaction = interaction
+    }
+
+    createRoleSelect(customId, placeHolder=null, [min,max]=[undefined, undefined], defaultSelect=[]){
+
+        this.customId = customId
+        
+        this.selector = new RoleSelectMenuBuilder()
+            .setCustomId(customId)
+        if(placeHolder){
+            this.selector.setPlaceholder(placeHolder)
+        }
+        if(!isNaN(min) && !isNaN(max)){
+            this.selector.setMinValues(min)
+                .setMaxValues(max)
+        }
+        if(defaultSelect.length > 0){
+            this.selector.addDefaultRoles(...defaultSelect)
+        }
+        return this
+    }
+
+    getRow(){
+        this.row = new ActionRowBuilder().addComponents(this.selector);
+        return this.row
+    } 
+        
+    /**
+     * @param {import('discord.js').InteractionResponse} response 
+     * @param {Number} selectedTime 
+     * @param {Function} func 
+     * @param {Function} timeoutFunc 
+     */
+    startListener(response, selectedTime=60_000, func, timeoutFunc=null, validateUserBoolean=true){
+
+        const collectFunction = validateUserBoolean ? validateUser(this.interaction, func) : validateUser(null ,func)
+
+        const filter = (int) => this.customId === int.customId
+
+        const collector = response.createMessageComponentCollector({
+            filter,
+            componentType: ComponentType.RoleSelect,
             idle: selectedTime ?? 60_000,  
         });
 
@@ -324,5 +381,6 @@ module.exports = {
     buttonBuilder,
     selectorTextBuilder,
     selectorUserBuilder,
+    selectorRoleBuilder,
     modalBuilder,
 }
