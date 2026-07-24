@@ -18,7 +18,6 @@ try {
 } catch(err){
     console.error("Couldn't detect branch, auto set to main.", err)
 }
-module.exports = {currentBranch}
 
 // Assigning token and clientId based on whether the current branch is main or not
 const botToken = (currentBranch != "main") && process.env.TESTING_TOKEN ? process.env.TESTING_TOKEN : process.env.TOKEN 
@@ -27,7 +26,7 @@ const clientId = (currentBranch != "main") && process.env.TESTING_clientId ? pro
 // creating our client with our needed intents and initializing an empty discordjs Collection to save our commands in, via the commandHandler.js 
 const client = new Client({ 
     intents: [GatewayIntentBits.GuildMembers,GatewayIntentBits.Guilds, GatewayIntentBits.GuildMessages, GatewayIntentBits.MessageContent, GatewayIntentBits.DirectMessages],
-    partials: [Partials.Channel, Partials.Message]
+    partials: [Partials.Channel, Partials.Message, Partials.GuildMember]
 });
 client.commands = new Collection();
 client.clientId = clientId
@@ -45,5 +44,7 @@ async function startBot(){
         process.exit(1)
     }
 }
+
+module.exports = {currentBranch, client}
 
 startBot()
