@@ -52,6 +52,48 @@ function getPermissionNum(type){
     return PermissionFlagsBits[type].toString();
 }
 
+/**
+ * @param {'GuildText' | 'DM' | 'GuildVoice' 
+ * | 'GroupDM' | 'GuildCategory' | 'GuildAnnouncement' 
+ * | 'AnnouncementThread' | 'PublicThread' | 'PrivateThread' 
+ * | 'GuildStageVoice' | 'GuildDirectory' | 'GuildForum' | 'GuildMedia'} type - The string name of the channel type.
+ * @returns {import('discord.js').ChannelType} Channel Type via `discord.js`
+ */
+function getChannelType(type){
+    return ChannelType[type];
+}
+
+/**
+ * @typedef {'GuildText' | 'DM' | 'GuildVoice' | 'GroupDM' | 'GuildCategory' | 'GuildAnnouncement' | 'AnnouncementThread' | 'PublicThread' | 'PrivateThread' | 'GuildStageVoice' | 'GuildDirectory' | 'GuildForum' | 'GuildMedia'} DiscordChannelTypeString
+ */
+
+/**
+ * @type {Record<DiscordChannelTypeString, number>}
+ */
+const ChannelTypesNum = {
+    GuildText: 0,
+    DM: 1,
+    GuildVoice: 2,
+    GroupDM: 3,
+    GuildCategory: 4,
+    GuildAnnouncement: 5,
+    AnnouncementThread: 10,
+    PublicThread: 11,
+    PrivateThread: 12,
+    GuildStageVoice: 13,
+    GuildDirectory: 14,
+    GuildForum: 15,
+    GuildMedia: 16
+};
+
+/**
+ * @param {DiscordChannelTypeString} type
+ * @returns {number} Raw API number! 
+ */
+function getChannelTypeNum(type){
+    return ChannelTypesNum[type]
+}
+
 function embed_builder(title=null, description=null, color ='#ffdcfc'){
     try {
         if (!title && !description) throw new Error("You must include a title or a description.");
@@ -282,4 +324,6 @@ module.exports = {
     intAuthorValidate,
     formatDate,
     createChannelInCategory,
+    getChannelType,
+    getChannelTypeNum,
 }
