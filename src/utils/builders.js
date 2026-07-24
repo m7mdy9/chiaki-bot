@@ -2,9 +2,9 @@ const {
     ActionRowBuilder, ButtonBuilder,
     StringSelectMenuBuilder, StringSelectMenuOptionBuilder,
     UserSelectMenuBuilder, RoleSelectMenuBuilder,
-    ModalBuilder, TextInputBuilder, 
-    TextInputStyle, ComponentType, 
-    ButtonStyle, 
+    ChannelSelectMenuBuilder, ModalBuilder, 
+    TextInputBuilder, TextInputStyle, 
+    ComponentType, ButtonStyle, 
 } = require("discord.js")
 const { intAuthorValidate } = require("./utils")
 
@@ -220,7 +220,7 @@ class selectorUserBuilder{
                 .setMaxValues(max)
         }
         if(defaultSelect.length > 0){
-            this.selector.addDefaultUsers(...defaultSelect)
+            this.selector.setDefaultUsers(...defaultSelect)
         }
         return this
     }
@@ -272,7 +272,7 @@ class selectorRoleBuilder{
                 .setMaxValues(max)
         }
         if(defaultSelect.length > 0){
-            this.selector.addDefaultRoles(...defaultSelect)
+            this.selector.setDefaultRoles(...defaultSelect)
         }
         return this
     }
@@ -297,6 +297,61 @@ class selectorRoleBuilder{
         const collector = response.createMessageComponentCollector({
             filter,
             componentType: ComponentType.RoleSelect,
+            idle: selectedTime ?? 60_000,  
+        });
+
+        collector.on('collect', collectFunction)
+        collector.on('end', timeoutFunc ? timeoutFunc : returnDefaultTimeout(this, this.constructor.name))
+    }
+}
+
+class selectorChannelBuilder{
+    constructor(interaction){
+        this.interaction = interaction
+    }
+
+    createRoleSelect(customId, placeHolder=null, [min,max]=[undefined, undefined], defaultSelect=[], channelTypes=[]){
+
+        this.customId = customId
+        
+        this.selector = new ChannelSelectMenuBuilder()
+            .setCustomId(customId)
+        if(placeHolder){
+            this.selector.setPlaceholder(placeHolder)
+        }
+        if(!isNaN(min) && !isNaN(max)){
+            this.selector.setMinValues(min)
+                .setMaxValues(max)
+        }
+        if(defaultSelect.length > 0){
+            this.selector.setDefaultChannels(...defaultSelect)
+        }
+        if(channelTypes.length > 0){
+            this.selector.setChannelTypes(...channelTypes)
+        }
+        return this
+    }
+
+    getRow(){
+        this.row = new ActionRowBuilder().addComponents(this.selector);
+        return this.row
+    } 
+        
+    /**
+     * @param {import('discord.js').InteractionResponse} response 
+     * @param {Number} selectedTime 
+     * @param {Function} func 
+     * @param {Function} timeoutFunc 
+     */
+    startListener(response, selectedTime=60_000, func, timeoutFunc=null, validateUserBoolean=true){
+
+        const collectFunction = validateUserBoolean ? validateUser(this.interaction, func) : validateUser(null ,func)
+
+        const filter = (int) => this.customId === int.customId
+
+        const collector = response.createMessageComponentCollector({
+            filter,
+            componentType: ComponentType.ChannelSelect,
             idle: selectedTime ?? 60_000,  
         });
 
@@ -382,5 +437,6 @@ module.exports = {
     selectorTextBuilder,
     selectorUserBuilder,
     selectorRoleBuilder,
+    selectorChannelBuilder,
     modalBuilder,
 }
