@@ -34,8 +34,8 @@
     - [x] nickname set
     - [x] nickname reset
   - [ ] Add the ability to log moderative actions done by the bot.
-  - [ ] Add the ability to do general mod logs.
-  - [ ] Add autoroles on join.
+  - [x] Add the ability to do general mod logs.
+  - [x] Add autoroles on join.
 - __Misc__
   - [x] Avatars
     - [x] Avatar (user/bot)
