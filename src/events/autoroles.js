@@ -7,7 +7,7 @@ module.exports = {
     async execute(member){
         const guildId = member.guild.id
         const autoroleDoc = await autoroleModel.findOne();
-        if(!autoroleDoc) return;
+        if(!autoroleDoc || !autoroleDoc?.roleIds) return;
         
         try {
             autoroleDoc.roleIds.forEach(async role => {

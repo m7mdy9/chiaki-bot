@@ -1,4 +1,3 @@
-const { managerToFetchingStrategyOptions } = require("discord.js");
 const { autoroleModel } = require("../../../database/models")
 const { embed_builder, hiddenFlag } = require("../../../utils/utils.js")
 const { buttonBuilder, selectorRoleBuilder } = require("../../../utils/builders.js")
@@ -55,13 +54,13 @@ module.exports = {
         }
 
         initialButton.startListener(initialResponse, null, 
-            /** @param {import('discord.js').Interaction} editInt */
-            async (editInt)=>{
+            /** @param {import('discord.js').Interaction} btnInt */
+            async (btnInt)=>{
                 
-                if(editInt.customId == "clearRoles"){
-                    if(!rolesDoc){ return editInt.reply({ content:"No roles to clear.", flags:[hiddenFlag]})}
+                if(btnInt.customId == "clearRoles"){
+                    if(!rolesDoc){ return btnInt.reply({ content:"No roles to clear.", flags:[hiddenFlag]})}
                     await updateRolesAndMsg()
-                    return editInt.reply({content:"Roles cleared.", flags:[hiddenFlag]})
+                    return btnInt.reply({content:"Roles cleared.", flags:[hiddenFlag]})
                 }
                 let previouslySelectedRoles = rolesDoc ? rolesDoc.roleIds : []
                 const roleSelectEmbed = embed_builder("AutRole Select","Select roles to be added on join.\nUnselect roles you don't want to be added")
@@ -69,7 +68,7 @@ module.exports = {
                 roleSelector.createRoleSelect("autoroleSelect", "Select Roles", [0, 5], previouslySelectedRoles)
                 const roleSelectorRow = roleSelector.getRow();
 
-                const firstBtnResponse = await editInt.reply({ embeds:[roleSelectEmbed], components:[roleSelectorRow],  withResponse: true})
+                const firstBtnResponse = await btnInt.reply({ embeds:[roleSelectEmbed], components:[roleSelectorRow],  withResponse: true})
                 const firstBtnMsg = firstBtnResponse.resource.message;
 
                 roleSelector.startListener(firstBtnMsg, null, 
