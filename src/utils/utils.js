@@ -96,7 +96,6 @@ function getChannelTypeNum(type){
 
 function embed_builder(title=null, description=null, color ='#ffdcfc'){
     try {
-        if (!title && !description) throw new Error("You must include a title or a description.");
         const embed = new EmbedBuilder()
         if (title) {
             embed.setTitle(title.toString())
@@ -308,6 +307,36 @@ async function createChannelInCategory(channelName, category, reason=null){
     }
 }
 
+function botHasBasicPerms(targetPermChannel, interaction){
+    const botPermissions = targetPermChannel.permissionsFor(interaction.client.user);
+
+    const isCorrectPerms = botPermissions.has([getPermissionNum("ViewChannel"), getPermissionNum("SendMessages"), getPermissionNum("EmbedLinks")]);
+    return isCorrectPerms;
+}
+
+const channelTypeNames = {
+  [ChannelType.GuildText]: 'Text Channel',
+  [ChannelType.GuildVoice]: 'Voice Channel',
+  [ChannelType.GuildCategory]: 'Category',
+  [ChannelType.GuildAnnouncement]: 'Announcement Channel',
+  [ChannelType.AnnouncementThread]: 'Announcement Thread',
+  [ChannelType.PublicThread]: 'Public Thread',
+  [ChannelType.PrivateThread]: 'Private Thread',
+  [ChannelType.GuildStageVoice]: 'Stage Channel',
+  [ChannelType.GuildDirectory]: 'Directory',
+  [ChannelType.GuildForum]: 'Forum Channel',
+  [ChannelType.GuildMedia]: 'Media Channel',
+  [ChannelType.DM]: 'Direct Message',
+  [ChannelType.GroupDM]: 'Group DM',
+};
+
+/**
+ * @param {number} num - Channe Type Number (0-16) 
+ */
+function channelTypeNumToName(num){
+    return channelTypeNames[num]
+}
+
 module.exports = {
     getOptionNum,
     getPermissionNum,
@@ -326,4 +355,6 @@ module.exports = {
     createChannelInCategory,
     getChannelType,
     getChannelTypeNum,
+    botHasBasicPerms,
+    channelTypeNumToName,
 }
