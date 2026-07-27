@@ -27,7 +27,7 @@ module.exports = {
             const targetUser = interaction.options.getUser("student") || interaction.user
             
             // fetching display avatar URL from either the member, user or the author
-            const avatarURL = targetMember.displayAvatarURL({size:128});
+            const avatarURL = targetMember.displayAvatarURL({size:128, extension: 'png'});
             // username of the user or author
             const username = targetUser.username
             

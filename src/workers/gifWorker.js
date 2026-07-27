@@ -160,7 +160,7 @@ async function buildEditedImage(ctx, backgroundImage, avatarImage, frameIndex, u
  * 8. We use Buffer.concat() to turn the gifChunks Array into a full buffer and then we return that full buffer
  * @returns {Uint8Array} - The Uint8Array Buffer of the newly built gif from the parameters given.
 */
-async function fullProcess({avatarPath, username}){
+async function fullProcess({avatarURL, username}){
 
     const extractedBackgroundImages = await dissectGif()
     
@@ -176,7 +176,8 @@ async function fullProcess({avatarPath, username}){
     encoder.setDelay(100)
     encoder.setQuality(10)
     
-    const avatarImage = await loadImage(avatarPath)
+    console.log(avatarURL)
+    const avatarImage = await loadImage(avatarURL)
     
     const canvas = createCanvas(width, height)
     const ctx = canvas.getContext("2d")

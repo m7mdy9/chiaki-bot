@@ -115,7 +115,7 @@ module.exports = {
                     endOutput = `🏆️ **<@!${intUser.id}> wins!**`
                     break;
                 case 2:
-                    endOutput = `🏆️ **<@!${intUser.id}> wins!**`
+                    endOutput = `🏆️ **<@!${targetUser.id}> wins!**`
                     break;
             }
             const lastEmbed = embed_builder(
