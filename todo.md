@@ -33,7 +33,7 @@
   - [x] nickname
     - [x] nickname set
     - [x] nickname reset
-  - [ ] Add the ability to log moderative actions done by the bot.
+  - [x] Add the ability to log moderative actions done by the bot.
   - [x] Add the ability to do general mod logs.
   - [x] Add autoroles on join.
 - __Misc__
@@ -66,5 +66,5 @@
     - Presumabely fixed.
 
 ## Misc:
-- [ ] Create a support server.
+- [x] Create a support server.
 - [x] Create different production and testing bots.
