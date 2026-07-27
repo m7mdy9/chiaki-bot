@@ -1,6 +1,7 @@
 const { basename, AuditLogEvent, Collection } = require("discord.js");
 const { modlogsModel } = require("../../database/models");
-const { embed_builder } = require("../../utils/utils");
+const { embed_builder, botHasBasicPerms } = require("../../utils/utils");
+const { checkModlogSettings } = require("../../utils/modlogs");
 
 module.exports = {
     name: "guildMemberUpdate",
@@ -54,20 +55,28 @@ module.exports = {
         try {
             const modlogChannel = await newMember.guild.channels.fetch(modlogDoc.channelId);
             if(!modlogChannel) return;
+            if(!botHasBasicPerms(modlogChannel, oldMember)) return;
+
+            const isTurnedOn = await checkModlogSettings("memberRoleUpdate", guildId)
+            if(!isTurnedOn) return;
 
             if(addedRoles?.size > 0 && addedRoles){
-                const addEmbed = embed_builder(`${newMember.user.username}'s Roles were updated`, null, process.env.green)
-                .setTimestamp().setThumbnail(newMember.displayAvatarURL({ size: 64 })).setFooter({ text: `ID: ${newMember.id}`});
+                const mainDescription = `<@!${newMember.id}>'s roles were updated`;
+                const addEmbed = embed_builder(null,mainDescription, process.env.green)
+                .setTimestamp().setAuthor({ name:"Member Roles Updated" })
+                .setThumbnail(newMember.displayAvatarURL({ size: 64 })).setFooter({ text: `ID: ${newMember.id}`});
                 addedRoles.forEach(role => {
-                    addEmbed.setDescription(`Added **\`${role.name}\`** (<@&${role.id}>)`)
+                    addEmbed.setDescription(`${mainDescription}\n\nAdded **\`${role.name}\`** (<@&${role.id}>)`)
                     modlogChannel.send({ embeds: [addEmbed] }).catch(console.error)
                 })
             }
              if(removedRoles?.size > 0 && removedRoles){
-                const removeEmbed = embed_builder(`${newMember.user.username}'s Roles were updated`, null, process.env.red)
-                .setTimestamp().setThumbnail(newMember.displayAvatarURL({ size: 64 })).setFooter({ text: `ID: ${newMember.id}`});
+                const mainDescription = `<@!${newMember.id}>'s roles were updated`;
+                const removeEmbed = embed_builder(null,mainDescription, process.env.red)
+                .setTimestamp().setAuthor({ name:"Member Roles Updated" })
+                .setThumbnail(newMember.displayAvatarURL({ size: 64 })).setFooter({ text: `ID: ${newMember.id}`});
                 removedRoles.forEach(role => {
-                    removeEmbed.setDescription(`Removed **\`${role.name}\`** (<@&${role.id}>)`)
+                   removeEmbed.setDescription(`${mainDescription}\n\nRemoved **\`${role.name}\`** (<@&${role.id}>)`)
                     modlogChannel.send({ embeds: [removeEmbed] }).catch(console.error)
                 })
             }

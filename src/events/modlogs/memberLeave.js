@@ -1,6 +1,7 @@
 const { basename } = require("discord.js");
 const { modlogsModel } = require("../../database/models");
-const { embed_builder } = require("../../utils/utils");
+const { embed_builder, botHasBasicPerms } = require("../../utils/utils");
+const { checkModlogSettings } = require("../../utils/modlogs");
 
 module.exports = {
     name: "guildMemberRemove",
@@ -16,15 +17,22 @@ module.exports = {
         try {
             const modlogChannel = await member.guild.channels.fetch(modlogDoc.channelId);
             if(!modlogChannel) return;
+            if(!botHasBasicPerms(modlogChannel, member)) return;
 
-            let embedDescription = null;
+            const isTurnedOn = await checkModlogSettings("memberJoinLeave", guildId)
+            if(!isTurnedOn) return;
+
+            let embedDescription = `<@!${member.id}> left the server`;
+
+            const embed = embed_builder(null,embedDescription, process.env.red)
+            .setTimestamp().setAuthor({ name:`${member.user.username} left` })
+            .setThumbnail(member.displayAvatarURL({ size: 64 })).setFooter({ text: `ID: ${member.id}`});
+            
             if(member?.joinedTimestamp){
                 const discordTimestamp = `<t:${Math.floor(member.joinedTimestamp / 1000)}:R>`
-                embedDescription = `Joined: ${discordTimestamp}`
+                embed.addFields( { name:`Joined`,value:`${discordTimestamp}` } )
             }
 
-            const embed = embed_builder(`${member.user.username} left the Server`,embedDescription, process.env.red)
-            .setTimestamp().setThumbnail(member.displayAvatarURL({ size: 64 })).setFooter({ text: `ID: ${member.id}`});
 
             await modlogChannel.send({ embeds:[embed] });
         } catch(err){

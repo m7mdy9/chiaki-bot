@@ -1,3 +1,4 @@
+const { logModAction } = require("../../../utils/modlogs.js")
 const { getOptionNum, getPermissionNum, embed_builder } = require("../../../utils/utils.js")
 const ms = require('ms')
 
@@ -78,6 +79,7 @@ module.exports = {
             try{
                 await targetMember.timeout(duration, reasonOutput)
                 await targetMember.send({embeds:[embed_builder(null, timeoutMsg, "#ff8d8d")]})
+                logModAction(interaction, "timeoutAdd", interaction.member, targetMember, rawReason, `\n**Duration:** ${ms(duration, { long: true })}`)
                 await interaction.editReply({
                     embeds:[
                         embed_builder(

@@ -1,3 +1,4 @@
+const { logModAction } = require("../../utils/modlogs.js")
 const { getPermissionNum, getOptionNum } = require("../../utils/utils")
 const { embed_builder } = require("../../utils/utils.js")
 
@@ -75,6 +76,7 @@ module.exports = {
                 deleteMessageSeconds: interaction.options.get("delmessages") ? 60 * 60 * 24 * 7 : 0,
                 reason
             })
+            logModAction(interaction, "ban", interaction.member, userToBan, reasonOption)
             let outputMessage = `Banned **${userToBan.user.username}**`
             if (reasonOption) { outputMessage += ` for \`${reasonOption}\`` }
             await interaction.editReply(outputMessage)

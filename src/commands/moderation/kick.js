@@ -1,3 +1,4 @@
+const { logModAction } = require("../../utils/modlogs.js")
 const { getOptionNum, getPermissionNum, embed_builder } = require("../../utils/utils.js")
 
 module.exports = {
@@ -61,6 +62,7 @@ module.exports = {
                     await targetUser.send({embeds:[embed_builder(null, kickMsg,'#ff8d8d')]})
                 }
                 await targetUser.kick(reasonOutput)
+                logModAction(interaction, "kick", interaction.member, targetUser, reason)
                 await interaction.editReply({content: msgOutput})
             }
         } catch(err){

@@ -1,5 +1,6 @@
 const { getOptionNum, getPermissionNum, embed_builder } = require("../../../utils/utils.js")
 const { warningModel } = require("../../../database/models/warnings.js")
+const { logModAction } = require("../../../utils/modlogs.js")
 
 module.exports = {
     name:"add",
@@ -60,6 +61,7 @@ module.exports = {
                 await interaction.editReply({
                     embeds:[embed_builder(null, `Successfully warned **${targetMember.user.username}** for **${reason}**`)]
                 })
+                logModAction(interaction, "warnAdd", interaction.member, targetMember, reason)
                 try {
                     targetMember.send({
                     embeds:[embed_builder(null, `You have been warned in **${interaction.guild.name}** for **${reason}**`, '#ff9494').setTimestamp()]

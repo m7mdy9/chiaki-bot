@@ -1,6 +1,7 @@
 const { autoroleModel } = require("../../../database/models")
 const { embed_builder, hiddenFlag } = require("../../../utils/utils.js")
-const { buttonBuilder, selectorRoleBuilder } = require("../../../utils/builders.js")
+const { buttonBuilder, selectorRoleBuilder } = require("../../../utils/builders.js");
+const { logModAction } = require("../../../utils/modlogs.js");
 
 module.exports = {
     name: `autorole`,
@@ -35,7 +36,9 @@ module.exports = {
 
                 embedToEdit.setDescription(`**No AutoRoles have been set**`)
                 embedToEdit.setFooter(null).setTimestamp(null)
-
+                logModAction(interaction, "specialOverride", interaction.member , null, null,
+                    [`AutoRole Change`, `**<@!${interaction.user.id}> has set autorole to \`none\`.**`], "autoroleUpdate"
+                )
             } else {
                 if(!rolesDoc){
                     rolesDoc = await autoroleModel.create({ guildId, roleIds: newRoles })
@@ -49,6 +52,10 @@ module.exports = {
                 embedToEdit.setDescription(`**Current AutoRoles:**\n${formattedRoles}`)
                 embedToEdit.setFooter({ text: `Last Edited`})
                 embedToEdit.setTimestamp(currentTimestamp)
+
+                logModAction(interaction, "specialOverride", interaction.member , null, null,
+                    [`AutoRole Change`, `**<@!${interaction.user.id}> has set autorole to ${formattedRoles}.**`], "autoroleUpdate"
+                )
             }
             await initialResponse.edit({ embeds:[embedToEdit]})
         }

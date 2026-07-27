@@ -1,6 +1,7 @@
 const { basename } = require("discord.js");
 const { modlogsModel } = require("../../database/models");
-const { embed_builder } = require("../../utils/utils");
+const { embed_builder, botHasBasicPerms } = require("../../utils/utils");
+const { checkModlogSettings } = require("../../utils/modlogs");
 
 module.exports = {
     name: "guildMemberAdd",
@@ -16,10 +17,16 @@ module.exports = {
         try {
             const modlogChannel = await member.guild.channels.fetch(modlogDoc.channelId);
             if(!modlogChannel) return;
+            if(!botHasBasicPerms(modlogChannel, member)) return;
+
+            const isTurnedOn = await checkModlogSettings("memberJoinLeave", guildId)
+            if(!isTurnedOn) return;
 
             const discordTimestamp = `<t:${Math.floor(member.user.createdTimestamp / 1000)}:R>`
-            const embed = embed_builder(`${member.user.username} joined the Server`,`Account Created: ${discordTimestamp}`, process.env.green)
-            .setTimestamp().setThumbnail(member.displayAvatarURL({ size: 64 })).setFooter({ text: `ID: ${member.id}`});
+            const embed = embed_builder(null,`**<@!${member.id}> joined the server**`, process.env.green)
+            .addFields( { name: `Account Age`, value:`${discordTimestamp}` } )
+            .setTimestamp().setAuthor({ name:`${member.user.username} joined` })
+            .setThumbnail(member.displayAvatarURL({ size: 64 })).setFooter({ text: `ID: ${member.id}`});
 
             await modlogChannel.send({ embeds:[embed] });
         } catch(err){

@@ -1,5 +1,6 @@
 const { getOptionNum, getPermissionNum, embed_builder } = require("../../../utils/utils.js")
 const { warningModel } = require("../../../database/models/warnings.js")
+const { logModAction } = require("../../../utils/modlogs.js")
 
 module.exports = {
     name:"remove",
@@ -71,6 +72,7 @@ module.exports = {
                         return editReply(`Couldn't delete Case #${caseNum} for ${targetMember.user.username}.
                             \nAnother observer might have already deleted it, please check with \`/warning view\` if it still exists.`)
                     }
+                    logModAction(interaction, "warnRemove", interaction.member, targetMember)
                     dmMessage = `Your warning in **${interaction.guild.name}** for **${deletedWarning.reason}** has been cleared.`;
                 } else {
                     deletedWarning = await warningModel.deleteMany({
@@ -80,7 +82,8 @@ module.exports = {
                     if(deletedWarning.deletedCount == 0) {
                         return editReply(`Couldn't delete Warnings for ${targetMember.user.username}.
                             \nAnother observer might have already deleted it, please check with \`/warning view\` if it still exists.`)
-                    }
+                        }
+                    logModAction(interaction, "warnClear", interaction.member, targetMember)
                     dmMessage = `Your warnings in **${interaction.guild.name}** have been cleared.`;
                 }
                 await interaction.editReply({

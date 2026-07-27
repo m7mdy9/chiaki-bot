@@ -1,3 +1,4 @@
+const { logModAction } = require("../../utils/modlogs")
 const { getPermissionNum, getOptionNum } = require("../../utils/utils")
 
 module.exports = {
@@ -30,6 +31,7 @@ module.exports = {
                 return await editReply("This user is not banned")
             } else {
                 await interaction.guild.bans.remove(targetId)
+                logModAction(interaction, "unban", interaction.member, targetUser)
                 await interaction.editReply(`Successfully removed the ban for **${targetUser.user.username}**`)
             }
         } catch(err){

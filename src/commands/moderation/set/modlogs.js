@@ -1,5 +1,6 @@
 const { modlogsModel } = require("../../../database/models");
 const { selectorChannelBuilder, buttonBuilder } = require("../../../utils/builders");
+const { logModAction } = require("../../../utils/modlogs");
 const { getChannelType, embed_builder, hiddenFlag, getOptionNum, getChannelTypeNum, getPermissionNum } = require("../../../utils/utils");
 
 module.exports = {
@@ -23,7 +24,7 @@ module.exports = {
 
         const initialEmbed = embed_builder("Modlogs Channel") 
 
-        async function setModlogChannel(channelId=null, modlogInt){
+        async function setModlogChannel(channelId=null, modlogInt, edit=false){
             if(initialResponse){
                 if(channelId){
                     initialEmbed.setDescription(`Curret Channel: <#${channelId}>`)
@@ -35,6 +36,9 @@ module.exports = {
             }
             if(!channelId){
                 if(modlogDoc){
+                    await logModAction(interaction, "specialOverride", interaction.member , null, null,
+                        [`Modlogs Change`, `**<@!${interaction.user.id}> has set the modlogs channel to \`none\`.**`], "modlogUpdate"
+                    )
                     await modlogDoc.deleteOne();
                     modlogDoc = null;
                     modlogInt.reply({ content:`Successfully removed the modlogs channel.` , flags:[hiddenFlag]})
@@ -47,10 +51,24 @@ module.exports = {
 
             if(!modlogDoc){
                 modlogDoc = await modlogsModel.create({ guildId, channelId })
+                return;
             }
+            if(modlogDoc?.channelId == channelId){
+                if(edit){
+                    await modlogInt.editReply({ content: `The modlog channel is already set to <#${channelId}>.`,flags:[hiddenFlag]})
+                    return 1;
+                } else {
+                    await modlogInt.reply({ content: `The modlog channel is already set to <#${channelId}>.`,flags:[hiddenFlag]})
+                }
+                return;
+            }
+
             modlogDoc.channelId = channelId;
             modlogDoc.timestamp = Date.now();
             await modlogDoc.save();
+            logModAction(interaction, "specialOverride", interaction.member , null, null,
+                [`Modlogs Change`, `**<@!${interaction.user.id}> has set the modlogs channel to <#${channelId}>.**`], "modlogUpdate"
+            )
         }
 
         async function hasCorrectPermissions(targetPermChannel, permInt, edit=false){
@@ -68,11 +86,11 @@ module.exports = {
                 return true;
             }
         }
-
+        let sameChannel;
         if(targetChannel){
 
             if(hasCorrectPermissions(targetChannel, interaction, true)){
-                await setModlogChannel(targetChannel.id)
+                sameChannel = await setModlogChannel(targetChannel.id, interaction, true);
             } else {
                 return;
             }
@@ -90,7 +108,11 @@ module.exports = {
             initialEmbed.setDescription(`No channel is set.`)
         }
         
-        initialResponse = await interaction.editReply({ embeds:[initialEmbed], components: initialRowComponents });
+        if(sameChannel === 1){
+            initialResponse = await interaction.channel.send({ embeds:[initialEmbed], components: initialRowComponents });
+        } else {
+            initialResponse = await interaction.editReply({ embeds:[initialEmbed], components: initialRowComponents });
+        }
         initialButton.startListener(initialResponse, null, 
             /** @param {import('discord.js').Interaction} btnInt */
             async (btnInt)=>{
