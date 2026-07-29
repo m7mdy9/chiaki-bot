@@ -1,7 +1,7 @@
 const fs = require("fs")
 const path = require("path")
 const { embed_builder, getPermissionNum } = require("../../utils/utils.js")
-const { selectorTextBuilder } = require("../../utils/builders.js")
+const { selectorTextBuilder, buttonBuilder } = require("../../utils/builders.js")
 const { ButtonStyle } = require("discord.js");
 
 let categoryNames, fullCommandInfo;
@@ -90,7 +90,7 @@ async function getCommands(type){
 
 module.exports ={
     name: "help",
-    description: "Shows information about commands relating to the bot.",
+    description: "Shows information about awesome commands you can use!",
     setup: getCommands,
     /** @param {import('discord.js').ChatInputCommandInteraction} interaction */
     async execute(interaction){
@@ -104,14 +104,19 @@ module.exports ={
             if(categ == "owner") continue;
             
             const formattedName = categ[0].toUpperCase()+categ.slice(1)
-            const embed = embed_builder(formattedName,null,chiakiColor)
+            let embedList = []
             const commands = fullCommandInfo.get(categ)
             
-            let EmbedDesc = "";
             if (!commands || commands.length === 0) continue;
             selector.addOption(formattedName, categ)
+            
+            let i = 0;
+            let currentDescription = "";
+            let embedFields = [];
             for (const command of commands){
+                i++
                 let description;
+
                 if (command?.options && command.options.length != 0){
                     let optionsNames = [];
                     command.options?.forEach(el => {
@@ -121,23 +126,87 @@ module.exports ={
                 } else {
                     description = command.description
                 }
-                // embed.addFields(
-                //     {name:`\`/${command.name}\``, value: description, inline: false}
-                // )
-                EmbedDesc +=`**\`/${command.name}\`**: ${description}\n`
+                embedFields.push(
+                    {name:`\`/${command.name}\``, value: description, inline: false}
+                )
+                if(i % 7 === 0 || i === commands.length){
+                    // currentDescription += `**\`/${command.name}\`**: ${description}`
+                    embedList.push(
+                        embed_builder(formattedName, currentDescription, chiakiColor).addFields(embedFields)
+                    );
+                    embedFields = []
+                    // currentDescription = "";
+                } else {
+                    // currentDescription +=`**\`/${command.name}\`**: ${description}\n\n`
+                }
             }
-            embed.setDescription(EmbedDesc)
-            Embeds.set(categ, embed)
+            Embeds.set(categ, embedList)
         }
         // console.log(Embeds)
-        const row = selector.getRow()
-        const response = await interaction.editReply({ embeds: [helpEmbed], components:[row],})
-        selector.startListener(response, null, async (i) =>{
-            if (i.user.id != interaction.user.id) {
-                return i.reply({ content: "You did not initiate the command.", ephemeral: true })
+        const selectorRow = selector.getRow()
+        
+        const pageButtons = new buttonBuilder(interaction)
+        .addButton("previousPage", "<", "Secondary", null, null, false)
+        .addButton("pageIndex", "1", "Primary", null, null, true)
+        .addButton("nextPage", ">", "Secondary", null, null, false);
+        
+        const prevPageBtnIndex = 0;
+        const pageIndexBtnIndex = 1;
+        const nextPageBtnIndex = 2;
+
+        const updateIndexAndGetRow = (pageNumber, embedsSize) =>{
+            pageButtons.buttons[pageIndexBtnIndex].setLabel(pageNumber.toString());
+            if(embedsSize == 1){
+                pageButtons.buttons.forEach(button => button.setDisabled(true));
+                return pageButtons.getRow();
             }
+            pageButtons.buttons.filter(button => button.data.custom_id != "pageIndex")
+                .forEach(button => button.setDisabled(false));
+            
+            if(embedsSize == pageNumber){
+                pageButtons.buttons[nextPageBtnIndex].setDisabled(true);
+            }
+            if(pageNumber == 1){
+                pageButtons.buttons[prevPageBtnIndex].setDisabled(true);
+            }
+
+            return pageButtons.getRow();
+        }
+
+        let currentIndex = 0;
+        let currentSelection;
+        const response = await interaction.editReply({ embeds: [helpEmbed], components:[selectorRow],})
+        selector.startListener(response, 120_000, async (i) =>{
             const selection = i.values[0]
-            i.update({ embeds: [Embeds.get(selection)], components:[row]})
+            const selectedEmbeds = Embeds.get(selection);
+            const firstEmbed = selectedEmbeds[0].setFooter({ text: `Page 1/${selectedEmbeds.length}` })
+            const buttonRow =  updateIndexAndGetRow(1, selectedEmbeds.length);
+
+            currentSelection = selectedEmbeds;
+            currentIndex = 0;
+
+            i.update({ embeds: [firstEmbed], components:[buttonRow, selectorRow]})
+        })
+
+        pageButtons.startListener(response, 120_000, async (btnInt)=>{
+            const customId = btnInt.customId;
+            let updatedButtonRow;
+
+            const embedsLength = currentSelection.length;
+            
+            if(customId == "nextPage"){
+                currentIndex++
+                updatedButtonRow = updateIndexAndGetRow(currentIndex + 1, embedsLength);
+            }
+            if(customId == "previousPage"){
+                currentIndex--
+                updatedButtonRow = updateIndexAndGetRow(currentIndex + 1, embedsLength);
+            }
+            
+            const currentPageNumber = currentIndex + 1
+            const selectedEmbed = currentSelection[currentIndex].setFooter({ text: `Page ${currentPageNumber}/${embedsLength}` })
+            
+            btnInt.update({ embeds: [selectedEmbed], components:[updatedButtonRow, selectorRow]})
         })
         // const ListFormatter = new Intl.ListFormat("en", {
         //     style: "long",
