@@ -2,7 +2,7 @@ const { getOptionNum, getPermissionNum, embed_builder } = require("../../../util
 
 module.exports = {
     name: "add",
-    description: "Adds a role to the selected member.",
+    description: "Adds specified role to the selected member.",
     options:[
         {
             name: "member",
@@ -36,23 +36,35 @@ module.exports = {
         const userHighestRolePos = interaction.member.roles.highest.rawPosition
         const targetHighestRolePos = targetUser.roles.highest.rawPosition
 
+        if(!targetUser){
+            return await editReply("This user is not in the server.")
+        }
         if(!botPerms){
             return await editReply("I do not possess permissions to add roles.\nGrant me the `Manage ROles` permission if you would like to run this command again.")
-        } else if(targetRolePos >= userHighestRolePos && !isOwner){
+        }
+        if(targetRolePos >= userHighestRolePos && !isOwner){
             return await editReply("You may not add a role higher than yours.")
-        } else if(targetHighestRolePos > userHighestRolePos && !isOwner && targetUser.id != interaction.member.id){
+        }
+        if(targetHighestRolePos > userHighestRolePos && !isOwner && targetUser.id != interaction.member.id){
             return await editReply("You may not add a role to someone with higher roles than you.")
-        } else if(targetRolePos >= botHighestRolePos){
+        }
+        if(targetRolePos >= botHighestRolePos){
             return await editReply("I can not add a role higher or equal to my highest role.")
-        } else if(targetRole.id == interaction.guild.id){
+        }
+        if(targetRole.id == interaction.guild.id){
             return await editReply("The everyone role can not be added as it belongs to anyone in the server.")
-        } else if(targetHasRole){
+        }
+        if(targetHasRole){
             return await editReply("This member already has that role.")
-        } else {
+        }
+        try {
             await targetUser.roles.add(targetRole.id)
             await interaction.editReply({embeds:[
                 embed_builder(null, `**${targetUser.user.username}** is now the Ultimate **${targetRole.name}**`)
             ]})
+        } catch(err){
+            await editReply("Could not add role to user.\n-#if you think there's an error please use \`/report bug\`")
+            console.error(`Couldn't add role in role/add.js: `,err)
         }
     }
 }
