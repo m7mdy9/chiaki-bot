@@ -5,7 +5,7 @@ const RESET = process.env.RESET
 const ownerId = process.env.ownerId
 module.exports = {
     name: "info",
-    description: "View information about Chiaki Bot, its developr and its Github Page.",
+    description: "View information about me, my developer and my Github Page!",
     /** @param {import('discord.js').ChatInputCommandInteraction} interaction */
     async execute(interaction) {
         const client = interaction.client

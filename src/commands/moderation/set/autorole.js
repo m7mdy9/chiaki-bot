@@ -5,7 +5,7 @@ const { logModAction } = require("../../../utils/modlogs.js");
 
 module.exports = {
     name: `autorole`,
-    description: `Check or set roles given to users on join.`,
+    description: `Set roles given to users automatically once they join the server.`,
     /** @param {import('discord.js').ChatInputCommandInteraction} interaction  */
     async execute(interaction){
         const guildId = interaction.guildId;
