@@ -14,6 +14,6 @@ const modlogSettingsSchema = new Schema({
     timestamp: { type: Date, default: Date.now},
 })
 
-const modlogSettingsModel = model('modlog_settings', modlogSettingsSchema)
+const modlogSettingsModel = model('modlog settings', modlogSettingsSchema)
 
 module.exports = { modlogSettingsModel }

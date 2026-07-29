@@ -16,10 +16,9 @@ const { botHasBasicPerms, embed_builder } = require('./utils');
  */
 async function checkModlogSettings(action, guildId){
     let settingsDoc = await modlogSettingsModel.findOne({ guildId });
-    console.log(settingsDoc);
+
     if(!settingsDoc){
         settingsDoc = await modlogSettingsModel.create({ guildId });
-        console.log(settingsDoc);
         return true;
     }
     let actionCategory;

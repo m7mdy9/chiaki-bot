@@ -1,0 +1,127 @@
+const { modlogSettingsModel, modlogsModel } = require("../../../database/models");
+const { selectorTextBuilder, buttonBuilder } = require("../../../utils/builders");
+const { embed_builder, hiddenFlag } = require("../../../utils/utils");
+
+const modlogFields =
+    [
+        "moderativeActions",
+        "channelActions",
+        "memberJoinLeave",
+        "memberRoleUpdate",
+        "messageDeletion",
+        "messageEdits",
+        "roleActions",
+        "modlogChanges",
+        "autoroleChanges",
+    ]
+const modlogObj = {
+    moderativeActions: "Moderative Actions",
+    channelActions: "Channels Audit",
+    memberJoinLeave: "Member Joins/Leaves",
+    memberRoleUpdate: "Member Role",
+    messageDeletion: "Deleted Messages",
+    messageEdits: "Message Edits",
+    roleActions: "Roles Audit",
+    modlogChanges: "Modlog Settings Changes",
+    autoroleChanges: "Autorole Settings Changes",
+}
+
+const isOnEmoji = (boolean) =>{
+    return boolean ? "<:check:1532093323874009198>" : "<:cross:1532093408611664105>"
+}
+
+module.exports = {
+    name: "settings",
+    description: "Adjust logging settings. To set a log channel, run /set modlogs",
+    /** @param {import("discord.js").ChatInputCommandInteraction} interaction */
+    async execute(interaction){
+        const guildId = interaction.guild.id;
+
+        const modLogChannel = (await modlogsModel.findOne({ guildId }))?.channelId || null
+        let settingsDoc = await modlogSettingsModel.findOne({ guildId })
+
+        if(!settingsDoc){
+            settingsDoc = await modlogSettingsModel.create({ guildId })
+        }
+
+        /**
+         * @param { 'moderativeActions' | 'channelActions' | 'memberJoinLeave' | 
+         * 'memberRoleUpdate' | 'messageDeletion' | 'messageEdits' |
+         * 'roleActions' | 'modlogChanges' | 'autoroleChanges' } setting 
+         * @param {boolean} boolean 
+         */
+        const changeSettings = async (setting, boolean) => {
+            settingsDoc[setting] = boolean;
+            settingsDoc.timestamp = Date.now();
+
+            await settingsDoc.save();
+        }
+
+        const resetSettings = async () => {
+            modlogFields.forEach(field => {
+                settingsDoc[field] = true;
+            })
+            await settingsDoc.save();
+        }
+
+        const returnFormattedSettings = () =>{
+            let resultString =
+            `**Current Logging Channel: ${modLogChannel ? `<#${modLogChannel}>` : `\`none\``}**\n\n`
+            
+            for(const modlogField in modlogObj){
+                resultString += `${isOnEmoji(settingsDoc[modlogField])} ${modlogObj[modlogField]}\n`
+            }
+
+            return resultString
+        }
+
+        const settingsEmbed = embed_builder("Mod Log Settings", returnFormattedSettings())
+        .setFooter({ text: "Last Edited" }).setTimestamp(settingsDoc.timestamp);
+
+        
+        const settingSelector = new selectorTextBuilder(interaction);
+        settingSelector.createSelector("settingSelector", "Toggle Setting", 1,1)
+        for (const modlogField in modlogObj){
+            settingSelector.addOption(modlogObj[modlogField], modlogField, null, null, false)
+        }
+        
+        const resetButton = new buttonBuilder(interaction)
+        .addButton('resetSettings', "Reset to Default", "Danger", null, "⏮️")
+        
+        const buttonRow = resetButton.getRow();
+        const selectorRow = settingSelector.getRow(); 
+        
+        const initialResponse = await interaction.editReply({ embeds:[settingsEmbed], components: [selectorRow, buttonRow]})
+        
+        const updateEmbed = async ()=>{
+            settingsEmbed.setDescription(returnFormattedSettings())
+            .setTimestamp(Date.now());
+            
+            await initialResponse.edit({ embeds:[settingsEmbed], components: [selectorRow, buttonRow] })
+        }
+
+        resetButton.startListener(initialResponse, 300_000, 
+            /** @param {import('discord.js').Interaction} btnInt */
+            async (btnInt)=>{
+                await resetSettings();
+                await updateEmbed();
+                await btnInt.reply({ content:"The settings have been reset to defaults.", flags:[hiddenFlag]});
+                return;
+        })
+
+        settingSelector.startListener(initialResponse, 300_000, 
+            /** @param {import('discord.js').Interaction} selectorInt */
+            async (selectorInt)=>{
+                const selectedValue = selectorInt.values[0];
+                const targetBoolean = !settingsDoc[selectedValue]
+
+                const formattedValue = modlogObj[selectedValue]
+                const formattedBoolean = targetBoolean ? "On" : "Off"
+
+                await changeSettings(selectedValue, targetBoolean);
+                await updateEmbed();
+                await selectorInt.reply({ content:`Successfully set **${formattedValue}** to **${formattedBoolean}**`, flags:[hiddenFlag]});
+                return;
+        })
+    }
+}
