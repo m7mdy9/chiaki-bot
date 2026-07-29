@@ -18,7 +18,7 @@ There are two branches currently within the Bot's Repository on Github: `main` a
 Main is the main Production Repo, while testing is the Repo where testing will occur.
 
 ## Suggestions
-Feel free to add suggestions either by issues or doing a pull request for todo.md, I'm open to all appropriate suggestions that are reasonable for a discord bot or a danganronpa themed suggestion. (For your information, I'm yet to finish V3 so don't spoil me please!)
+Feel free to add suggestions either by issues or doing a pull request for todo.md, I'm open to all appropriate suggestions that are reasonable for a discord bot or a danganronpa themed suggestion.
 
 ## Contribution
 If you feel like contributing, please do! And if you do, I will forever be grateful to you!
