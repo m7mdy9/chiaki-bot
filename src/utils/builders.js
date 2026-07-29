@@ -81,7 +81,7 @@ class buttonBuilder{
     /**
      * @param {'Primary' | 'Secondary' | 'Success' | 'Danger' | 'Link'} style - cool button style from discord!!
     */
-    addButton(customId=null, label=null, style='Primary', url=null, emoji=null){
+    addButton(customId=null, label=null, style='Primary', url=null, emoji=null, disable=false){
         if(!Object.keys(ButtonStyle).includes(style)){
             style = ButtonStyle.Primary
         } else {
@@ -104,6 +104,9 @@ class buttonBuilder{
         }
         if(url){
             button.setURL(url)
+        }
+        if(disable){
+            button.setDisabled(true);
         }
         
         this.buttons.push(button)
