@@ -3,6 +3,7 @@ const { resolve } = require('path')
 const Piscina = require("piscina")
 const { dark_red, RED, YELLOW, RESET, DARK_GREY } = process.env
 const chrono = require("chrono-node")
+const { checkmarkEmoji, crossEmoji } = require("./config.json")
 
 /**
  * @param {'SUB_COMMAND' | 'SUB_COMMAND_GROUP' | 'STRING' | 
@@ -352,4 +353,6 @@ module.exports = {
     getChannelTypeNum,
     botHasBasicPerms,
     channelTypeNumToName,
+    checkmarkEmoji,
+    crossEmoji
 }

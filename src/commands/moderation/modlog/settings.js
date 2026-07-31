@@ -1,6 +1,6 @@
 const { modlogSettingsModel, modlogsModel } = require("../../../database/models");
 const { selectorTextBuilder, buttonBuilder } = require("../../../utils/builders");
-const { embed_builder, hiddenFlag } = require("../../../utils/utils");
+const { embed_builder, hiddenFlag, checkmarkEmoji, crossEmoji } = require("../../../utils/utils");
 
 const modlogFields =
     [
@@ -27,7 +27,7 @@ const modlogObj = {
 }
 
 const isOnEmoji = (boolean) =>{
-    return boolean ? "<:check:1532093323874009198>" : "<:cross:1532093408611664105>"
+    return boolean ? `${checkmarkEmoji}` : `${crossEmoji}`
 }
 
 module.exports = {
