@@ -28,7 +28,6 @@ const censorWord = (word)=>{
 
 const isSlurPresent = (inputText)=>{
     const matches = matcher.getAllMatches(inputText);
-    console.log(matches)
     if(matches.length < 1){
         return {isSlur: false, censoredMatch:null};
     }

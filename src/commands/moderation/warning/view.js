@@ -42,7 +42,7 @@ module.exports = {
                 value:`Warned by: **<@!${modId}>**\nReason: ${reason}\nTimestamp:<t:${Math.floor(Date.parse(timestamp)/1000)}>`,
                 inline:false})
         })
-        console.log(embedsFields)
+        // console.log(embedsFields)
         // for (const warning of memberWarnings){
         //     embeds.push({modId, reason, caseNum, timestamp})
         //     console.log(embeds)
@@ -50,10 +50,10 @@ module.exports = {
         const baseEmbed = embed_builder(`${targetUsername}'s warnings`, null).setThumbnail(targetMember.user.displayAvatarURL({size: 256}))
         let currentEmbed = EmbedBuilder.from(baseEmbed)
         for (let i = 0; i < embedsFields.length; i++){
-            console.log(i)
+            // console.log(i)
             currentEmbed.addFields(embedsFields[i])
             if( ( (i+1) % 5 == 0 && i != 0) || (i+1) === embedsFields.length){
-                console.log("In IF:",i)
+                // console.log("In IF:",i)
                 embeds.push(currentEmbed) // .setColor("Aqua")
                 currentEmbed = EmbedBuilder.from(baseEmbed)
             }
@@ -78,7 +78,6 @@ module.exports = {
                 const customId = el.data.custom_id;
                 if(!ButtonDict[customId]){
                     el.setDisabled(true)
-                    console.log(customId)
                 } else {
                     if(index == 0 && (customId == "backest" || customId == "back")){
                         el.setDisabled(true)

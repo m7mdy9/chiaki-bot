@@ -176,7 +176,6 @@ async function fullProcess({avatarURL, username}){
     encoder.setDelay(100)
     encoder.setQuality(10)
     
-    console.log(avatarURL)
     const avatarImage = await loadImage(avatarURL)
     
     const canvas = createCanvas(width, height)

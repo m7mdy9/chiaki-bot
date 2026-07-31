@@ -16,6 +16,7 @@ module.exports = {
             required: false,
         }
     ],
+    cooldown: 3,
     /**
      * @param {import('discord.js').ChatInputCommandInteraction} interaction 
      */

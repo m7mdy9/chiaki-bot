@@ -37,7 +37,6 @@ module.exports = {
                 return interaction.reply("This report has been removed!!")
             }
             DMMessage = interaction.message;
-            console.log(customId)
         }
         const messageModal = new modalBuilder(interaction, 'reportUserReplyModal', "Your Reply")
         const replyUserReportInput = messageModal.createTextInput("replyUserReportInput", "Enter your messages to us!", "Paragraph", "Message goes here!", true, null, [5, 1000]);

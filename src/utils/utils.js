@@ -223,22 +223,17 @@ const gifWorker = new Piscina({
  * @returns {[import('discord.js').AttachmentBuilder, String]} Returns discordjs AttachmentBuilder of newly made gif and the time taken in the order as follows [gifAttachment, time]
  */
 async function makeExecutionGif(avatarURL, username){
-    // measuring how long it has been since the process started
     const startTime = performance.now()
 
-    // running our gifWorker.js as a threaded gifWorker to avoid blocking and performance drops and it returns a Uint8Array Buffer
     const gifBuffer = await gifWorker.run({avatarURL, username})
 
-    // transfers the gifBuffer into the Buffer class so discord actually doesnt break the gif!
     const formattedGifBuffer = Buffer.from(gifBuffer)
 
-    // creating the gif attachment that will be sent in discord
     const gifAttachment = new AttachmentBuilder(formattedGifBuffer, { name: 'execute-avatar.gif'})
     
-    // measuring how long it took for the process in seconds and allowing 2 decimal points 
     const timeTakenToExecute = ((performance.now() - startTime)/1000).toFixed(2)
 
-    console.log(DARK_GREY+`Time taken to finish execution gif: ${timeTakenToExecute}s`+RESET)
+    // console.log(DARK_GREY+`Time taken to finish execution gif: ${timeTakenToExecute}s`+RESET)
 
     return [gifAttachment, timeTakenToExecute]
 }

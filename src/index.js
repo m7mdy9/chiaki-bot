@@ -28,6 +28,7 @@ const client = new Client({
     intents: [GatewayIntentBits.GuildMembers,GatewayIntentBits.Guilds, GatewayIntentBits.GuildMessages, GatewayIntentBits.MessageContent, GatewayIntentBits.DirectMessages],
     partials: [Partials.Channel, Partials.Message, Partials.GuildMember]
 });
+client.cooldowns = new Collection();
 client.commands = new Collection();
 client.clientId = clientId
 client.botToken = botToken

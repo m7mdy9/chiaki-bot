@@ -14,7 +14,6 @@ async function getCommands(type){
         })
         categoryNames = categoryPaths.flatMap(el => path.basename(el))
         fullCommandInfo = new Map();
-        let ephemeralCommands = [];
         for (const category of categoryPaths){
             // console.log(category)
             const categoryName = path.basename(category)
@@ -41,9 +40,6 @@ async function getCommands(type){
                         name: data.name || file.name.replace(".js", ""),
                         description: data.description || "No description provided.",
                         options: formattedOptions || null,
-                    }
-                    if(data.hidden){
-                        ephemeralCommands.push(commandInfo.name)
                     }
                     commands.push(commandInfo)
                 }
@@ -74,9 +70,6 @@ async function getCommands(type){
                             description: data.description || "No description provided.",
                             options: formattedOptions || null,
                         }
-                        if(data.hidden){
-                            ephemeralCommands.push(commandInfo.name)
-                        }
                         // console.log(commandInfo)
                         commands.push(commandInfo)
                     }
@@ -85,7 +78,7 @@ async function getCommands(type){
             fullCommandInfo.set(categoryName, commands)
             // console.log(fullCommandInfo)
         }
-        return [fullCommandInfo, ephemeralCommands];
+        return fullCommandInfo;
 }
 
 module.exports ={

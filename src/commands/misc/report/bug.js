@@ -24,7 +24,6 @@ module.exports = {
 
         const blacklistedDoc = await reportBugBLModel.findOne({ userId, }).sort({ _id: -1 })
         if(blacklistedDoc && blacklistedDoc?.expiryDate){
-            console.log(blacklistedDoc)
             const expiryDateMS = blacklistedDoc.expiryDate.getTime()
             const expiryDateTimestamp = Math.floor(expiryDateMS / 1000)
             if(expiryDateMS > Date.parse(new Date("2098"))){

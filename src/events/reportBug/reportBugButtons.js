@@ -136,7 +136,6 @@ module.exports = {
 
                 const blacklistedDoc = await reportBugBLModel.findOne({ userId, })?.sort({ _id: -1 })
                 const blacklistCaseNum = blacklistedDoc?.caseNum;
-                console.log(blacklistedDoc)
                 if(!blacklistedDoc){
                     await reportBugBLModel.create({ userId, caseNum: 1, blacklistedBy: interaction.user.id,reason: textGiven})
                     

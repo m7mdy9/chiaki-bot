@@ -25,9 +25,7 @@ module.exports = {
                 isGif = true;
         }
         if(isGif == "random"){
-            console.log("hi?")
             Math.random() >= 0.7 ? isGif = true : isGif = false
-            console.log(isGif)
         }
         let catAPI = `https://api.thecatapi.com/v1/images/search?size=med`
         catAPI = isGif ? catAPI+"&mime_types=gif" : catAPI
@@ -35,7 +33,6 @@ module.exports = {
         const altImage = "https://static.wikia.nocookie.net/silly-cat/images/5/59/Milly.png/revision/latest?cb=20231001194804"
         
         const response = await (await fetch(catAPI))?.json()
-        console.log(catAPI)
         const catFact = await (await fetch(catFactAPI))?.json()
         
         const image = response[0]?.url || altImage 

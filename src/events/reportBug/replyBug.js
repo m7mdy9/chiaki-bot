@@ -36,7 +36,6 @@ module.exports = {
                 return interaction.reply("This report bug has been removed!\nIf the bug persists please create another report!")
             }
             DMMessage = interaction.message;
-            console.log(customId)
         }
         const messageModal = new modalBuilder(interaction, 'bugReplyModal', "Your Reply")
         const bugReportDMInput = messageModal.createTextInput("bugReportDMInput", "Enter your messages to us!", "Paragraph", "Message goes here!", true, null, [5, 1000]);

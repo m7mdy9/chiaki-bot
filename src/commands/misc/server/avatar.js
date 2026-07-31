@@ -4,6 +4,7 @@ const { Vibrant } = require('node-vibrant');
 module.exports = {
     name:"avatar",
     description:"Preview the icon of the current server.",
+    isServerOnly: true,
     /**
      * @param {import('discord.js').ChatInputCommandInteraction} interaction 
      */

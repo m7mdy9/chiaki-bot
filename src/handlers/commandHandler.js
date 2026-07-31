@@ -62,7 +62,7 @@ async function loadCommands(client) {
             continue;
         }
 
-        // yay bot has command now!
+        // we add all command info to the commands collection and we push the command data to the commands array
         client.commands.set(command.data.name, command);
         commands.push(command.data);
     }

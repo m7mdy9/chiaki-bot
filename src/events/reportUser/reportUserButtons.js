@@ -91,7 +91,6 @@ module.exports = {
 
                 const blacklistedDoc = await reportCardBLModel.findOne({ userId: abuserId })?.sort({ _id: -1 })
                 const blacklistCaseNum = blacklistedDoc?.caseNum;
-                console.log(blacklistedDoc)
                 if(!blacklistedDoc){
                     await reportCardBLModel.create({ userId: abuserId, caseNum: 1, blacklistedBy: interaction.user.id,reason: textGiven})
                     
@@ -221,7 +220,6 @@ module.exports = {
                 const userId = reportDoc.reporterId;
 
                 const blacklistedDoc = await reportUserBLModel.findOne({ userId, })?.sort({ _id: -1 })
-                console.log(blacklistedDoc)
                 if(!blacklistedDoc){
                     await reportUserBLModel.create({ userId, caseNum: 1, blacklistedBy: interaction.user.id,reason: textGiven})
                     

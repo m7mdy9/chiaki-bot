@@ -18,6 +18,7 @@ module.exports = {
             required: false
         }
     ],
+    cooldown: 1,
     /** @param {import('discord.js').ChatInputCommandInteraction} interaction */
     async execute(interaction) {
 

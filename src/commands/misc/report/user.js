@@ -53,7 +53,6 @@ module.exports = {
             textModal.addComponents(reportUserInput)
 
             textModal.showModal(null, async (allFields, modalInteraction) => {
-                console.log(modalInteraction.customId)
                 const reportInput = allFields.reportUserInput;
 
                 const lastDocCaseNum = (await reportUserModel.findOne().sort({ caseNum: -1 }))?.caseNum

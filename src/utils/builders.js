@@ -408,10 +408,7 @@ class modalBuilder{
      */
     async showModal(time=900_000,func){
         await this.interaction.showModal(this.modal)
-        const array = this.textInputList.flatMap(txt =>
-            txt.data.custom_id
-        )
-        console.log(array)
+
         const filter = (i) => this.modal.data.custom_id === i.customId && i.user.id == this.interaction.user.id
         try{
             const modalInteraction = await this.interaction.awaitModalSubmit({

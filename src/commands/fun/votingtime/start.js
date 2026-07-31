@@ -19,6 +19,7 @@ module.exports = {
             required:true,
         }
     ],
+    cooldown: 3,
     /** @param {import('discord.js').ChatInputCommandInteraction} interaction */
     async execute(interaction){
         const author = interaction.user
