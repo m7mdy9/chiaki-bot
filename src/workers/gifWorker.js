@@ -4,6 +4,10 @@ const { createCanvas, GlobalFonts, loadImage } = require("@napi-rs/canvas")
 const gifFrames = require('gif-frames');
 const GIFEncoder = require("gif-encoder-2/src/GIFEncoder");
 
+const mediaFolder = `media/executeGif`
+const pixelDanganronpaFontPath = path.join(process.cwd(), `${mediaFolder}/pixel-danganronpa.otf`)
+const executionGifPath = path.join(process.cwd(), `${mediaFolder}/execution_dr1_optimized.gif`)
+
 /** 
  * @param {Number} frameIndex - The frame Index/Number
  * @returns \{xCord, yCord} depending on the frame index
@@ -43,8 +47,7 @@ const getFrameInfo =(frameIndex)=>{
 }
 
 // Loading the Danganronpa Font that will be used in buildEditedImage()
-const executionFontPath = path.join(process.cwd(), "media/pixel-danganronpa.otf")
-GlobalFonts.registerFromPath(executionFontPath, "dang")
+GlobalFonts.registerFromPath(pixelDanganronpaFontPath, "pixelDangan")
 
 const totalFrames = 51
 const width = 498;
@@ -74,7 +77,7 @@ async function dissectGif(){
     if(dissectedGifFrames) return dissectedGifFrames;
     else {
         const extractedFrames = await gifFrames({
-            url: path.join(process.cwd(), 'media/execution_dr1_optimized.gif'),
+            url: executionGifPath,
             frames: 'all',
             outputType: 'png',
             cumulative: true,
@@ -122,7 +125,7 @@ async function buildEditedImage(ctx, backgroundImage, avatarImage, frameIndex, u
     ctx.drawImage(backgroundImage, 0,0, width,height)
     ctx.drawImage(avatarImage, xCord, yCord, size, size)
 
-    ctx.font = "18px dang"
+    ctx.font = "18px pixelDangan"
     ctx.fillStyle = "#fafbf9"
     ctx.textAlign = 'right'
     ctx.textBaseline = 'alphabetic'

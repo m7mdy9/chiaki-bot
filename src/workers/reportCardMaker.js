@@ -1,7 +1,7 @@
 const { promises:fs, createWriteStream } = require("node:fs")
 const path = require("node:path")
 const { createCanvas, GlobalFonts, loadImage } = require("@napi-rs/canvas")
-const mediaDir = path.join(process.cwd(), '/media')
+const mediaDir = path.join(process.cwd(), '/media/reportCard')
 
 const width = 480;
 const height = 272;
@@ -10,7 +10,7 @@ const reportCardPath = path.join(mediaDir, 'reportCard.png')
 const textFontPath = path.join(mediaDir, 'DaysOne-Regular.ttf')
 const usernameFontPath = path.join(mediaDir, "SourceSans3-SemiBold.ttf")
 GlobalFonts.registerFromPath(textFontPath, "DaysOne")
-GlobalFonts.registerFromPath(usernameFontPath, "SS3")
+GlobalFonts.registerFromPath(usernameFontPath, "SS3SemiBold")
 let backgroundImage = null
 
 const loadBackgroundImage = async (imagePath)=>{
@@ -45,7 +45,7 @@ async function createReportCard(avatarPath, username, profile){
         ctx.textBaseline = 'alphabetic'
     }
     function otherProps(){
-        ctx.font = "13px SS3"
+        ctx.font = "13px SS3SemiBold"
         ctx.fillStyle = "#fafbf9"
         ctx.textAlign = 'left'
         ctx.textBaseline = 'alphabetic'
