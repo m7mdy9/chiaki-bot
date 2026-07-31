@@ -62,7 +62,7 @@ function defineVotingTimeJob(client){
                         inline: false,
                     }
                 }
-                if(el.value == "\u2008" || !el.value || !el.value.startsWith("**")){
+                if(el.value == "\u200b" || !el.value || !el.value.startsWith("**")){
                     return el
                 }
                 return {
@@ -78,7 +78,7 @@ function defineVotingTimeJob(client){
 
 
             if(votesById.length < 1){
-                const noVotesEmbed = embed_builder("VOTING RESULTS",null,dark_red).addFields({name:"NO VOTES", value:"\u2008"})
+                const noVotesEmbed = embed_builder("VOTING RESULTS",null,dark_red).addFields({name:"NO VOTES", value:"\u200b"})
                 lastEmbeds.push(noVotesEmbed)
             } else {
                 let votingResults = {}
@@ -90,7 +90,7 @@ function defineVotingTimeJob(client){
                 })
                 let i = -1;
                 const votesFields = pastFields.map(el =>{
-                    if(el.value == "\u2008" || !el.value || !el.value.startsWith("**")){
+                    if(el.value == "\u200b" || !el.value || !el.value.startsWith("**")){
                     return el
                     }
                     i++

@@ -54,9 +54,9 @@ module.exports = {
                     text: 'Will you make the right choice, or the dreadfully wrong one?'
                 })
             selectedUsers.forEach(user=>{
-                votingEmbed.addFields({name:`\u2008`,value:`**≫ <@!${user}>**`, inline:true})
+                votingEmbed.addFields({name:`\u200b`,value:`**≫ <@!${user}>**`, inline:true})
             })
-            const emptyField = {name:`\u2008`, value:`\u2008`, inline:true}
+            const emptyField = {name:`\u200b`, value:`\u200b`, inline:true}
             let embedFieldsLength = votingEmbed.data.fields.length
             if(embedFieldsLength > 3 && (embedFieldsLength % 3) != 0){
                 while((embedFieldsLength % 3) != 0){
@@ -66,7 +66,7 @@ module.exports = {
             }
             const endTime = Date.now() + timeInMs
             const endTimeDiscordTimestamp = Math.floor(endTime/1000)
-            votingEmbed.addFields({name:'\u2008', value:`Voting ends <t:${endTimeDiscordTimestamp}:R>`})
+            votingEmbed.addFields({name:'\u200b', value:`Voting ends <t:${endTimeDiscordTimestamp}:R>`})
             
             let usersNames = [];
 
