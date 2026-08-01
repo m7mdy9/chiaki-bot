@@ -14,13 +14,23 @@ const { botHasBasicPerms, embed_builder } = require('./utils');
  *   'autoroleChanges' | 'autoroleUpdate' | 'autoroleEdit'} action
  * @param {String} guildId 
  */
-async function checkModlogSettings(action, guildId){
+async function checkModlogSettings(action, guildId, channelId=null, parentId=null){
     let settingsDoc = await modlogSettingsModel.findOne({ guildId });
 
     if(!settingsDoc){
         settingsDoc = await modlogSettingsModel.create({ guildId });
         return true;
     }
+
+    if(channelId && settingsDoc.ignoredChannelIds){
+        const channelIdMatches = settingsDoc.ignoredChannelIds?.includes(channelId);
+        const parentIdMatches = settingsDoc.ignoredChannelIds?.includes(parentId);
+        
+        if(channelIdMatches || parentIdMatches){
+            return false;
+        }
+    }
+    
     let actionCategory;
 
     const actions = {
