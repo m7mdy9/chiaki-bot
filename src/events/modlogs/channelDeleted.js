@@ -19,7 +19,7 @@ module.exports = {
             if(!modlogChannel) return;
             if(!botHasBasicPerms(modlogChannel, channel)) return;
 
-            const isTurnedOn = await checkModlogSettings("channelAction", guildId)
+            const isTurnedOn = await checkModlogSettings("channelAction", guildId, channel.id, channel.parentId)
             if(!isTurnedOn) return;
 
             const channelTypeName = channelTypeNumToName(channel.type)

@@ -25,7 +25,7 @@ module.exports = {
             if(!modlogChannel) return;
             if(!botHasBasicPerms(modlogChannel, guild)) return;
 
-            const isTurnedOn = await checkModlogSettings("messageUpdate", guildId)
+            const isTurnedOn = await checkModlogSettings("messageUpdate", guildId, newMessage.channelId, newMessage.channel.parentId)
             if(!isTurnedOn) return;
 
             const oldContent = oldMessage.content

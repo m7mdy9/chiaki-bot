@@ -21,7 +21,7 @@ module.exports = {
             if(!modlogChannel) return;
             if(!botHasBasicPerms(modlogChannel, message)) return;
 
-            const isTurnedOn = await checkModlogSettings("messageDeletion", guildId)
+            const isTurnedOn = await checkModlogSettings("messageDeletion", guildId, message.channelId, message.channel.parentId)
             if(!isTurnedOn) return;
 
             const messageContent = message?.content || "Couldn't fetch message content";

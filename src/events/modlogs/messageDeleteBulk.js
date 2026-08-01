@@ -20,7 +20,7 @@ module.exports = {
             if(!modlogChannel) return;
             if(!botHasBasicPerms(modlogChannel, channel)) return;
 
-            const isTurnedOn = await checkModlogSettings("messageDeletion", guildId)
+            const isTurnedOn = await checkModlogSettings("messageDeletion", guildId, channel.id, channel.parentId)
             if(!isTurnedOn) return;
 
             const embed = embed_builder(`Bulk Message Deletion`, `**${messages.size} messages deleted in <#${channel.id}>**`, process.env.red)

@@ -1,5 +1,5 @@
 const { modlogSettingsModel, modlogsModel } = require("../../../database/models");
-const { selectorTextBuilder, buttonBuilder } = require("../../../utils/builders");
+const { selectorTextBuilder, buttonBuilder, selectorChannelBuilder } = require("../../../utils/builders");
 const { embed_builder, hiddenFlag, checkmarkEmoji, crossEmoji } = require("../../../utils/utils");
 
 const modlogFields =
@@ -47,11 +47,10 @@ module.exports = {
         /**
          * @param { 'moderativeActions' | 'channelActions' | 'memberJoinLeave' | 
          * 'memberRoleUpdate' | 'messageDeletion' | 'messageEdits' |
-         * 'roleActions' | 'modlogChanges' | 'autoroleChanges' } setting 
-         * @param {boolean} boolean 
+         * 'roleActions' | 'modlogChanges' | 'autoroleChanges' | 'ignoredChannelIds' } setting 
          */
-        const changeSettings = async (setting, boolean) => {
-            settingsDoc[setting] = boolean;
+        const changeSettings = async (setting, option) => {
+            settingsDoc[setting] = option;
             settingsDoc.timestamp = Date.now();
 
             await settingsDoc.save();
@@ -61,6 +60,8 @@ module.exports = {
             modlogFields.forEach(field => {
                 settingsDoc[field] = true;
             })
+            settingsDoc.ignoredChannelIds = [];
+
             await settingsDoc.save();
         }
 
@@ -71,6 +72,13 @@ module.exports = {
             for(const modlogField in modlogObj){
                 resultString += `${isOnEmoji(settingsDoc[modlogField])} ${modlogObj[modlogField]}\n`
             }
+
+            if(settingsDoc.ignoredChannelIds?.length > 0){
+                resultString += `\n**Ignored Channels/Categories:** ${settingsDoc.ignoredChannelIds.map(el => `**<#${el}>**`).join("")}`
+            } else {
+                resultString += `\n**Ignored Channels/Categories:** None.`                
+            }
+            resultString+= `\n*__(Doesn't apply to commands)__*`
 
             return resultString
         }
@@ -86,18 +94,31 @@ module.exports = {
         }
         
         const resetButton = new buttonBuilder(interaction)
-        .addButton('resetSettings', "Reset to Default", "Danger", null, "⏮️")
+        .addButton('resetSettings', "Reset to Defaults", "Danger", null, "⏮️")
         
         const buttonRow = resetButton.getRow();
         const selectorRow = settingSelector.getRow(); 
         
-        const initialResponse = await interaction.editReply({ embeds:[settingsEmbed], components: [selectorRow, buttonRow]})
+        const channelSelector = new selectorChannelBuilder(interaction)
+        .createChannelSelect("ignoreChannelSelect", "Select Ignored Channels/Categories", [0, 25], settingsDoc.ignoredChannelIds || [])
+
+        const getChannelRow = ()=>{
+            if(settingsDoc.ignoredChannelIds?.length > 0){
+                channelSelector.selector.setDefaultChannels(...settingsDoc.ignoredChannelIds)
+            } else {
+                channelSelector.selector.setDefaultChannels([])
+            }
+
+            return channelSelector.getRow()
+        }
+
+        const initialResponse = await interaction.editReply({ embeds:[settingsEmbed], components: [selectorRow, getChannelRow(), buttonRow]})
         
         const updateEmbed = async ()=>{
             settingsEmbed.setDescription(returnFormattedSettings())
             .setTimestamp(Date.now());
             
-            await initialResponse.edit({ embeds:[settingsEmbed], components: [selectorRow, buttonRow] })
+            await initialResponse.edit({ embeds:[settingsEmbed], components: [selectorRow, getChannelRow(), buttonRow] })
         }
 
         resetButton.startListener(initialResponse, 300_000, 
@@ -121,6 +142,18 @@ module.exports = {
                 await changeSettings(selectedValue, targetBoolean);
                 await updateEmbed();
                 await selectorInt.reply({ content:`Successfully set **${formattedValue}** to **${formattedBoolean}**`, flags:[hiddenFlag]});
+                return;
+        })
+
+        channelSelector.startListener(initialResponse, 300_000, 
+            /** @param {import('discord.js').Interaction} channelInt */            
+            async (channelInt)=>{
+                const selectedValues = channelInt.values;
+                const formattedValue = channelInt.values?.length > 0 ? selectedValues.map(el => `**<#${el}>**`).join("") : "None";
+
+                await changeSettings("ignoredChannelIds", selectedValues);
+                await updateEmbed();
+                await channelInt.reply({ content:`Successfully set **Ignored Channels/Categories** to: ${formattedValue}`, flags:[hiddenFlag]});
                 return;
         })
     }
