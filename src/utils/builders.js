@@ -313,7 +313,7 @@ class selectorChannelBuilder{
         this.interaction = interaction
     }
 
-    createRoleSelect(customId, placeHolder=null, [min,max]=[undefined, undefined], defaultSelect=[], channelTypes=[]){
+    createChannelSelect(customId, placeHolder=null, [min,max]=[undefined, undefined], defaultSelect=[], channelTypes=[]){
 
         this.customId = customId
         

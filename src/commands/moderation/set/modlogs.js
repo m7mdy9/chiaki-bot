@@ -125,7 +125,7 @@ module.exports = {
                     const channelSelector = new selectorChannelBuilder(btnInt);
                     const alreadySelectedChannel = modlogDoc?.channelId ? [modlogDoc.channelId] : [];
                     
-                    channelSelector.createRoleSelect('modlogSelect', "Select a channel.", [1, 1], alreadySelectedChannel, [getChannelType("GuildText")]);
+                    channelSelector.createChannelSelect('modlogSelect', "Select a channel.", [1, 1], alreadySelectedChannel, [getChannelType("GuildText")]);
                     const channelSelectorRow = channelSelector.getRow();
                     const channelSelectorEmbed = embed_builder("Select a Channel", "Select a channel where modlogs will be sent.");
 
