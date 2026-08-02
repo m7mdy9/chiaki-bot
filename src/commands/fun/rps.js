@@ -26,7 +26,7 @@ module.exports = {
             isMe = true;
         }
         if(isBot && !isMe){
-            return interaction.editReply("You can not choose to play against a bot other than me.")
+            return interaction.editReply("You can not choose to play against a bot other than me!")
         }
         if(isMe){
             oppChoice = rpsList[Math.floor(Math.random()*rpsList.length)]

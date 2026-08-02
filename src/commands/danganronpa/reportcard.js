@@ -1,6 +1,6 @@
 const { embed_builder, getOptionNum, createAttachment, hiddenFlag, formatDate } = require("../../utils/utils.js")
 const { buttonBuilder, modalBuilder, selectorTextBuilder } = require("../../utils/builders.js")
-const { reportCardModel, reportCardBLModel } = require("../../database/models")
+const { reportCardModel, reportCardBLModel } = require("../../database/models/index.js")
 const { createReportCard } = require("../../workers/reportCardMaker.js")
 const { isSlurPresent } = require("../../utils/slurfilter.js")
 
