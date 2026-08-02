@@ -3,7 +3,11 @@ const { resolve } = require('path')
 const Piscina = require("piscina")
 const { dark_red, RED, YELLOW, RESET, DARK_GREY } = process.env
 const chrono = require("chrono-node")
-const { checkmarkEmoji, crossEmoji } = require("./config.json")
+const {
+    checkmarkEmoji, crossEmoji, kofiLink,
+    supportServerInvite, pinkHex, redHex,
+    greenHex, dark_redHex,
+} = require("./config.json")
 
 /**
  * @param {'SUB_COMMAND' | 'SUB_COMMAND_GROUP' | 'STRING' | 
@@ -111,22 +115,6 @@ function embed_builder(title=null, description=null, color ='#ffdcfc'){
     } catch (error) {
         return console.error(error)
     }
-}
-
-function embed_info(ownerId, client, result, time){
-    try{
-    const embed1 = embed_builder("Information", 
-        `The bot was developed and made by <@!${ownerId}>
-        \nCurrent Ping: **${client.ws.ping}ms**
-        \nUptime: **${result} ${time}**
-        \n**[Check Chiaki Bot Github Page!](https://github.com/m7mdy9/chiaki-bot)**
-        \n**[Bot Invite Link](${process.env.INVITE})**`,
-        "#ffdcfc"
-    )
-    return embed1
-    } catch(error){
-        console.error(error)
-    }    
 }
 
 const rng_activity = (dict) => {
@@ -336,7 +324,6 @@ function channelTypeNumToName(num){
 module.exports = {
     getOptionNum,
     getPermissionNum,
-    embed_info,
     embed_builder,
     hiddenFlag,
     rng_activity,
@@ -354,5 +341,7 @@ module.exports = {
     botHasBasicPerms,
     channelTypeNumToName,
     checkmarkEmoji,
-    crossEmoji
+    crossEmoji,
+    kofiLink,
+    supportServerInvite
 }

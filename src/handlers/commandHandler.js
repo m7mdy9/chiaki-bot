@@ -40,6 +40,9 @@ async function loadCommands(client) {
         
         const command = require(fullPath);
 
+        if(command.readOnly){
+            continue;
+        }
         // setup function just in case maybe
         if (command.setup) {
             await command.setup(client); // passing the client to that function
@@ -105,6 +108,10 @@ async function loadCommands(client) {
         for (const file of subcommandFiles) {
             const fullPath = path.join(folderPath, file);
             const subcommand = require(fullPath);
+
+            if (subcommand.readOnly) {
+                continue;
+            }
 
             // same stuff
             if (subcommand.setup) {
