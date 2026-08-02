@@ -291,11 +291,28 @@ async function createChannelInCategory(channelName, category, reason=null){
     }
 }
 
-function botHasBasicPerms(targetPermChannel, interaction){
-    const botPermissions = targetPermChannel.permissionsFor(interaction.client.user);
+const textChannelTypes = [
+    ChannelType.GuildText, ChannelType.GuildAnnouncement,
+];
 
-    const isCorrectPerms = botPermissions.has([getPermissionNum("ViewChannel"), getPermissionNum("SendMessages"), getPermissionNum("EmbedLinks")]);
-    return isCorrectPerms;
+function botHasBasicPerms(targetPermChannel, interaction, strictType){
+    try {
+        if(strictType && targetPermChannel.type !== ChannelType.GuildText){
+            return false;
+        }
+        
+        if(!textChannelTypes.includes(targetPermChannel.type)){
+            throw Error("bad thang")
+        }
+
+        const botPermissions = targetPermChannel.permissionsFor(interaction.client.user);
+    
+        const isCorrectPerms = botPermissions.has([getPermissionNum("ViewChannel"), getPermissionNum("SendMessages"), getPermissionNum("EmbedLinks")]);
+        return isCorrectPerms;
+    } catch(err){
+        console.log(YELLOW+`botHasBasicPerms for ${targetPermChannel?.id} has errored and defaulted to false`+RESET)
+        return false;
+    }
 }
 
 const channelTypeNames = {
