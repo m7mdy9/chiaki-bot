@@ -24,7 +24,7 @@ module.exports = {
 
             const discordTimestamp = `<t:${Math.floor(member.user.createdTimestamp / 1000)}:R>`
             const embed = embed_builder(null,`**<@!${member.id}> joined the server**`, process.env.green)
-            .addFields( { name: `Account Age`, value:`${discordTimestamp}` } )
+            .addFields( { name: `Account Created`, value:`${discordTimestamp}` } )
             .setTimestamp().setAuthor({ name:`${member.user.username} joined` })
             .setThumbnail(member.displayAvatarURL({ size: 64 })).setFooter({ text: `ID: ${member.id}`});
 
