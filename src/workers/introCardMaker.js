@@ -76,8 +76,8 @@ async function createIntroCard(avatarURL, primaryText, secondaryText){
     if(primaryText.length > 40){
         primaryText = `${primaryText.slice(0,37)}...`
     }
-    if(secondaryText.length > 40){
-        secondaryText = `${secondaryText.slice(0,37)}...`
+    if(secondaryText.length > 44){
+        secondaryText = `${secondaryText.slice(0,39)}...`
     }
 
     primaryTextOptions()
