@@ -1,3 +1,4 @@
+process.env.DOTENV_CONFIG_QUIET = 'true';
 require("dotenv").config({quiet:true});
 
 // Correcting the console color codes, as they are usually broken due to the ways .env saves values

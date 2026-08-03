@@ -16,6 +16,6 @@
     "pretty-ms": "^7.0.1"
   },
   "scripts": {
-    "start": "DOTENV_CONFIG_QUIET=true node src/index.js"
+    "start": "node src/index.js"
   }
 }
