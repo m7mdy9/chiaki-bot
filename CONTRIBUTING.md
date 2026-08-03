@@ -79,7 +79,6 @@ Make sure you have [node.js](https://nodejs.org/) downloaded before going furthe
 
 ## Running the Bot
 You can run the bot either by `npm start` or `node src/index.js`.
-* Running your bot via `npm start` prevents env from echoing into the console if you would like a clean output.
 
 ## Command Example
 - For Subcommands, include them in a folder inside their category, and that will automatically apply as a subcommand

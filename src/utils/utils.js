@@ -113,7 +113,7 @@ function embed_builder(title=null, description=null, color ='#ffdcfc'){
         }
         return embed
     } catch (error) {
-        return console.error(error)
+        console.error(error)
     }
 }
 
@@ -297,6 +297,8 @@ const textChannelTypes = [
 
 function botHasBasicPerms(targetPermChannel, interaction, strictType){
     try {
+        if(!targetPermChannel) return false;
+
         if(strictType && targetPermChannel.type !== ChannelType.GuildText){
             return false;
         }
@@ -311,6 +313,18 @@ function botHasBasicPerms(targetPermChannel, interaction, strictType){
         return isCorrectPerms;
     } catch(err){
         console.log(YELLOW+`botHasBasicPerms for ${targetPermChannel?.id} has errored and defaulted to false`+RESET)
+        return false;
+    }
+}
+
+function userHasBasicPermissions(targetPermChannel, member){
+        try {
+        const userPermissions = targetPermChannel.permissionsFor(member);
+    
+        const isCorrectPerms = userPermissions.has([getPermissionNum("ViewChannel"), getPermissionNum("SendMessages"), getPermissionNum("ReadMessageHistory")]);
+        return isCorrectPerms;
+    } catch(err){
+        console.log(YELLOW+`userHasBasicPermissions for ${targetPermChannel?.id} has errored and defaulted to false`+RESET)
         return false;
     }
 }
@@ -338,6 +352,12 @@ function channelTypeNumToName(num){
     return channelTypeNames[num]
 }
 
+function badWordsResponse(censoredMatch){
+    return `:x: **Response Flagged:** An offensive word was found. **Match: **||${censoredMatch}||`+
+            `\nAny attempt to evade the censor may result in a **blacklist** from using this command.`+
+            `\n-# If you think that is a mistake, please report it via /report bug and provide sentence you put.`
+}
+
 module.exports = {
     getOptionNum,
     getPermissionNum,
@@ -360,5 +380,10 @@ module.exports = {
     checkmarkEmoji,
     crossEmoji,
     kofiLink,
-    supportServerInvite
+    supportServerInvite,
+    userHasBasicPermissions,
+    badWordsResponse,
+    pinkHex, redHex,
+    greenHex, dark_redHex,
+    
 }

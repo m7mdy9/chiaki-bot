@@ -222,7 +222,7 @@ class selectorUserBuilder{
             this.selector.setMinValues(min)
                 .setMaxValues(max)
         }
-        if(defaultSelect.length > 0){
+        if(defaultSelect.filter(Boolean).length > 0){
             this.selector.setDefaultUsers(...defaultSelect)
         }
         return this
@@ -274,7 +274,7 @@ class selectorRoleBuilder{
             this.selector.setMinValues(min)
                 .setMaxValues(max)
         }
-        if(defaultSelect.length > 0){
+        if(defaultSelect.filter(Boolean).length > 0){
             this.selector.setDefaultRoles(...defaultSelect)
         }
         return this
@@ -326,7 +326,7 @@ class selectorChannelBuilder{
             this.selector.setMinValues(min)
                 .setMaxValues(max)
         }
-        if(defaultSelect.length > 0){
+        if(defaultSelect.filter(Boolean).length > 0){
             this.selector.setDefaultChannels(...defaultSelect)
         }
         if(channelTypes.length > 0){
