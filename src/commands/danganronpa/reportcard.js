@@ -180,7 +180,7 @@ module.exports = {
                                         await resetSelectChoice();
                                         return modalInteraction.reply({ content: `:x: **Response Flagged:** An offensive word was found. **Match: **||${censoredMatch}||`+
                                             `\nAny attempt to evade the censor may result in a **blacklist** from using this command.`+
-                                            `\n-# If you think that is a mistake, please report it via /report bug and provide word you put.`, flags:[hiddenFlag]})
+                                            `\n-# If you think that is a mistake, please report it via /report bug and provide sentence you put.`, flags:[hiddenFlag]})
                                     }
 
                                     let isDateWrong = false;

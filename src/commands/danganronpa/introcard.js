@@ -1,4 +1,5 @@
-const { getOptionNum, createAttachment } = require("../../utils/utils")
+const { isSlurPresent } = require("../../utils/slurfilter");
+const { getOptionNum, createAttachment, hiddenFlag } = require("../../utils/utils")
 const { createIntroCard } = require("../../workers/introCardMaker")
 
 module.exports = {
@@ -24,6 +25,18 @@ module.exports = {
         const chosenString = interaction.options.getString("ultimate")
         const chosenUser = interaction.options.getMember('student') || interaction.options.getUser('student');
         
+        if(chosenString){
+            const { isSlur, censoredMatch} = isSlurPresent(chosenString)
+            if(isSlur){
+                await interaction.deleteReply();
+                return interaction.followUp({ content:
+                    `:x: **Response Flagged:** An offensive word was found. **Match: **||${censoredMatch}||`+
+                    `\nAny attempt to evade the censor may result in a **blacklist** from using this command.`+
+                    `\n-# If you think that is a mistake, please report it via /report bug and provide sentence you put.`,
+                    flags:[hiddenFlag]})
+            }
+        }
+
         const targetUser = chosenUser || interaction?.member || interaction.user;
         const targetAvatar = targetUser.displayAvatarURL({ size: 512, extension: "png" });
 
