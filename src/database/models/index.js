@@ -10,6 +10,7 @@ const { reportUserModel } = require("./reportUser.js")
 const { autoroleModel } = require("./autorole.js")
 const { modlogsModel } = require("./modlogs.js");
 const { modlogSettingsModel } = require("./modlogSettings.js");
+const { welcomeMessageModel } = require("./welcomeMessage.js");
 
 module.exports = {
     reportBugBLModel,
@@ -24,6 +25,7 @@ module.exports = {
     autoroleModel,
     modlogsModel,
     modlogSettingsModel,
+    welcomeMessageModel,
 }
 
 // Dyanmic file registry, however the auto suggestions wont work!

@@ -13,6 +13,7 @@ const modlogFields =
         "roleActions",
         "modlogChanges",
         "autoroleChanges",
+        "welcomeMessageChanges",
     ]
 const modlogObj = {
     moderativeActions: "Moderative Actions",
@@ -24,6 +25,7 @@ const modlogObj = {
     roleActions: "Roles Audit",
     modlogChanges: "Modlog Settings Changes",
     autoroleChanges: "Autorole Settings Changes",
+    welcomeMessageChanges: "Welcome Message Updates",
 }
 
 const isOnEmoji = (boolean) =>{
@@ -47,7 +49,7 @@ module.exports = {
         /**
          * @param { 'moderativeActions' | 'channelActions' | 'memberJoinLeave' | 
          * 'memberRoleUpdate' | 'messageDeletion' | 'messageEdits' |
-         * 'roleActions' | 'modlogChanges' | 'autoroleChanges' | 'ignoredChannelIds' } setting 
+         * 'roleActions' | 'modlogChanges' | 'autoroleChanges' | 'ignoredChannelIds' | 'welcomeMessageChanges'} setting 
          */
         const changeSettings = async (setting, option) => {
             settingsDoc[setting] = option;

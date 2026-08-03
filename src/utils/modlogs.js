@@ -11,7 +11,7 @@ const { botHasBasicPerms, embed_builder } = require('./utils');
  *   'messageEdits' | 'messageUpdate' | 'messageEdit' |
  *   'roleActions' | 'roleCreate' | 'roleDelete' |
  *   'modlogChanges' | 'modlogUpdate' | 'modlogEdit' |
- *   'autoroleChanges' | 'autoroleUpdate' | 'autoroleEdit'} action
+ *   'autoroleChanges' | 'autoroleUpdate' | 'autoroleEdit' | 'welcomeMessageUpdate'} action
  * @param {String} guildId 
  */
 async function checkModlogSettings(action, guildId, channelId=null, parentId=null){
@@ -43,6 +43,7 @@ async function checkModlogSettings(action, guildId, channelId=null, parentId=nul
         roleActions: ["roleActions","roleCreate", "roleDelete", "roleUpdate"],
         modlogChanges: ["modlogChanges","modlogUpdate", "modlogEdit"],
         autoroleChanges: ["autoroleChanges","autoroleUpdate", "autoroleEdit"],
+        welcomeMessageUpdate: ["welcomeMessageUpdate", "welcomeMsgUpdate", "welcomeMsgEdit", "welcomeMessageEdit"],
     }
 
     if(Object.keys(actions).includes(action)){
@@ -82,7 +83,6 @@ module.exports = {
             if(!modlogChannel) return;
             if(!botHasBasicPerms(modlogChannel, interaction)) return;
             const isTurnedOn = await checkModlogSettings(trueActionName ? trueActionName : action, guild.id);
-            console.log(isTurnedOn)
             if(!isTurnedOn) return;
 
             let targetUsername = target?.username || target?.user?.username

@@ -11,6 +11,7 @@ const modlogSettingsSchema = new Schema({
     roleActions: {type: Boolean, default: true},
     modlogChanges: {type: Boolean, default: true},
     autoroleChanges: {type: Boolean, default: true},
+    welcomeMessageChanges: {type: Boolean, default: true},
     ignoredChannelIds: {type: [String], default: []},
     timestamp: { type: Date, default: Date.now},
 })

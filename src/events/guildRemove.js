@@ -1,12 +1,12 @@
 const { Events } = require("discord.js");
 const { 
     votingEntryModel, votingTimeModel, modlogSettingsModel,
-    modlogsModel, autoroleModel, warningModel 
+    modlogsModel, autoroleModel, warningModel, welcomeMessageModel 
 } = require("../database/models");
 
 const guildRelatedModels = [
     votingEntryModel, votingTimeModel, modlogSettingsModel,
-    modlogsModel, autoroleModel, warningModel 
+    modlogsModel, autoroleModel, warningModel, welcomeMessageModel 
 ]
 
 module.exports = {
