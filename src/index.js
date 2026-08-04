@@ -16,7 +16,10 @@ console.originalError = console.error;
 // checking current branch to see whether we will use the main client id and token or the testing id and token
 let currentBranch = "main"
 try {
-    currentBranch = execSync("git branch --show-current").toString().trim()
+    const newBranch = execSync("git branch --show-current").toString().trim()
+    if(newBranch == "testing" || newBranch != "js"){
+        currentBranch = newBranch
+    }
 } catch(err){
     console.error("Couldn't detect branch, auto set to main.", err)
 }
@@ -31,6 +34,7 @@ console.error = (...args)=>{
 // Assigning token and clientId based on whether the current branch is main or not
 const botToken = (currentBranch != "main") && process.env.TESTING_TOKEN ? process.env.TESTING_TOKEN : process.env.TOKEN 
 const clientId = (currentBranch != "main") && process.env.TESTING_clientId ? process.env.TESTING_clientId : process.env.clientId 
+console.log(currentBranch)
 
 // creating our client with our needed intents and initializing an empty discordjs Collection to save our commands in, via the commandHandler.js 
 const client = new Client({ 
