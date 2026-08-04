@@ -17,6 +17,7 @@ console.originalError = console.error;
 let currentBranch = "main"
 try {
     const newBranch = execSync("git branch --show-current").toString().trim()
+    console.log('newBranch')
     if(newBranch == "testing" || newBranch != "js"){
         currentBranch = newBranch
     }
