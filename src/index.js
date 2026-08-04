@@ -44,6 +44,7 @@ client.botToken = botToken
 
 async function startBot(){
     try{
+        require("./server.js")
         await runEventHandler(client)
         
         await client.login(botToken)
