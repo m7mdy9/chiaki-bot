@@ -18,9 +18,9 @@ let currentBranch = "main"
 try {
     if(process.env?.isKoyeb){
         return;
+    } else {
+        currentBranch = execSync("git branch --show-current").toString().trim()
     }
-
-    currentBranch = execSync("git branch --show-current").toString().trim()
 } catch(err){
     console.error("Couldn't detect branch, auto set to main.", err)
 }
