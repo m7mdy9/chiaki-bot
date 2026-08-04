@@ -17,7 +17,7 @@ console.originalError = console.error;
 let currentBranch = "main"
 try {
     if(process.env?.isKoyeb){
-        return;
+        currentBranch = "main"
     } else {
         currentBranch = execSync("git branch --show-current").toString().trim()
     }
