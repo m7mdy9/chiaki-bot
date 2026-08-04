@@ -1,5 +1,5 @@
 const { autoroleModel } = require("../../../database/models")
-const { embed_builder, hiddenFlag } = require("../../../utils/utils.js")
+const { embed_builder, hiddenFlag, checkMemberPermissions } = require("../../../utils/utils.js")
 const { buttonBuilder, selectorRoleBuilder } = require("../../../utils/builders.js");
 const { logModAction } = require("../../../utils/modlogs.js");
 
@@ -8,6 +8,12 @@ module.exports = {
     description: `Set roles given to users automatically once they join the server.`,
     /** @param {import('discord.js').ChatInputCommandInteraction} interaction  */
     async execute(interaction){
+        const userHasCorrectPerms = checkMemberPermissions(interaction.member, "ManageGuild")
+        if(!userHasCorrectPerms){
+            interaction.editReply("You do not have permissions to **Manage Server**.")
+            return; 
+        }
+
         const guildId = interaction.guildId;
         let rolesDoc = await autoroleModel.findOne({ guildId });
         

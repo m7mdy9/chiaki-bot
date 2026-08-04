@@ -1,5 +1,5 @@
 const { logModAction } = require("../../../utils/modlogs.js")
-const { getOptionNum, getPermissionNum, embed_builder } = require("../../../utils/utils.js")
+const { getOptionNum, getPermissionNum, embed_builder, checkMemberPermissions } = require("../../../utils/utils.js")
 const ms = require('ms')
 
 module.exports = {
@@ -30,8 +30,18 @@ module.exports = {
      * @param {import('discord.js').ChatInputCommandInteraction} interaction 
      */
     async execute(interaction){
+        const userHasCorrectPerms = checkMemberPermissions(interaction.member, "ModerateMembers")
+        if(!userHasCorrectPerms){
+            interaction.editReply("You do not have permissions to **Moderate/Timeout Members**.")
+            return; 
+        }
+
         const editReply = (content)=>{interaction.editReply(content)}
         const botPerms = interaction.appPermissions.has("ModerateMembers")
+        if(!botPerms){
+            return await editReply("I do not have permissions to timeout students.")
+        }
+
         const targetMember = interaction.options.getMember('member')
         const rawReason = interaction.options.getString('reason') || null
         const duration = ms(interaction.options.getString('duration'))
@@ -57,9 +67,7 @@ module.exports = {
         const isOwner = interaction.member.id === guildOwner
         const timeoutable = targetMember.moderatable
 
-        if(!botPerms){
-            return await editReply("I do not have permissions to timeout students.")
-        } else if(!targetMember){
+        if(!targetMember){
             return await editReply("The student is not in this virtual world.")
         } else if(!duration || duration > ms("28d") || duration < ms("30s")){
             return await editReply("Provide a valid duration for the timeout that doesn't go over 28 days.\nE.g. 10h, 7 days")

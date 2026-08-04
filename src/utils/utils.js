@@ -39,18 +39,23 @@ function getOptionNum(type="STRING"){
     return parseInt(output)
 }
 /**
+ * @typedef { 'CreateInstantInvite' | 'KickMembers' | 'BanMembers' |
+ *   'Administrator' | 'ManageChannels' | 'ManageGuild' | 'AddReactions' |
+ *   'ViewAuditLog' | 'PrioritySpeaker' | 'Stream' | 'ViewChannel' |
+ *   'SendMessages' | 'SendTTSMessages' | 'ManageMessages' | 'EmbedLinks' |
+ *   'AttachFiles' | 'ReadMessageHistory' | 'MentionEveryone' | 'UseExternalEmojis' |
+ *   'ViewGuildInsights' | 'Connect' | 'Speak' | 'MuteMembers' |
+ *   'DeafenMembers' | 'MoveMembers' | 'UseVAD' | 'ChangeNickname' |
+ *   'ManageNicknames' | 'ManageRoles' | 'ManageWebhooks' | 'ManageGuildExpressions' |
+ *   'UseApplicationCommands' | 'RequestToSpeak' | 'ManageEvents' | 'ManageThreads' |
+ *   'CreatePublicThreads' | 'CreatePrivateThreads' | 'UseExternalStickers' | 'SendMessagesInThreads' |
+ *   'ModerateMembers'
+ * } DiscordPerms
+ */
+
+/**
  * 
- * @param {'CreateInstantInvite' | 'KickMembers' | 'BanMembers' 
- * |'Administrator' | 'ManageChannels' | 'ManageGuild' | 'AddReactions' 
- * | 'ViewAuditLog' | 'PrioritySpeaker' | 'Stream' | 'ViewChannel' 
- * | 'SendMessages' | 'SendTTSMessages' | 'ManageMessages' | 'EmbedLinks' 
- * | 'AttachFiles' | 'ReadMessageHistory' | 'MentionEveryone' | 'UseExternalEmojis' 
- * | 'ViewGuildInsights' | 'Connect' | 'Speak' | 'MuteMembers' 
- * | 'DeafenMembers' | 'MoveMembers' | 'UseVAD' | 'ChangeNickname' 
- * | 'ManageNicknames' | 'ManageRoles' | 'ManageWebhooks' | 'ManageGuildExpressions' 
- * | 'UseApplicationCommands' | 'RequestToSpeak' | 'ManageEvents' | 'ManageThreads' 
- * | 'CreatePublicThreads' | 'CreatePrivateThreads' | 'UseExternalStickers' | 'SendMessagesInThreads'
- * | 'ModerateMembers'} type 
+ * @param {DiscordPerms} type 
  * @returns {string} Stringified Permission Bitfield
 */
 function getPermissionNum(type){
@@ -329,6 +334,47 @@ function userHasBasicPermissions(targetPermChannel, member){
     }
 }
 
+/**
+ * @param {import('discord.js').GuildMember} member 
+ * @param  {...DiscordPerms} args 
+ */
+function checkMemberPermissions(member, ...args){
+    try {
+        const memberPermissions = member.permissions
+
+        const hasPermissions = memberPermissions.has(args);
+        console.log(hasPermissions)
+        
+        return hasPermissions;
+    } catch (err){
+        console.error("checkMemberPermissions failed...returning false\nError:", err)
+        return false;
+    }
+}
+
+/**
+ * @param {import('discord.js').Guild} guild 
+ * @param  {...DiscordPerms} args 
+ */
+async function checkClientPermissions(guild, ...args){
+    try {
+        let botPermissions = guild.members.me?.permissions ?? (await guild.members.fetchMe())?.permissions;
+        
+        if(!botPermissions){
+            console.warn("Couldn't get bot perms in checkClientPermissions...returning false")
+            return false;
+        }
+
+        const hasPermissions = botPermissions.has(args);
+        console.log(hasPermissions)
+        
+        return hasPermissions;
+    } catch (err){
+        console.error("checkClientPermissions failed...returning false\nError:", err)
+        return false;
+    }
+}
+
 const channelTypeNames = {
   [ChannelType.GuildText]: 'Text Channel',
   [ChannelType.GuildVoice]: 'Voice Channel',
@@ -385,5 +431,6 @@ module.exports = {
     badWordsResponse,
     pinkHex, redHex,
     greenHex, dark_redHex,
-    
+    checkMemberPermissions,
+    checkClientPermissions,
 }

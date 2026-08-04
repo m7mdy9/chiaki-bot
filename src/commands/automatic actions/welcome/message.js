@@ -2,7 +2,7 @@ const { ChannelType } = require('discord.js');
 const { welcomeMessageModel } = require('../../../database/models');
 const { createWelcomeMsg } = require('../../../events/welcomeMessage');
 const { selectorTextBuilder, buttonBuilder, selectorChannelBuilder, modalBuilder } = require('../../../utils/builders');
-const { embed_builder, hiddenFlag, checkmarkEmoji, crossEmoji, botHasBasicPerms, userHasBasicPermissions, badWordsResponse, greenHex } = require('../../../utils/utils');
+const { embed_builder, hiddenFlag, checkmarkEmoji, crossEmoji, botHasBasicPerms, userHasBasicPermissions, badWordsResponse, greenHex, checkMemberPermissions } = require('../../../utils/utils');
 const { isSlurPresent } = require('../../../utils/slurfilter');
 const { logModAction } = require('../../../utils/modlogs');
 
@@ -11,6 +11,12 @@ module.exports = {
     description: "Set a welcome message whenever a new user joins! And sends an intro card which is like in /introcard",
     /** @param {import('discord.js').ChatInputCommandInteraction} interaction  */
     async execute(interaction){
+        const userHasCorrectPerms = checkMemberPermissions(interaction.member, "ManageGuild")
+        if(!userHasCorrectPerms){
+            interaction.editReply("You do not have permissions to **Manage Server**.")
+            return; 
+        }
+
         const guildId = interaction.guild.id;
         
         let welcomeDoc = await welcomeMessageModel.findOne({ guildId })

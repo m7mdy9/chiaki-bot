@@ -32,6 +32,12 @@ module.exports = {
      */
     async execute(interaction){
         try {
+            const userHasCorrectPerms = checkMemberPermissions(interaction.member, "BanMembers")
+            if(!userHasCorrectPerms){
+                interaction.editReply("You do not have permissions to **Ban/Unban Members**.")
+                return; 
+            }
+
             const editReply = (content)=>{interaction.editReply(content)}
             const botPerms = interaction.appPermissions.has("BanMembers")
             

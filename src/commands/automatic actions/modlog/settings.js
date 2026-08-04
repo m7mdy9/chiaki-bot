@@ -1,6 +1,6 @@
 const { modlogSettingsModel, modlogsModel } = require("../../../database/models");
 const { selectorTextBuilder, buttonBuilder, selectorChannelBuilder } = require("../../../utils/builders");
-const { embed_builder, hiddenFlag, checkmarkEmoji, crossEmoji } = require("../../../utils/utils");
+const { embed_builder, hiddenFlag, checkmarkEmoji, crossEmoji, checkMemberPermissions } = require("../../../utils/utils");
 
 const modlogFields =
     [
@@ -37,6 +37,12 @@ module.exports = {
     description: "Adjust logging settings. To set a log channel, run /set modlogs",
     /** @param {import("discord.js").ChatInputCommandInteraction} interaction */
     async execute(interaction){
+        const userHasCorrectPerms = checkMemberPermissions(interaction.member, "ManageGuild")
+        if(!userHasCorrectPerms){
+            interaction.editReply("You do not have permissions to **Manage Server**.")
+            return; 
+        }
+        
         const guildId = interaction.guild.id;
 
         const modLogChannel = (await modlogsModel.findOne({ guildId }))?.channelId || null

@@ -1,4 +1,4 @@
-const { getOptionNum, getPermissionNum, embed_builder } = require("../../../utils/utils.js")
+const { getOptionNum, getPermissionNum, embed_builder, checkMemberPermissions } = require("../../../utils/utils.js")
 
 module.exports = {
     name: "add",
@@ -23,8 +23,18 @@ module.exports = {
      * @param {import("discord.js").ChatInputCommandInteraction} interaction 
      */
     async execute(interaction){
+        const userHasCorrectPerms = checkMemberPermissions(interaction.member, "ManageRoles")
+        if(!userHasCorrectPerms){
+            interaction.editReply("You do not have permissions to **Manage Roles**.")
+            return; 
+        }
+
         const editReply = (content)=>{interaction.editReply(content)}
         const botPerms = interaction.appPermissions.has("ManageRoles")
+        if(!botPerms){
+            return await editReply("I do not possess permissions to add roles.\nGrant me the `Manage ROles` permission if you would like to run this command again.")
+        }
+        
         const targetRole = interaction.options.getRole('role')
        
         const isOwner = interaction.member.id == interaction.guild.ownerId
@@ -38,9 +48,6 @@ module.exports = {
 
         if(!targetUser){
             return await editReply("This user is not in the server.")
-        }
-        if(!botPerms){
-            return await editReply("I do not possess permissions to add roles.\nGrant me the `Manage ROles` permission if you would like to run this command again.")
         }
         if(targetRolePos >= userHighestRolePos && !isOwner){
             return await editReply("You may not add a role higher than yours.")

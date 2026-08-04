@@ -1,5 +1,5 @@
 const { logModAction } = require("../../utils/modlogs.js")
-const { getOptionNum, getPermissionNum, embed_builder } = require("../../utils/utils.js")
+const { getOptionNum, getPermissionNum, embed_builder, checkMemberPermissions } = require("../../utils/utils.js")
 
 module.exports = {
     name: "kick",
@@ -24,6 +24,12 @@ module.exports = {
      */
     async execute(interaction){
         try {
+            const userHasCorrectPerms = checkMemberPermissions(interaction.member, "KickMembers")
+            if(!userHasCorrectPerms){
+                interaction.editReply("You do not have permissions to **Kick Members**.")
+                return; 
+            }
+            
             const targetUser = interaction.options.getMember('member')
             const editReply = (content)=>{interaction.editReply(content)}
             
@@ -41,6 +47,7 @@ module.exports = {
                 kickMsg += ` | ${reason}`
             } 
             
+
             if(!botPerms){
                 return await editReply("I do not possess permissions to kick members.\nGrant me `Kick Members` permissions, if you would like to run this command once more.")
             } else if(!targetUser){

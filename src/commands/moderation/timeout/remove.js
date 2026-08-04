@@ -1,5 +1,5 @@
 const { logModAction } = require("../../../utils/modlogs.js")
-const { getOptionNum, getPermissionNum, embed_builder } = require("../../../utils/utils.js")
+const { getOptionNum, getPermissionNum, embed_builder, checkMemberPermissions } = require("../../../utils/utils.js")
 
 module.exports = {
     name:"remove",
@@ -17,8 +17,18 @@ module.exports = {
      * @param {import('discord.js').ChatInputCommandInteraction} interaction 
      */
     async execute(interaction){
+        const userHasCorrectPerms = checkMemberPermissions(interaction.member, "ModerateMembers")
+        if(!userHasCorrectPerms){
+            interaction.editReply("You do not have permissions to **Moderate/Timeout Members**.")
+            return; 
+        }
+
         const editReply = (content)=>{interaction.editReply(content)}
         const botPerms = interaction.appPermissions.has("ModerateMembers")
+        if(!botPerms){
+            return await editReply("I do not have permissions to remove timeouts from students.")
+        }
+
         const targetMember = interaction.options.getMember('member')
 
         let timeoutMsg = `Your timeout has been removed in **${interaction.guild.name}**`
@@ -30,9 +40,7 @@ module.exports = {
         const isOwner = interaction.member.id === guildOwner
         const timedOut = targetMember.isCommunicationDisabled()
 
-        if(!botPerms){
-            return await editReply("I do not have permissions to remove timeouts from students.")
-        } else if(!targetMember){
+        if(!targetMember){
             return await editReply("The student is not in this virtual world.")
         } else if(!timedOut){
             return await editReply("This student is not timed out.")

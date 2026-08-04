@@ -1,5 +1,5 @@
 const { logModAction } = require("../../utils/modlogs")
-const { getPermissionNum, getOptionNum } = require("../../utils/utils")
+const { getPermissionNum, getOptionNum, checkMemberPermissions } = require("../../utils/utils")
 
 module.exports = {
     name: "unban",
@@ -19,6 +19,11 @@ module.exports = {
     async execute(interaction){
         const editReply = (content)=>{interaction.editReply(content)}
         try {
+            const userHasCorrectPerms = checkMemberPermissions(interaction.member, "BanMembers")
+            if(!userHasCorrectPerms){
+                interaction.editReply("You do not have permissions to **Ban/Unban Members**.")
+                return; 
+            }
             const botPerms = interaction.appPermissions.has("BanMembers")
             
             const targetUser = interaction.options.get('user')

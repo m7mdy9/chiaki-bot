@@ -1,4 +1,4 @@
-const { getOptionNum, getPermissionNum, embed_builder } = require("../../../utils/utils.js")
+const { getOptionNum, getPermissionNum, embed_builder, checkMemberPermissions } = require("../../../utils/utils.js")
 const { warningModel } = require("../../../database/models/warnings.js")
 const { logModAction } = require("../../../utils/modlogs.js")
 
@@ -24,6 +24,12 @@ module.exports = {
      * @param {import("discord.js").ChatInputCommandInteraction} interaction 
      */
     async execute(interaction){
+        const userHasCorrectPerms = checkMemberPermissions(interaction.member, "ModerateMembers")
+            if(!userHasCorrectPerms){
+            interaction.editReply("You do not have permissions to **Moderate Members**.")
+            return; 
+        }
+
         const editReply = (content)=>{return interaction.editReply(content)}
         const targetMember = interaction.options.get("member");
         const caseNum = interaction.options.getString("case").trim();

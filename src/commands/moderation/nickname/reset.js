@@ -17,6 +17,10 @@ module.exports = {
      */
     async execute(interaction){
         const editReply = (content)=>{interaction.editReply({content})}
+        if(!botPerms){
+            return await editReply("I do not have permissions to change student nicknames.")
+        }
+
         const botPerms = interaction.appPermissions.has("ManageNicknames");
         const targetMember = interaction.options.getMember("member");
         
@@ -29,9 +33,7 @@ module.exports = {
         const ownerId = interaction.guild.ownerId
         const isOwner = interaction.member.id === ownerId
 
-        if(!botPerms){
-            return await editReply("I do not have permissions to change student nicknames.")
-        } else if(!targetMember){
+        if(!targetMember){
             return await editReply("The member is not in the server.")
         }else if(!isOwner && targetMember.id === ownerId){
             return await editReply("I can not reset the nickname of the observer of this virtual world.")

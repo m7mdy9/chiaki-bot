@@ -1,7 +1,7 @@
 const { modlogsModel } = require("../../../database/models");
 const { selectorChannelBuilder, buttonBuilder } = require("../../../utils/builders");
 const { logModAction } = require("../../../utils/modlogs");
-const { getChannelType, embed_builder, hiddenFlag, getOptionNum, getChannelTypeNum, getPermissionNum } = require("../../../utils/utils");
+const { getChannelType, embed_builder, hiddenFlag, getOptionNum, getChannelTypeNum, getPermissionNum, checkMemberPermissions } = require("../../../utils/utils");
 
 module.exports = {
     name: "modlogs",
@@ -17,6 +17,12 @@ module.exports = {
     ],
     /** @param {import('discord.js').ChatInputCommandInteraction} interaction  */
     async execute(interaction){
+        const userHasCorrectPerms = checkMemberPermissions(interaction.member, "ManageGuild")
+        if(!userHasCorrectPerms){
+            interaction.editReply("You do not have permissions to **Manage Server**.")
+            return; 
+        }
+
         const targetChannel = interaction.options.getChannel('channel');
         const guildId = interaction.guildId;
         let initialResponse;
