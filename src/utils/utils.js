@@ -209,8 +209,8 @@ function extractEmbedsFromMessage(message){
 // gifWorker that is used in the makeExecutionGif() function
 const gifWorker = new Piscina({
     filename: resolve(process.cwd(), "src/workers/gifWorker.js"),
-    maxThreads: process.env?.isKoyeb ? 1 : 2,
-    minThreads: 1,
+    // maxThreads: process.env?.isKoyeb ? 1 : 2,
+    // minThreads: 1,
 })
 
 /**
@@ -229,7 +229,12 @@ const gifWorker = new Piscina({
 async function makeExecutionGif(avatarURL, username){
     const startTime = performance.now()
 
-    const gifBuffer = await gifWorker.run({avatarURL, username})
+    let gifBuffer 
+    if(process.env.isKoyeb){
+        gifBuffer = await require("../workers/gifWorker")({avatarURL, username})
+    } else {    
+        gifBuffer = await gifWorker.run({avatarURL, username})
+    }
 
     const formattedGifBuffer = Buffer.from(gifBuffer)
 
