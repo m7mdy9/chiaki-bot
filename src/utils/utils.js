@@ -1,13 +1,21 @@
 const { SlashCommandBuilder, EmbedBuilder, PermissionFlagsBits, MessageFlags, ActivityType, ActionRowBuilder, AttachmentBuilder, ChannelType} = require("discord.js")
 const { resolve } = require('path') 
 const Piscina = require("piscina")
-const { dark_red, RED, YELLOW, RESET, DARK_GREY } = process.env
 const chrono = require("chrono-node")
 const {
     checkmarkEmoji, crossEmoji, kofiLink,
     supportServerInvite, pinkHex, redHex,
     greenHex, dark_redHex,
 } = require("./config.json")
+
+const {RED, YELLOW, RESET, GREEN, DARK_GREY, dark_red} = process.env
+const asciiColors = {
+    RedAscii: RED,
+    YellowAscii: YELLOW,
+    ResetAscii: RESET,
+    GreenAscii: GREEN,
+    DarkGreyAscii: DARK_GREY,
+}
 
 /**
  * @param {'SUB_COMMAND' | 'SUB_COMMAND_GROUP' | 'STRING' | 
@@ -433,4 +441,5 @@ module.exports = {
     greenHex, dark_redHex,
     checkMemberPermissions,
     checkClientPermissions,
+    ...asciiColors
 }

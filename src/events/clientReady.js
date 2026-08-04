@@ -2,7 +2,8 @@ const { agenda } = require("../agenda/agenda.js")
 const { defineVotingTimeJob } = require("../agenda/jobs/votingTimeJob.js")
 const { deploySlashCommands } = require('../handlers/commandHandler.js');
 const { connectDB } = require("../database/connect.js")
-const { startActivity } = require("../utils/utils.js")
+const { startActivity, checkmarkEmoji } = require("../utils/utils.js");
+const { webhookLog } = require("../utils/errorHandler.js");
 const { GREEN, RESET } = process.env
 module.exports = {
     name: "clientReady",
@@ -17,5 +18,6 @@ module.exports = {
         defineVotingTimeJob(client);
         await agenda.start()
         console.log("Started the agenda scheduler!")
+        await webhookLog(`${checkmarkEmoji} Successfully started up **${client.user.tag}**`)
     }
 }

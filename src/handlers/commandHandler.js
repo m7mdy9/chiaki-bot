@@ -3,17 +3,21 @@ const path = require("path");
 const { REST, Routes, Collection, SlashCommandBuilder, PermissionsBitField, PermissionFlagsBits } = require("discord.js");
 const { getPermissionNum } = require("../utils/utils");
 const { YELLOW, RED, DARK_GREY, GREEN, RESET } = process.env
-const { currentBranch } = require("../")
+const currentBranch = process.currentBranch;
 
-let ignoreCategories = [];
-if(currentBranch == "main"){
-    ignoreCategories.push("owner")
-}
+const helpCommand = require("../commands/misc/help.js")
 
+let ignoredCommands = [];
+let testOnlyCommands = [];
 /**
  * @param {import('discord.js').Client} client 
- */
+*/
 async function loadCommands(client) {
+    const ownerCommands = (await helpCommand.setup()).get("owner").flatMap(cmd => cmd?.name)
+    if(currentBranch == "main"){
+        ignoredCommands = ownerCommands
+    }
+
     const targetDir = path.dirname(__dirname);
     let commandsPath = path.join(targetDir, "commands");
 
@@ -22,7 +26,7 @@ async function loadCommands(client) {
 
     // get the command categories (crucial for the help command)
     const commandCategories = fs.readdirSync(commandsPath, {withFileTypes: true})
-        .filter(file => file.isDirectory() && !ignoreCategories.includes(file.name) )
+        .filter(file => file.isDirectory())
         .map(dirent => path.join(dirent.parentPath, dirent.name))
     const commandFiles = commandCategories.flatMap(folder => {
         return fs.readdirSync(folder, {withFileTypes: true}).filter(file => file.name.endsWith(".js") && !file.isDirectory()).map(file => path.join(file.parentPath,file.name))
@@ -67,7 +71,13 @@ async function loadCommands(client) {
 
         // we add all command info to the commands collection and we push the command data to the commands array
         client.commands.set(command.data.name, command);
-        commands.push(command.data);
+
+        if(!ignoredCommands.includes(command.data.name)){
+            commands.push(command.data);
+        } else {
+            testOnlyCommands.push(command.data)
+        }
+
     }
     
     // i hate sub commands
@@ -145,8 +155,13 @@ async function loadCommands(client) {
         }
 
         // If any subcommands were added, register the base command
-        if (hasSubcommands && !baseCommandExists) {
+        const isOwnerCategory = path.basename(path.dirname(commandsPath)) == "owner"
+
+        if (hasSubcommands && !baseCommandExists && !isOwnerCategory) {
             commands.push(baseCommand);
+        }
+        else if(hasSubcommands && !baseCommandExists && isOwnerCategory){
+            testOnlyCommands.push(baseCommand)
         }
     }
     
@@ -161,6 +176,7 @@ async function deploySlashCommands(client, clientId, token) {
     try {
         console.log(DARK_GREY+"Deploying new commands..."+RESET);
         await rest.put(Routes.applicationCommands(clientId), { body: commands });
+        await rest.put(Routes.applicationGuildCommands(clientId, process.env.TESTING_GUILD), { body: [...testOnlyCommands]})
         console.log(DARK_GREY+"Slash commands deployed successfully!"+RESET);
     } catch (error) {
         console.error(RED+"❌ Error deploying commands:"+RESET, error);

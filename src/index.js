@@ -11,6 +11,7 @@ require("dotenv").config({quiet:true});
 const { Client, GatewayIntentBits, Collection, Partials} = require('discord.js');
 const runEventHandler = require("./handlers/eventHandler")
 const { execSync } = require("child_process");
+console.originalError = console.error;
 
 // checking current branch to see whether we will use the main client id and token or the testing id and token
 let currentBranch = "main"
@@ -19,6 +20,13 @@ try {
 } catch(err){
     console.error("Couldn't detect branch, auto set to main.", err)
 }
+process.currentBranch = currentBranch;
+
+const { handleError } = require("./utils/errorHandler");
+console.error = (...args)=>{
+    handleError(...args)
+}
+
 
 // Assigning token and clientId based on whether the current branch is main or not
 const botToken = (currentBranch != "main") && process.env.TESTING_TOKEN ? process.env.TESTING_TOKEN : process.env.TOKEN 
