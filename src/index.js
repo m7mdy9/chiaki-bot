@@ -51,7 +51,7 @@ async function startBot(){
 
     } catch(err){
         console.log(process.env.RED+"Congratulations, the bot failed to start! | "+process.env.RESET)
-        console.error(err)
+        console.originalError(err)
         process.exit(1)
     }
 }
