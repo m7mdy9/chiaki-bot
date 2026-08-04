@@ -16,11 +16,11 @@ console.originalError = console.error;
 // checking current branch to see whether we will use the main client id and token or the testing id and token
 let currentBranch = "main"
 try {
-    const newBranch = execSync("git branch --show-current").toString().trim()
-    console.log('newBranch')
-    if(newBranch == "testing" || newBranch != "js"){
-        currentBranch = newBranch
+    if(process.env?.isKoyeb){
+        return;
     }
+
+    currentBranch = execSync("git branch --show-current").toString().trim()
 } catch(err){
     console.error("Couldn't detect branch, auto set to main.", err)
 }
