@@ -209,7 +209,8 @@ function extractEmbedsFromMessage(message){
 // gifWorker that is used in the makeExecutionGif() function
 const gifWorker = new Piscina({
     filename: resolve(process.cwd(), "src/workers/gifWorker.js"),
-    maxThreads: 2,
+    maxThreads: process.env?.isKoyeb ? 1 : 2,
+    minThreads: 1,
 })
 
 /**

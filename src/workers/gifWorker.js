@@ -73,7 +73,7 @@ let dissectedGifFrames = null;
  * 4. We load each frame into canvas using loadImage() and into a variable named cachedFrames
  * 5. We assign the empty dissectedGifFrames variable the cachedFrames and return it.
 */
-async function dissectGif(){
+async function dissectGif(iterativeLoop=false){
     if(dissectedGifFrames) return dissectedGifFrames;
     else {
         const extractedFrames = await gifFrames({
@@ -83,9 +83,20 @@ async function dissectGif(){
             cumulative: true,
         })
 
-        const frameBuffers = await Promise.all(extractedFrames.map(frame=>streamToBuffer(frame.getImage())))
+        let frameBuffers = []
+        let cachedFrames = []
+        if(iterativeLoop){
+            for (const frame of extractedFrames){
+                frameBuffers.push(await streamToBuffer(frame.getImage()))
+            }
+            for (const buffer of frameBuffers){
+                cachedFrames.push(await loadImage(buffer))
+            }
+        } else {
+            frameBuffers = await Promise.all(extractedFrames.map(frame=>streamToBuffer(frame.getImage())));
+            cachedFrames = await Promise.all(frameBuffers.map(buffer => loadImage(buffer)));
+        }
 
-        const cachedFrames = await Promise.all(frameBuffers.map(buffer => loadImage(buffer)))
 
         dissectedGifFrames = cachedFrames
 
@@ -165,7 +176,7 @@ async function buildEditedImage(ctx, backgroundImage, avatarImage, frameIndex, u
 */
 async function fullProcess({avatarURL, username}){
 
-    const extractedBackgroundImages = await dissectGif()
+    const extractedBackgroundImages = await dissectGif(process.env?.isKoyeb)
     
     const encoder = new GIFEncoder(width, height, 'octree', true)
     
