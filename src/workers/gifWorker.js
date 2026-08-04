@@ -184,6 +184,8 @@ async function fullProcess({avatarURL, username}){
     const encoderStream = encoder.createReadStream()
     encoderStream.on("data", (chunk)=> gifChunks.push(chunk))
     
+    const streamPromise = streamToBuffer(encoderStream);
+
     // Encoder start & options
     encoder.start()
     encoder.setRepeat(0)
@@ -208,7 +210,8 @@ async function fullProcess({avatarURL, username}){
     }
 
     encoder.finish()
-    const finalBuffer = Buffer.concat(gifChunks)
+
+    const finalBuffer = await streamPromise
     
     return finalBuffer
 }
