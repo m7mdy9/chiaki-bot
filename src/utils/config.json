@@ -1,12 +1,19 @@
 {   
-    "checkmarkEmoji": "<:check:1532093323874009198>",
-    "crossEmoji": "<:cross:1532093408611664105>",
-    "kofiLink": "https://ko-fi.com/m7mdy9",
-    "supportServerInvite": "https://discord.gg/rvyApbfnGk",
-    "pinkHex":"#ffdcfc",
-    "redHex":"#ff8d8d",
-    "greenHex":"#97ff94",
-    "dark_redHex":"#a80000",
+    "emojis":{
+        "checkmarkEmoji": "<:check:1532093323874009198>",
+        "crossEmoji": "<:cross:1532093408611664105>",
+        "kofiLogo": "<:kofi_logo:1534654306182103120>"
+    },
+    "links": {
+        "kofiLink": "https://ko-fi.com/m7mdy9",
+        "supportServerInvite": "https://discord.gg/rvyApbfnGk"
+    },
+    "hexColors": {
+        "pinkHex":"#ffdcfc",
+        "redHex":"#ff8d8d",
+        "greenHex":"#97ff94",
+        "dark_redHex":"#a80000"
+    },
     "danganronpa1_characters": [
         "Makoto Naegi",
         "Kyoko Kirigiri",

@@ -3,9 +3,7 @@ const { resolve } = require('path')
 const Piscina = require("piscina")
 const chrono = require("chrono-node")
 const {
-    checkmarkEmoji, crossEmoji, kofiLink,
-    supportServerInvite, pinkHex, redHex,
-    greenHex, dark_redHex,
+    emojis, links, hexColors
 } = require("./config.json")
 
 const {RED, YELLOW, RESET, GREEN, DARK_GREY, dark_red} = process.env
@@ -209,8 +207,7 @@ function extractEmbedsFromMessage(message){
 // gifWorker that is used in the makeExecutionGif() function
 const gifWorker = new Piscina({
     filename: resolve(process.cwd(), "src/workers/gifWorker.js"),
-    // maxThreads: process.env?.isKoyeb ? 1 : 2,
-    // minThreads: 1,
+    maxThreads: process.env?.isKoyeb ? 1 : 3,
 })
 
 /**
@@ -229,12 +226,7 @@ const gifWorker = new Piscina({
 async function makeExecutionGif(avatarURL, username){
     const startTime = performance.now()
 
-    let gifBuffer 
-    if(process.env.isKoyeb){
-        gifBuffer = await require("../workers/gifWorker")({avatarURL, username})
-    } else {    
-        gifBuffer = await gifWorker.run({avatarURL, username})
-    }
+    const gifBuffer = await gifWorker.run({avatarURL, username})
 
     const formattedGifBuffer = Buffer.from(gifBuffer)
 
@@ -438,15 +430,12 @@ module.exports = {
     getChannelTypeNum,
     botHasBasicPerms,
     channelTypeNumToName,
-    checkmarkEmoji,
-    crossEmoji,
-    kofiLink,
-    supportServerInvite,
     userHasBasicPermissions,
     badWordsResponse,
-    pinkHex, redHex,
-    greenHex, dark_redHex,
     checkMemberPermissions,
     checkClientPermissions,
-    ...asciiColors
+    ...links,
+    ...emojis,
+    ...hexColors,
+    ...asciiColors,
 }

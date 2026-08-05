@@ -1,5 +1,5 @@
 const { Events } = require('discord.js');
-const { botHasBasicPerms, embed_builder, supportServerInvite } = require('../utils/utils');
+const { botHasBasicPerms, embed_builder, supportServerInvite, kofiLink, kofiLogo } = require('../utils/utils');
 
 module.exports = {
     name: Events.GuildCreate,
@@ -48,7 +48,7 @@ function commandWrap(command){
 
 function introductionEmbed(){
     const embed = embed_builder("Chiaki Bot Introduction", "**Thank you for adding ChiakiBot to your server! Hope you enjoy your time using it!**"
-        +"\n\nChiaki Bot's source code is public on github, and you can visit it from my about me or with **\`/info\`**, so even if you're worried you can check it out for yourself or run the code yourself on your own PRIVATE bot!\n(though if you do that and you end up liking it, considering giving me a tip! **\`/donate\`**)")
+        +`\n\nChiaki Bot's source code is public on github, and you can visit it from my about me or with **\`/info\`**, so even if you're worried you can check it out for yourself or run the code yourself on your own PRIVATE bot!\n(though if you do that and you end up liking it, **[Considering giving me a tip](${kofiLink}) ${kofiLogo}**)`)
     .addFields(
         { name: "Featured Commands and Categories", 
             value: 

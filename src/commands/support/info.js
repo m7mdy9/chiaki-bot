@@ -1,14 +1,15 @@
-const { kofiLink, supportServerInvite, embed_builder } = require('../../utils/utils')
+const { kofiLink, supportServerInvite, embed_builder, kofiLogo } = require('../../utils/utils')
 
 function embed_info(ownerId, client, result, time){
     try{
     const embed1 = embed_builder("Information", 
-        `The bot was developed and made by <@!${ownerId}>`
+        `The bot is developed by <@!${ownerId}>`
         +`\nCurrent Ping: **${client.ws.ping}ms**`
         +`\nUptime: **${result} ${time}**`
+        +`\nServers: **${client.guilds.cache.size}**`
         +`\n**[Check Chiaki Bot Github Page!](https://github.com/m7mdy9/chiaki-bot)**`
         +`\n**[[Bot Invite Link]](${process.env.INVITE})**\n**[[Support Server]](${supportServerInvite})**`
-        +`\n\nLiking the bot so far? **[consider tipping me on Ko-fi!](${kofiLink})**`,
+        +`\n\nLiking the bot so far? **[Consider tipping me on Ko-fi ${kofiLogo}](${kofiLink})**`,
         "#ffdcfc"
     )
     return embed1

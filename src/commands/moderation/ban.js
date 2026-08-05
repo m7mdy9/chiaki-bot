@@ -1,5 +1,5 @@
 const { logModAction } = require("../../utils/modlogs.js")
-const { getPermissionNum, getOptionNum } = require("../../utils/utils")
+const { getPermissionNum, getOptionNum, checkMemberPermissions } = require("../../utils/utils")
 const { embed_builder } = require("../../utils/utils.js")
 
 module.exports = {
