@@ -39,8 +39,13 @@ console.log(currentBranch)
 
 // creating our client with our needed intents and initializing an empty discordjs Collection to save our commands in, via the commandHandler.js 
 const client = new Client({ 
-    intents: [GatewayIntentBits.GuildMembers,GatewayIntentBits.Guilds, GatewayIntentBits.GuildMessages, GatewayIntentBits.MessageContent, GatewayIntentBits.DirectMessages],
-    partials: [Partials.Channel, Partials.Message, Partials.GuildMember]
+    intents: [
+        GatewayIntentBits.GuildMembers, GatewayIntentBits.Guilds, 
+        GatewayIntentBits.GuildMessages, GatewayIntentBits.MessageContent,
+    ],
+    partials: [
+        Partials.Channel, Partials.Message
+    ]
 });
 client.cooldowns = new Collection();
 client.commands = new Collection();
