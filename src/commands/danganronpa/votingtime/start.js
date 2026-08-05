@@ -84,7 +84,6 @@ module.exports = {
             const votingDocument = await votingTimeModel.create({
                 guildId,
                 channelId,
-                userId,
                 usersIds,
                 usersNames,
                 endTime,

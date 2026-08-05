@@ -27,12 +27,15 @@ function defineVotingTimeJob(client){
            const message = await (await client.channels.fetch(channelId))?.messages?.fetch(messageId)
            let lastEmbeds = [];
            let files = [];
+           
+           const voteDocument = await votingTimeModel.findById(votingId)
 
             if(!message){
-                return console.warn(YELLOW+`Voting ${votingId}'s message not found.`+RESET)
+                console.warn(YELLOW+`Voting ${votingId}'s message not found.`+RESET)
+                voteDocument?.delete();
+                return; 
             }
 
-            const voteDocument = await votingTimeModel.findById(votingId)
             const numberOfVotes = voteDocument.votersIds.length
 
             const votesById = await votingEntryModel.aggregate([
@@ -137,6 +140,7 @@ function defineVotingTimeJob(client){
             voteDocument.ended = true;
             voteDocument.save().catch(err=>console.error('Failed to save ended',err))
             votingEntryModel.deleteMany({ votingId: voteObjId }).catch(err=>console.error('Failed to delete entries',err))
+            voteDocument.deleteOne()
 
             return processingMessage.edit({ embeds:lastEmbeds, files})
 

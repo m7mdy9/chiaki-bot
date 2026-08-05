@@ -2,7 +2,6 @@ const { Schema, model } = require("mongoose")
 
 const votingTimeSchema = new Schema({
     guildId: {type: String, required: true},
-    userId: {type: String, required: false},
     channelId: {type: String, required: true},
     messageId: {type: String, required: false, index: true},
     usersIds: {type: [String], required: true},
