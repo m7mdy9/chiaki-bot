@@ -129,3 +129,10 @@ software under these terms.
 
 **Use** means anything you do with the software requiring one
 of your licenses.
+
+## Addition from author
+* This bot is an unofficial, non-profit fan project. It is not affiliated with, endorsed by, sponsored by, or otherwise associated with Spike Chunsoft or the creators of the Danganronpa franchise.
+* This License applies to the Bot's code and it doesn't apply to any of Spike Chunsoft's assests used within this project.
+
+* Self-hosting or using Chiaki Nanami (Chiaki Bot) means you agree to the Bot's Terms of Service and Discord's Terms of Service and you agree that you will not attempt to break either of them using the bot.
+If you intentionally break the ToS of both entities, your license will be revoked and you may be prohibited from using the bot.
