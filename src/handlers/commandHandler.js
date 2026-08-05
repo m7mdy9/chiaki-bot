@@ -51,6 +51,15 @@ async function loadCommands(client) {
         if (command.setup) {
             await command.setup(client); // passing the client to that function
         }
+        const cmdCategory = path.basename(path.dirname(commandsPath))
+        const isFunCommands = ["fun","danganronpa","image"].includes(cmdCategory) || command.name == "avatar"
+        const contexts = [0]
+        if(!command.permissions && !command.isServerOnly){
+            contexts.push(1)
+        }
+        if(isFunCommands){
+            contexts.push(2)
+        }
 
         // incase stupid me doesnt include data himself
         if (!command.data) {
@@ -59,7 +68,8 @@ async function loadCommands(client) {
                 description: command.description || "No description provided",
                 options: command.options || [],
                 default_member_permissions: command?.permissions || null,
-                dm_permission: command?.permissions ? false : true
+                dm_permission: command?.permissions ? false : true,
+                contexts,
             }
         }
 
@@ -105,6 +115,7 @@ async function loadCommands(client) {
                 options: []
             }
         }
+
         const permissionFile = fs.readdirSync(folderPath).filter(file => path.extname(file) === '' && file.startsWith("!")) || null
         // console.log(permissionFile)
         if (permissionFile.length > 0){
@@ -112,6 +123,14 @@ async function loadCommands(client) {
             baseCommand.dm_permission = false
         };
         
+        const cmdCategory = path.basename(path.dirname(commandsPath));
+        const isFunCommands = ["fun","danganronpa","image"].includes(cmdCategory)
+        const contexts = [0, 1]
+        if(isFunCommands){
+            contexts.push(2)
+        }
+
+        baseCommand.contexts = contexts;
         const subcommandFiles = fs.readdirSync(folderPath).filter(file => file.endsWith(".js"));
         let hasSubcommands = false;
 
@@ -155,7 +174,7 @@ async function loadCommands(client) {
         }
 
         // If any subcommands were added, register the base command
-        const isOwnerCategory = path.basename(path.dirname(commandsPath)) == "owner"
+        const isOwnerCategory = cmdCategory == "owner"
 
         if (hasSubcommands && !baseCommandExists && !isOwnerCategory) {
             commands.push(baseCommand);
