@@ -3,8 +3,9 @@ const { resolve } = require('path')
 const Piscina = require("piscina")
 const chrono = require("chrono-node")
 const {
-    emojis, links, hexColors
+    emojis, links, hexColors, DBL_TOKEN, clientId
 } = require("./config.json")
+const { createDjsClient } = require("discordbotlist");
 
 const {RED, YELLOW, RESET, GREEN, DARK_GREY, dark_red} = process.env
 const asciiColors = {
@@ -411,6 +412,17 @@ function badWordsResponse(censoredMatch){
             `\n-# If you think that is a mistake, please report it via /report bug and provide sentence you put.`
 }
 
+async function startDBL(client){
+    if(DBL_TOKEN){
+        const dbl = new createDjsClient(DBL_TOKEN, client);
+        await dbl.postBotStats({ guilds: client.guilds.cache.size, users: client.users.cache.size });
+        const formattedCommands = client.commands.map(cmd => cmd.data)
+        await dbl.postBotCommands([...formattedCommands])
+        await dbl.startPosting()
+    }
+    return;
+}
+
 module.exports = {
     getOptionNum,
     getPermissionNum,
@@ -438,4 +450,5 @@ module.exports = {
     ...emojis,
     ...hexColors,
     ...asciiColors,
+    startDBL,
 }

@@ -5,6 +5,7 @@
     "agenda": "^6.2.5",
     "chrono-node": "^2.9.1",
     "discord.js": "^14.26.4",
+    "discordbotlist": "^1.1.1",
     "dotenv": "^17.4.2",
     "express": "^5.2.1",
     "gif-encoder-2": "^1.0.5",
