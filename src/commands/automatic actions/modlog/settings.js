@@ -35,6 +35,7 @@ const isOnEmoji = (boolean) =>{
 module.exports = {
     name: "settings",
     description: "Adjust logging settings. To set a log channel, run /set modlogs",
+    isServerOnly: true,
     /** @param {import("discord.js").ChatInputCommandInteraction} interaction */
     async execute(interaction){
         const userHasCorrectPerms = checkMemberPermissions(interaction.member, "ManageGuild")

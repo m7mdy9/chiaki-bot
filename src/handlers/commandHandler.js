@@ -52,13 +52,17 @@ async function loadCommands(client) {
             await command.setup(client); // passing the client to that function
         }
         const cmdCategory = path.basename(path.dirname(commandsPath))
-        const isFunCommands = ["fun","danganronpa","image"].includes(cmdCategory) || command.name == "avatar"
+        const isFunCommands = ["fun","danganronpa","image"].includes(cmdCategory) || command.name == "avatar" || command.name == "help"
+        
+        const integration_types = [0]
         const contexts = [0]
+
         if(!command.permissions && !command.isServerOnly){
             contexts.push(1)
         }
         if(isFunCommands){
             contexts.push(2)
+            integration_types.push(1)
         }
 
         // incase stupid me doesnt include data himself
@@ -70,6 +74,7 @@ async function loadCommands(client) {
                 default_member_permissions: command?.permissions || null,
                 dm_permission: command?.permissions ? false : true,
                 contexts,
+                integration_types,
             }
         }
 
@@ -124,13 +129,24 @@ async function loadCommands(client) {
         };
         
         const cmdCategory = path.basename(path.dirname(commandsPath));
-        const isFunCommands = ["fun","danganronpa","image"].includes(cmdCategory)
-        const contexts = [0, 1]
-        if(isFunCommands){
+        const funCommandExceptions = ["welcome", "votingtime"]
+
+        const isFunCommands = ["fun","danganronpa","image"].includes(cmdCategory) && !funCommandExceptions.includes(folder)
+        console.log(isFunCommands,  ["fun","danganronpa","image"].includes(cmdCategory), !funCommandExceptions.includes(folder))
+
+        const integration_types = [0]
+        const contexts = [0]
+        if(!(permissionFile.length > 0)){
+            contexts.push(1)
+        }
+        if(isFunCommands && !(permissionFile.length > 0)){
+            integration_types.push(1)
             contexts.push(2)
         }
-
+        console.log(folder, integration_types, contexts)
         baseCommand.contexts = contexts;
+        baseCommand.integration_types = integration_types;
+
         const subcommandFiles = fs.readdirSync(folderPath).filter(file => file.endsWith(".js"));
         let hasSubcommands = false;
 

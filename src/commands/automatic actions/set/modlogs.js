@@ -15,6 +15,7 @@ module.exports = {
             channel_types: [getChannelTypeNum("GuildText")]
         }
     ],
+    isServerOnly: true,
     /** @param {import('discord.js').ChatInputCommandInteraction} interaction  */
     async execute(interaction){
         const userHasCorrectPerms = checkMemberPermissions(interaction.member, "ManageGuild")

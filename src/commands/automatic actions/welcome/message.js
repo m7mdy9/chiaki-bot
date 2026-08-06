@@ -9,6 +9,7 @@ const { logModAction } = require('../../../utils/modlogs');
 module.exports = {
     name: "message",
     description: "Set a welcome message whenever a new user joins! And sends an intro card which is like in /introcard",
+    isServerOnly: true,
     /** @param {import('discord.js').ChatInputCommandInteraction} interaction  */
     async execute(interaction){
         const userHasCorrectPerms = checkMemberPermissions(interaction.member, "ManageGuild")
