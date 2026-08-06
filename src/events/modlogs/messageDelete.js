@@ -25,7 +25,7 @@ module.exports = {
             if(!isTurnedOn) return;
 
             const messageContent = message?.content || "Couldn't fetch message content";
-            const formattedContent = messageContent > 1010 ? `${messageContent.splice(0,1007)}...` : messageContent
+            const formattedContent = messageContent.length > 1010 ? `${messageContent.slice(0,1007)}......` : messageContent
 
             const embedDescription = `**Message Deleted in <#${message.channelId}>**\n${formattedContent}`
 

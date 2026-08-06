@@ -10,17 +10,25 @@ const botName = "Chiaki Bot"
 const iconURL = "https://images-ext-1.discordapp.net/external/ljpqgpRph_hDsvuoiseOpu14JjR_MoHy8H5Yo9WlMhE/%3Fsize%3D512/https/cdn.discordapp.com/avatars/1502713354936914080/2b58262a2b3e6f7112ef4b7785b248a9.webp?format=webp"
 
 async function handleError(text, ...args){
-    let err = args.join(" ")
-    
+    const rawError = args.find(arg => arg instanceof Error) || args[0] || text;
+
+    let detailedError = ""
+    if(rawError instanceof Error){
+        detailedError = rawError.stack || rawError.message
+    } else if(typeof rawError == "object"){
+        detailedError = JSON.stringify(rawError, null, 2)
+    } else {
+        detailedError = args.map(arg => (typeof arg == "object" ? JSON.stringify(arg) : String(arg))).join(" ");
+    }
+
     const redText = `${RedAscii}${stripVTControlCharacters(text)}${ResetAscii}`
-    console.originalError(redText, err)
+    console.originalError(redText, rawError)
     
-    if(!err){
-        err = text;
+    if(args.length < 1){
         text = ""
     }
     const formattedText = text ? stripVTControlCharacters(text) : "Chiaki Bot Error";
-    const formattedError = err ? stripVTControlCharacters(err) : "";
+    const formattedError = detailedError ? stripVTControlCharacters(detailedError).slice(0, 3990) + "...." : "";
 
     if(currentBranch !== "main"){
         return;
@@ -34,7 +42,7 @@ async function handleError(text, ...args){
             embeds:[errorEmbed]
         })
     } catch(secondError){
-        console.originalError("VITAL ERROR: FAILED TO LOG ERROR, INFO:\n",secondError)
+        console.originalError("VITAL ERROR: FAILED TO LOG ERROR, INFO:\n",secondError.stack)
         
     }
 }
@@ -52,7 +60,7 @@ async function webhookLog(text){
             embeds:[logEmbed]
         })
     } catch(err){
-        console.originalError("VITAL ERROR: FAILED TO LOG ERROR, INFO:\n",err)
+        console.originalError("VITAL ERROR: FAILED TO LOG ERROR, INFO:\n",err.stack)
     }
 }
 

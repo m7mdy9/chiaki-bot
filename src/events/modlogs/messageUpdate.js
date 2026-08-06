@@ -32,8 +32,8 @@ module.exports = {
             const newContent = newMessage.content
             if((!oldContent || !newContent) || oldContent === newContent) return;
 
-            const formattedOld = oldContent > 1010 ? `${oldContent.splice(0,1007)}...` : oldContent
-            const formattedNew = newContent > 1010 ? `${newContent.splice(0,1007)}...` : newContent
+            const formattedOld = oldContent.length > 1010 ? `${oldContent.slice(0,1007)}......` : oldContent
+            const formattedNew = newContent.length > 1010 ? `${newContent.slice(0,1007)}......` : newContent
 
             const embed = embed_builder("Message Edited", `**[Jump to Message](${newMessage.url})** in <#${newMessage.channelId}>`)
             .setAuthor({ name: newMessage.author.tag, iconURL: newMessage.author.displayAvatarURL({ size: 64 })})
