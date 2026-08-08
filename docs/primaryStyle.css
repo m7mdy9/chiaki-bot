@@ -1,7 +1,12 @@
+@import url('https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100..900;1,100..900&display=swap');
+
 * {
     color:rgb(48, 48, 48);
     text-wrap: wrap;
+    font-family: "Roboto" ,Arial ,Tahoma , sans-serif;
+    font-weight: 500;
 }
+
 html {
     background-color:rgb(246, 212, 255);
 }
