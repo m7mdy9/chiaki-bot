@@ -35,6 +35,7 @@ console.error = (...args)=>{
 // Assigning token and clientId based on whether the current branch is main or not
 const botToken = (currentBranch != "main") && process.env.TESTING_TOKEN ? process.env.TESTING_TOKEN : process.env.TOKEN 
 const clientId = (currentBranch != "main") && process.env.TESTING_clientId ? process.env.TESTING_clientId : process.env.clientId 
+process.env.mongo = (currentBranch != "main") && process.env.mongoTESTING ? process.env.mongoTESTING : process.env.mongo;
 console.log(currentBranch)
 
 // creating our client with our needed intents and initializing an empty discordjs Collection to save our commands in, via the commandHandler.js 

@@ -132,7 +132,6 @@ async function loadCommands(client) {
         const funCommandExceptions = ["welcome", "votingtime"]
 
         const isFunCommands = ["fun","danganronpa","image"].includes(cmdCategory) && !funCommandExceptions.includes(folder)
-        console.log(isFunCommands,  ["fun","danganronpa","image"].includes(cmdCategory), !funCommandExceptions.includes(folder))
 
         const integration_types = [0]
         const contexts = [0]
@@ -143,7 +142,6 @@ async function loadCommands(client) {
             integration_types.push(1)
             contexts.push(2)
         }
-        console.log(folder, integration_types, contexts)
         baseCommand.contexts = contexts;
         baseCommand.integration_types = integration_types;
 
