@@ -79,3 +79,33 @@ nav ul li:hover, nav ul li a:hover {
 .kinda-footer {
     padding-bottom: 10px;
 }
+
+@media screen and (max-width: 768px) {
+    #nav-right {
+        float: left;
+        
+    }
+    nav ul {
+        display: flex;
+        flex-direction: row;
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+    .chiaki-div {
+        flex-direction: column;
+    }
+    .chiaki-pfp {
+        margin: 0 auto !important;
+    }
+    .chiaki-header {
+        text-align: center !important;
+        margin: 0 auto !important;
+    }
+}
+
+@media screen and (max-width: 400px){
+    nav ul li {
+        width: 50%;
+        box-sizing: border-box;
+    }
+}
