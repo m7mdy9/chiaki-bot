@@ -6,7 +6,7 @@ module.exports = {
     /** @param {import('discord.js').GuildMember} member */
     async execute(member){
         const guildId = member.guild.id
-        const autoroleDoc = await autoroleModel.findOne();
+        const autoroleDoc = await autoroleModel.findOne({ guildId });
         if(!autoroleDoc || !autoroleDoc?.roleIds) return;
         
         try {
