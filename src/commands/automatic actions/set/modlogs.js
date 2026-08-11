@@ -34,7 +34,7 @@ module.exports = {
         async function setModlogChannel(channelId=null, modlogInt, edit=false){
             if(initialResponse){
                 if(channelId){
-                    initialEmbed.setDescription(`Curret Channel: <#${channelId}>`)
+                    initialEmbed.setDescription(`Curret Channel: <#${channelId}>\n\nUse **\`/modlog settigns\`** to change the logging settings.`)
                     .setFooter({ text: `Last Edited`}).setTimestamp();
                 } else {
                     initialEmbed.setDescription(`No channel is set.`).setFooter(null).setTimestamp(null);
@@ -109,7 +109,7 @@ module.exports = {
         const initialRowComponents = [initialButton.getRow()]
 
         if(modlogDoc?.channelId){
-            initialEmbed.setDescription(`Current Channel: <#${modlogDoc.channelId}>`)
+            initialEmbed.setDescription(`Current Channel: <#${modlogDoc.channelId}>\n\nUse **\`/modlog settigns\`** to change the logging settings.`)
             .setFooter({ text: `Last Edited`}).setTimestamp(modlogDoc.timestamp)
         } else {
             initialEmbed.setDescription(`No channel is set.`)

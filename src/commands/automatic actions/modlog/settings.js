@@ -76,7 +76,7 @@ module.exports = {
 
         const returnFormattedSettings = () =>{
             let resultString =
-            `**Current Logging Channel: ${modLogChannel ? `<#${modLogChannel}>` : `\`none\``}**\n\n`
+            `**Current Logging Channel: ${modLogChannel ? `<#${modLogChannel}>` : `\`none\``}**\n(set using **\`/set modlogs\`**)\n\n`
             
             for(const modlogField in modlogObj){
                 resultString += `${isOnEmoji(settingsDoc[modlogField])} ${modlogObj[modlogField]}\n`
