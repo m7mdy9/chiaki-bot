@@ -7,7 +7,7 @@ const {
 } = require("./config.json")
 const { createDjsClient } = require("discordbotlist");
 
-const {RED, YELLOW, RESET, GREEN, DARK_GREY, dark_red} = process.env
+const {RED, YELLOW, RESET, GREEN, DARK_GREY, dark_red, SupportServerId} = process.env
 const asciiColors = {
     RedAscii: RED,
     YellowAscii: YELLOW,
@@ -451,4 +451,5 @@ module.exports = {
     ...hexColors,
     ...asciiColors,
     startDBL,
+    SupportServerId,
 }

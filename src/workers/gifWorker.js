@@ -74,7 +74,7 @@ let dissectedGifFrames = null;
  * 5. We assign the empty dissectedGifFrames variable the cachedFrames and return it.
 */
 async function dissectGif(iterativeLoop=false){
-    if(dissectedGifFrames) return dissectedGifFrames;
+    if(dissectedGifFrames && !process.env.isKoyeb) return dissectedGifFrames;
     else {
         const extractedFrames = await gifFrames({
             url: executionGifPath,
