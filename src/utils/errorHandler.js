@@ -57,7 +57,9 @@ async function webhookLog(text){
             .setAuthor({ name: botName, iconURL:iconURL })
 
         await webhook.send({
-            embeds:[logEmbed]
+            embeds:[logEmbed],
+            username: "Happy Not Error Guy",
+            avatarURL: "https://cdn.discordapp.com/attachments/1502727509261942884/1537528714047393802/image.png?ex=6a7f5eb3&is=6a7e0d33&hm=2ce08289f62b0218a8925cfab0996a81304622de55ed0d947e74e7f2c984eec2&"
         })
     } catch(err){
         console.originalError("VITAL ERROR: FAILED TO LOG ERROR, INFO:\n",err.stack)
