@@ -101,6 +101,9 @@ nav ul li:hover, nav ul li a:hover {
         text-align: center !important;
         margin: 0 auto !important;
     }
+    .kinda-footer {
+        margin-bottom: 70px;
+    }
 }
 
 @media screen and (max-width: 400px){
