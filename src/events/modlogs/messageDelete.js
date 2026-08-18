@@ -1,6 +1,6 @@
 const { basename } = require("discord.js");
 const { modlogsModel } = require("../../database/models");
-const { embed_builder, botHasBasicPerms } = require("../../utils/utils");
+const { embed_builder, botHasBasicPerms, redHex } = require("../../utils/utils");
 const { checkModlogSettings } = require("../../utils/modlogs");
 
 module.exports = {
@@ -29,7 +29,7 @@ module.exports = {
 
             const embedDescription = `**Message Deleted in <#${message.channelId}>**\n${formattedContent}`
 
-            const embed = embed_builder(null, embedDescription, process.env.red)
+            const embed = embed_builder(null, embedDescription, redHex)
             if(!message.partial){
                 embed.setAuthor({ name: message.author.username, iconURL: message.author.displayAvatarURL({ size: 64 }) })
                 embed.setTimestamp().setFooter({ text:`UserID: ${message.author.id}` });

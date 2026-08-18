@@ -6,11 +6,10 @@ const {
     TextInputBuilder, TextInputStyle, 
     ComponentType, ButtonStyle, 
 } = require("discord.js")
-const { intAuthorValidate } = require("./utils")
+const { intAuthorValidate, YellowAscii, ResetAscii } = require("./utils")
 
-const RED = process.env.RED
-const YELLOW = process.env.YELLOW
-const RESET = process.env.RESET
+const YELLOW = YellowAscii
+const RESET = ResetAscii
 
 /**
  * @param {any} context - The class instance of ('this'), must contain interaction and row

@@ -1,7 +1,7 @@
-const { getOptionNum, embed_builder, hiddenFlag, createChannelInCategory } = require("../../../utils/utils.js")
+const { getOptionNum, embed_builder, hiddenFlag, createChannelInCategory, redHex, greenHex, RedAscii, ResetAscii } = require("../../../utils/utils.js")
 const { buttonBuilder, modalBuilder } = require("../../../utils/builders.js")
 const { reportsModel, reportBugBLModel } = require("../../../database/models")
-const { RED, RESET, bugReportCategoryId } = process.env
+const { BUG_REPORT_CATEGORY_ID } = process.env
 
 module.exports = {
     name: "bug",
@@ -38,14 +38,14 @@ module.exports = {
         
         if(lastReport){
             const cdTS = Date.parse(lastReport.timestamp) + 5 * 60 * 1000
-            if(cdTS > Date.now() && userId != process.env.ownerId){
+            if(cdTS > Date.now() && userId != process.env.OWNER_ID){
                 return interaction.editReply({embeds:[embed_builder(null,
                     `There's a 5 minute cooldown between bug reports, sorry!
-                    \nYou can try again <t:${Math.floor(cdTS/1000)}:R>`,process.env.red)]})
+                    \nYou can try again <t:${Math.floor(cdTS/1000)}:R>`,redHex)]})
             }
         }
-        const embed = embed_builder("Report a Bug", "Press the button to input your report.",process.env.red)
-        const resultEmbed = embed_builder("Report Sent!", "Thank you for your report!", process.env.green)
+        const embed = embed_builder("Report a Bug", "Press the button to input your report.",redHex)
+        const resultEmbed = embed_builder("Report Sent!", "Thank you for your report!", greenHex)
 
         const button = new buttonBuilder(interaction)
             .addButton("report", "Report", "Danger", null, "⚠️")
@@ -74,7 +74,7 @@ module.exports = {
 
                 modalInteraction.update({ embeds: [resultEmbed], components: [] });
                 try {
-                    const reportEmbedToReporter = embed_builder(`Created Bug Report Case: ${caseNum}`, null, process.env.green)
+                    const reportEmbedToReporter = embed_builder(`Created Bug Report Case: ${caseNum}`, null, greenHex)
                             .addFields(
                             { name: `Report Info`, value: reason, inline: false },
                             { name: `attachment URL`, value: `${attachment?.url ?? "None"}` }
@@ -111,7 +111,7 @@ module.exports = {
                     .addButton(`reportBugBL:${caseNum}`, 'Strike/BL reporter', "Danger", null, "⚠️")
                     .addButton(`reportBugDismiss:${caseNum}`, `Dismiss`, `Secondary`, null, '❌');
 
-                const reportCategory = await interaction.client.channels.fetch(bugReportCategoryId)
+                const reportCategory = await interaction.client.channels.fetch(BUG_REPORT_CATEGORY_ID)
                 const reportChannel = await createChannelInCategory(`bug-case-${caseNum}`, reportCategory, `report channel for case: ${caseNum}`)
                 
                 const messageOptions = { embeds: [reportEmbed], components:[reportEmbedButtons.getRow()] }
@@ -120,9 +120,9 @@ module.exports = {
                     const reportMessage = await reportChannel.send(messageOptions);
                     reportMessage.pin();
                 } else {
-                    console.error(RED+"Failed to find the report channel"+RESET)
+                    console.error(RedAscii+"Failed to find the report channel"+ResetAscii)
 
-                    const ownerIdDM = await interaction.client.users.fetch(process.env.ownerId)
+                    const ownerIdDM = await interaction.client.users.fetch(process.env.OWNER_ID)
                     ownerIdDM.send("Failed to find the report channel")
                     ownerIdDM.send({content:"Report:", ...messageOptions})
                 }

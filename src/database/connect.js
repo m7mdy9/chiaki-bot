@@ -1,8 +1,8 @@
 const mongoose = require('mongoose')
-const { RED, GREEN, RESET } = process.env
+const { RedAscii, ResetAscii } = require('../utils/utils')
 
 async function connectDB(){
-    if(!process.env.mongo){
+    if(!process.env.MONGODB_KEY){
         console.error("The mongodb token is missing.")
         process.exit(1)
     }
@@ -13,12 +13,12 @@ async function connectDB(){
     mongoose.connection.on("error", (err)=>{console.error("An error has occured within the DB: ",err)})
     mongoose.connection.on("disconnected", ()=>{console.warn("DB disconnected.")})
     try {
-        mongoose.connect(process.env.mongo, {
+        mongoose.connect(process.env.MONGODB_KEY, {
             maxPoolSize: 10,
             serverSelectionTimeoutMS: 5000,
         })
     } catch(err){
-        console.error(RED+`MongoDB connection failed.${RESET}\nError:`, err)
+        console.error(RedAscii+`MongoDB connection failed.${ResetAscii}\nError:`, err)
         process.exit(1)
     }
 }

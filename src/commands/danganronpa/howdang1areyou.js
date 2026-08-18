@@ -1,5 +1,5 @@
-const { getOptionNum, embed_builder} = require('../../utils/utils.js')
-const { danganronpa1_characters, secretUser} = require("../../utils/config.json")
+const { getOptionNum, embed_builder, pinkSquareId, blackSquareId} = require('../../utils/utils.js')
+const { danganronpa1_characters } = require("../../utils/misc.json")
 const  formattedList = danganronpa1_characters.map(el => ({name:el, value:el}))
 module.exports = {
     name: "howdang1areyou",
@@ -27,14 +27,14 @@ module.exports = {
         const charChoice = interaction.options.getString("character") || danganronpa1_characters[Math.floor(Math.random() * danganronpa1_characters.length)]
         const targetUser = interaction.options.getUser("user") || interaction.user
         const isUser = targetUser.id != interaction.user.id
-        if((targetUser.id === process.env.ownerId && charChoice.toLowerCase() == "kyoko kirigiri") || (targetUser.id === process.env.secretUser && charChoice.toLowerCase() == "chihiro fujisaki")){
+        if((targetUser.id === process.env.OWNER_ID && charChoice.toLowerCase() == "kyoko kirigiri") || (targetUser.id === process.env.RIGGED_USER_ID && charChoice.toLowerCase() == "chihiro fujisaki")){
             RNG = 100.00
-        } else if(targetUser.id === process.env.secretUser && charChoice.toLowerCase() == "kyoko kirigiri"){
+        } else if(targetUser.id === process.env.RIGGED_USER_ID && charChoice.toLowerCase() == "kyoko kirigiri"){
             RNG = 0.00
         }
         const roundNum = Math.round(RNG / 10)
-        const ChiakiSquare = "<:pink_square:1508908743822414074>".repeat(roundNum)
-        const BlackSquare = "<:black_square:1508910237518794843>".repeat(10-roundNum)
+        const ChiakiSquare = `<:pink_square:${pinkSquareId}>`.repeat(roundNum)
+        const BlackSquare = `<:black_square:${blackSquareId}>`.repeat(10-roundNum)
         const output = ChiakiSquare + BlackSquare
         const embed = embed_builder(
             `How ${charChoice} ${isUser ? `is ${targetUser.username}?` : `are you?`}`,

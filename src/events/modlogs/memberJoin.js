@@ -1,6 +1,6 @@
 const { basename } = require("discord.js");
 const { modlogsModel } = require("../../database/models");
-const { embed_builder, botHasBasicPerms } = require("../../utils/utils");
+const { embed_builder, botHasBasicPerms, greenHex } = require("../../utils/utils");
 const { checkModlogSettings } = require("../../utils/modlogs");
 
 module.exports = {
@@ -23,7 +23,7 @@ module.exports = {
             if(!isTurnedOn) return;
 
             const discordTimestamp = `<t:${Math.floor(member.user.createdTimestamp / 1000)}:R>`
-            const embed = embed_builder(null,`**<@!${member.id}> joined the server**`, process.env.green)
+            const embed = embed_builder(null,`**<@!${member.id}> joined the server**`, greenHex)
             .addFields( { name: `Account Created`, value:`${discordTimestamp}` } )
             .setTimestamp().setAuthor({ name:`${member.user.username} joined` })
             .setThumbnail(member.displayAvatarURL({ size: 64 })).setFooter({ text: `ID: ${member.id}`});

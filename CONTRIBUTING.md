@@ -16,52 +16,46 @@ Make sure you have [node.js](https://nodejs.org/) downloaded before going furthe
     * Create your `.env` file in the root directory.
     * Add the following and replace the values with actual values from your testing environment.
     ```env
-    # Main Tokens and DB URI
-    TOKEN=discord_bot_token_here_this_token_will_be_used_if_branchName_is_main
-    mongo=mongodb_cluster_login_here
-
-    # Owner Id and Client ID
-    ownerId=owner_id_goes_here
-    clientId=client_id_used_if_branchName_is_main
-
-    # Testing Token & Client ID if the branch is not `main` (OPTIONAL, IF NOT SET THE BOT WILL JUST USE THE MAIN TOKEN AND CLIENTID)
-    TESTING_TOKEN=testing_bot_token
-    TESTING_clientId=testing_bot_clientId
+    # Main Bot Credentials
+    BOT_TOKEN=main_bot_token
+    MONGODB_KEY=mongodb_uri
+    CLIENT_ID=client_id
+    DBL_TOKEN=discord_bot_list_token
     
-    # Bot Invite Link.
-    INVITE=bot_invite_link
+    #Error Handling Webhook
+    MAIN_ERR_WEBHOOK=webhook_link_for_errors
+    TESTING_GUILD=guild_id_for_testing
 
+    # Misc IDs
+    SupportServerId=support_guild_id_OPTIONAL_UNUSED
+    OWNER_ID=966205214308847626
 
-    secretUser=id_used_for_specific_odds_in_howdangareyou_(pretty much rigged odds against a friend of mine)
+    # for a little rigged odds in /howdangareyou commands (pls dont gamble with these commands)
+    RIGGED_USER_ID=user_id
 
-    # Dog Fact API & API Key
-    dogAPIKey=api_used_from_thedogapi.com_for_dog_pictures
-    dogFactAPIKey=api_used_for_dog_facts_link_for_api:https://rapidapi.com/maketest-1YGgU5ZOtA/api/random-dog-facts/pricing
-
+    # Dog API Key (thedogapi.com) and Dog Facts API Key (https://rapidapi.com/maketest-1YGgU5ZOtA/api/random-dog-facts/pricing)
+    DOG_API_KEY=insert_dog_api_key
+    DOGFACT_API_KEY=insert_dog_fact_api_key
 
     # categories for reports
-    bugReportCategoryId=categoryId_where_bugReports_are_made
-    bugReportArchiveCategoryId=categoryId_of_bugReports_archives
+    BUG_REPORT_CATEGORY_ID=category_id
+    BUG_REPORT_ARCHIVE_CATEGORY_ID=category_id
 
-    userReportCategoryId=categoryId_where_userReports_are_made
-    userReportArchiveCategoryId=categoryId_where_userReports_are_archived
+    USER_REPORT_CATEGORY_ID=category_id
+    USER_REPORT_ARCHIVE_CATEGORY_ID=category_id
 
-    # Some hex colors used inside the bot.
-    pink="#ffdcfc"
-    red="#ff8d8d"
-    green='#97ff94'
-    dark_red="#a80000"
-    
-    # colors for terminal
-    RED='\x1b[31m'
-    YELLOW='\x1b[33m'
-    RESET='\x1b[0m'
-    GREEN='\x1b[32m'
-    DARK_GREY='\x1b[1;30m'
+    # Testing Bot Credentials (LEAVE EMPTY IF YOU DO NOT HAVE A TESTING BOT, IT WILL FALLBACK TO THE PRIMARY ONES)
+    TESTING_TOKEN=testing_bot_token
+    TESTING_CLIENT_ID=testing_bot_client_id
+    MONGODB_TESTING_KEY=testing_mongodb_uri
 
-    # IDs of emojis! (you can set emoji ids inside your bot via dev portal)
-    DARK_RED_SQUARE=replace_with_emoji_id_of_a_dark_red_square
-    BLACK_SQUARE=replace_with_emoji_id_of_a_black/dark_grey_square
+    # Emojis IDs for Production (Main Branch)
+    DARK_RED_SQUARE=emoji_id
+    BLACK_SQUARE=emoji_id
+
+    # Emojis IDs for Testing Branch
+    DARK_RED_SQUARE_TESTING=emoji_id
+    BLACK_SQUARE_TESTING=emoji_id
 
     # slur blacklist words, include words in the following format:
     WORD_BLACKLIST=badWord1,badWord2,badWord3,badWord4...and so on.
@@ -86,6 +80,7 @@ You can run the bot either by `npm start` or `node src/index.js`.
 - For subcommands, if you want to set a required permission you have to put in the subcommand folder the name of the permission (e.g. `ManageRoles` ) as an empty file, and it's preceeded by a !, so the permission file would be `misc/dice/!ManageRoles` (CASE SENSITIVE), You do not need to include anything inside the file, and it must have no extension.
 ```js
 const { getOptionNum, embed_builder, hiddenFlag, getPermissionNum, embed_builder, embed_info } = require("/path/to/utils/utils.js")
+// there exists alot of helpers and utility stuff in utils.js so make sure to give it a look!
 
 module.exports = {
     name:"command_name",
@@ -99,7 +94,7 @@ module.exports = {
     options: [
         {
             name:'option_name', // REQUIRED, MUST BE LOWERCASE.
-            description: 'option_description', // required
+            description: 'option_description', // requiredisServerOnly: true,
             type: getOptionNum("INTEGER"), // required
             /* OPTIONS:
             "SUB_COMMAND",
@@ -120,7 +115,9 @@ module.exports = {
         //You can add more options
     ],
     permissions:"ManageRoles", // ONLY FOR NON-SUBCOMMANDS, CASE SENSITIVE. and is OPTIONAL!
-    hidden: true, //Makes the command Ephemeral (only the user who ran it can see it), false by default
+    hidden: true, // Makes the command Ephemeral (only the user who ran it can see it), false by default
+    isServerOnly: true, // Makes the command ONLY work if the bot is in the server its running in, and server only of course
+
     // Defining interaction for correct autocomplete provided by your editor
     /** @param {import('discord.js').ChatInputCommandInteraction} interaction */
     async execute(interaction){

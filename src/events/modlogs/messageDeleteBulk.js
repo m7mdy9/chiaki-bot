@@ -1,6 +1,6 @@
 const { basename } = require("discord.js");
 const { modlogsModel } = require("../../database/models");
-const { embed_builder, botHasBasicPerms } = require("../../utils/utils");
+const { embed_builder, botHasBasicPerms, redHex } = require("../../utils/utils");
 const { checkModlogSettings } = require("../../utils/modlogs");
 
 module.exports = {
@@ -23,7 +23,7 @@ module.exports = {
             const isTurnedOn = await checkModlogSettings("messageDeletion", guildId, channel.id, channel.parentId)
             if(!isTurnedOn) return;
 
-            const embed = embed_builder(`Bulk Message Deletion`, `**${messages.size} messages deleted in <#${channel.id}>**`, process.env.red)
+            const embed = embed_builder(`Bulk Message Deletion`, `**${messages.size} messages deleted in <#${channel.id}>**`, redHex)
             .setAuthor({ name: guild.name, iconURL: channel.guild.iconURL({ size: 64 }) })
             .setTimestamp().setFooter({ text:`ChannelID: ${channel.id}` });
 

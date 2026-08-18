@@ -1,6 +1,6 @@
 const { basename } = require("discord.js");
 const { modlogsModel } = require("../../database/models");
-const { embed_builder, botHasBasicPerms } = require("../../utils/utils");
+const { embed_builder, botHasBasicPerms, redHex } = require("../../utils/utils");
 const { checkModlogSettings } = require("../../utils/modlogs");
 
 module.exports = {
@@ -22,7 +22,7 @@ module.exports = {
             const isTurnedOn = await checkModlogSettings("roleActions", guildId)
             if(!isTurnedOn) return;
 
-            const embed = embed_builder("Role Deleted", `**\`${role.name}\` was deleted.**`, process.env.red)
+            const embed = embed_builder("Role Deleted", `**\`${role.name}\` was deleted.**`, redHex)
             .setFooter({ text: `ID: ${role.id}` }).setTimestamp()
             .setAuthor({ name: guild.name, iconURL: guild.iconURL({ size: 64 }) })
 

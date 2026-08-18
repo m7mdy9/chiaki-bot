@@ -3,18 +3,19 @@ const { resolve } = require('path')
 const Piscina = require("piscina")
 const chrono = require("chrono-node")
 const {
-    emojis, links, hexColors, DBL_TOKEN, clientId
+    emojis, links, hexColors, asciiColors, botInvite
 } = require("./config.json")
 const { createDjsClient } = require("discordbotlist");
 
-const {RED, YELLOW, RESET, GREEN, DARK_GREY, dark_red, SupportServerId} = process.env
-const asciiColors = {
-    RedAscii: RED,
-    YellowAscii: YELLOW,
-    ResetAscii: RESET,
-    GreenAscii: GREEN,
-    DarkGreyAscii: DARK_GREY,
-}
+const {DBL_TOKEN, SupportServerId} = process.env
+
+const isNotMainBranch = process.currentBranch != "main"
+
+const squareEmojis = {
+    pinkSquareId: (isNotMainBranch && process.env.PINK_SQUARE_TESTING) || process.env.PINK_SQUARE,
+    darkRedSquareId: (isNotMainBranch && process.env.DARK_RED_SQUARE_TESTING) || process.env.DARK_RED_SQUARE,
+    blackSquareId: (isNotMainBranch && process.env.BLACK_SQUARE_TESTING) || process.env.BLACK_SQUARE,
+};
 
 /**
  * @param {'SUB_COMMAND' | 'SUB_COMMAND_GROUP' | 'STRING' | 
@@ -111,7 +112,7 @@ function getChannelTypeNum(type){
     return ChannelTypesNum[type]
 }
 
-function embed_builder(title=null, description=null, color ='#ffdcfc'){
+function embed_builder(title=null, description=null, color = hexColors.pinkHex){
     try {
         const embed = new EmbedBuilder()
         if (title) {
@@ -235,7 +236,7 @@ async function makeExecutionGif(avatarURL, username){
     
     const timeTakenToExecute = ((performance.now() - startTime)/1000).toFixed(2)
 
-    // console.log(DARK_GREY+`Time taken to finish execution gif: ${timeTakenToExecute}s`+RESET)
+    // console.log(asciiColors.DarkGreyAscii+`Time taken to finish execution gif: ${timeTakenToExecute}s`+asciiColors.ResetAscii)
 
     return [gifAttachment, timeTakenToExecute]
 }
@@ -325,7 +326,7 @@ function botHasBasicPerms(targetPermChannel, interaction, strictType){
         const isCorrectPerms = botPermissions.has([getPermissionNum("ViewChannel"), getPermissionNum("SendMessages"), getPermissionNum("EmbedLinks")]);
         return isCorrectPerms;
     } catch(err){
-        console.log(YELLOW+`botHasBasicPerms for ${targetPermChannel?.id} has errored and defaulted to false`+RESET)
+        console.log(asciiColors.YellowAscii+`botHasBasicPerms for ${targetPermChannel?.id} has errored and defaulted to false`+asciiColors.ResetAscii)
         return false;
     }
 }
@@ -337,7 +338,7 @@ function userHasBasicPermissions(targetPermChannel, member){
         const isCorrectPerms = userPermissions.has([getPermissionNum("ViewChannel"), getPermissionNum("SendMessages"), getPermissionNum("ReadMessageHistory")]);
         return isCorrectPerms;
     } catch(err){
-        console.log(YELLOW+`userHasBasicPermissions for ${targetPermChannel?.id} has errored and defaulted to false`+RESET)
+        console.log(asciiColors.YellowAscii+`userHasBasicPermissions for ${targetPermChannel?.id} has errored and defaulted to false`+asciiColors.ResetAscii)
         return false;
     }
 }
@@ -450,6 +451,8 @@ module.exports = {
     ...emojis,
     ...hexColors,
     ...asciiColors,
+    ...squareEmojis,
     startDBL,
     SupportServerId,
+    botInvite,
 }

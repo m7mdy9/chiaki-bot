@@ -1,7 +1,7 @@
-const { getOptionNum, embed_builder, hiddenFlag, createChannelInCategory } = require("../../../utils/utils.js");
+const { getOptionNum, embed_builder, hiddenFlag, createChannelInCategory, redHex, greenHex } = require("../../../utils/utils.js");
 const { buttonBuilder, modalBuilder } = require("../../../utils/builders.js");
 const { reportUserModel, reportUserBLModel, reportCardModel, reportCardBLModel } = require("../../../database/models/index.js");
-const { RED, RESET, userReportCategoryId } = process.env;
+const { USER_REPORT_CATEGORY_ID } = process.env;
 
 module.exports = {
     name: "user",
@@ -24,12 +24,12 @@ module.exports = {
         const guildId = interaction.guildId || null
 
         const lastReport = await reportUserModel.findOne({ reporterId }).sort({timestamp: -1})
-        if(lastReport && reporterId != process.env.ownerId){
+        if(lastReport && reporterId != process.env.OWNER_ID){
             const cdTS = Date.parse(lastReport.timestamp) + 60 * 1000
             if(cdTS > Date.now()){
                 return interaction.editReply({embeds:[embed_builder(null,
                     `There's a 1 minute cooldown between user reports, sorry!
-                    \nYou can try again <t:${Math.floor(cdTS/1000)}:R>`,process.env.red)]})
+                    \nYou can try again <t:${Math.floor(cdTS/1000)}:R>`,redHex)]})
             }
         }
 
@@ -68,7 +68,7 @@ module.exports = {
                 })
                 const abuserNameId = `**<@!${targetUserId}>/\`${targetUserId}\`**`
                 
-                const userReportCategory = await interaction.client.channels.fetch(userReportCategoryId)
+                const userReportCategory = await interaction.client.channels.fetch(USER_REPORT_CATEGORY_ID)
                 const userReportChannel = await createChannelInCategory(`report-case-${caseNum}-${targetUser.username}`, userReportCategory, `report channel for case: ${caseNum}`)
 
                 const reportEmbed = embed_builder(`New User Report by ${interaction.user.username}`).addFields(
@@ -91,7 +91,7 @@ module.exports = {
                 .then(()=>{ userReportChannel.send({ content: `Abuser's Report Card:\n\`\`\`js\n${abuserReportCard}\n\`\`\``}) })
                 
                 try {
-                    const reportEmbedInDM = embed_builder(`Created User Report Case: ${caseNum}`, null, process.env.green)
+                    const reportEmbedInDM = embed_builder(`Created User Report Case: ${caseNum}`, null, greenHex)
                       .addFields(
                         { name: 'Abuser Mention/ID', value: abuserNameId, inline: true },
                         { name: 'Report Info', value: reportInput, inline: false },
@@ -104,7 +104,7 @@ module.exports = {
                     console.error(`Couldn't DM Reporter in report user.js,Error name: `, err)
                 }
 
-                const successEmbed = embed_builder('Thank you for your report!',`You successfully submitted a report on **\`${targetUser.username}\`**!`, process.env.green)
+                const successEmbed = embed_builder('Thank you for your report!',`You successfully submitted a report on **\`${targetUser.username}\`**!`, greenHex)
                   .setFooter({ text: "We will get back to you soon!" })
 
                 return modalInteraction.update({ embeds:[successEmbed], components:[], flags: [hiddenFlag] })

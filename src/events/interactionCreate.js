@@ -1,7 +1,7 @@
 const { Collection } = require("discord.js")
-const { hiddenFlag } = require("../utils/utils.js")
+const { hiddenFlag, botInvite } = require("../utils/utils.js")
 let fullCommandInfo
-const { ownerId } = process.env
+const { OWNER_ID } = process.env
 
 module.exports = {
     name: "interactionCreate",
@@ -14,7 +14,7 @@ module.exports = {
         if (!interaction.isCommand()) return;
 
         const client = interaction.client
-        const isOwner = interaction.user.id === process.env.ownerId
+        const isOwner = interaction.user.id === OWNER_ID
 
         /** @type {import('discord.js').Collection<string, import('discord.js').Collection<string, number>>} */
         const cooldowns = client.cooldowns;
@@ -68,7 +68,7 @@ module.exports = {
             if (isServerOnly && !interaction.guild) {
                 return interaction.reply({
                     content: `You can not run this commnad outside of servers that the bot is in.
-                    \nIf you would like this command to work, invite **[Chiaki Nanami](${process.env.INVITE})** to the server or ask an administrator to do so.`,
+                    \nIf you would like this command to work, invite **[Chiaki Nanami](${botInvite})** to the server or ask an administrator to do so.`,
                     flags: [hiddenFlag]
                 })
             }

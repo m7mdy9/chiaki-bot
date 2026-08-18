@@ -1,5 +1,5 @@
 const { embed_builder } = require("../../../utils/utils.js")
-const { all_chiaki_lines,chiaki_half_body_sprites } = require("../../../utils/config.json")
+const { all_chiaki_lines,chiaki_half_body_sprites } = require("../../../utils/misc.json")
 
 module.exports = {
     name: "chiaki-line",

@@ -4,7 +4,6 @@ const { deploySlashCommands } = require('../handlers/commandHandler.js');
 const { connectDB } = require("../database/connect.js")
 const { startActivity, checkmarkEmoji, startDBL } = require("../utils/utils.js");
 const { webhookLog } = require("../utils/errorHandler.js");
-const { GREEN, RESET, } = process.env
 
 module.exports = {
     name: "clientReady",
@@ -12,7 +11,7 @@ module.exports = {
     async execute(client){
         console.log(`✅ Logged in as ${client.user.tag}`);
         await connectDB();
-        await deploySlashCommands(client, client.clientId, client.botToken);
+        await deploySlashCommands(client, client.CLIENT_ID, client.BOT_TOKEN);
         console.log(`Slash commands successfully deployed.`)
         startActivity(client)
         
@@ -21,6 +20,8 @@ module.exports = {
         console.log("Started the agenda scheduler!")
         await webhookLog(`${checkmarkEmoji} Successfully started up **${client.user.tag}**`)
         
-        await startDBL(client)
+        if(process.currentBranch == "main"){
+            await startDBL(client)
+        }
     }
 }

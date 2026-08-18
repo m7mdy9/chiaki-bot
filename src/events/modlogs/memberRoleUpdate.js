@@ -1,6 +1,6 @@
 const { basename, AuditLogEvent, Collection } = require("discord.js");
 const { modlogsModel } = require("../../database/models");
-const { embed_builder, botHasBasicPerms } = require("../../utils/utils");
+const { embed_builder, botHasBasicPerms, redHex, greenHex } = require("../../utils/utils");
 const { checkModlogSettings } = require("../../utils/modlogs");
 
 module.exports = {
@@ -62,7 +62,7 @@ module.exports = {
 
             if(addedRoles?.size > 0 && addedRoles){
                 const mainDescription = `<@!${newMember.id}>'s roles were updated`;
-                const addEmbed = embed_builder(null,mainDescription, process.env.green)
+                const addEmbed = embed_builder(null,mainDescription, greenHex)
                 .setTimestamp().setAuthor({ name:"Member Roles Updated" })
                 .setThumbnail(newMember.displayAvatarURL({ size: 64 })).setFooter({ text: `ID: ${newMember.id}`});
                 addedRoles.forEach(role => {
@@ -72,7 +72,7 @@ module.exports = {
             }
              if(removedRoles?.size > 0 && removedRoles){
                 const mainDescription = `<@!${newMember.id}>'s roles were updated`;
-                const removeEmbed = embed_builder(null,mainDescription, process.env.red)
+                const removeEmbed = embed_builder(null,mainDescription, redHex)
                 .setTimestamp().setAuthor({ name:"Member Roles Updated" })
                 .setThumbnail(newMember.displayAvatarURL({ size: 64 })).setFooter({ text: `ID: ${newMember.id}`});
                 removedRoles.forEach(role => {

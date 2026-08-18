@@ -1,5 +1,5 @@
 const { embed_builder } = require("../../utils/utils.js")
-const { ownerId } = process.env
+const { OWNER_ID } = process.env
 
 module.exports = {
     options: [
@@ -12,7 +12,7 @@ module.exports = {
     ],
     hidden: true,
     async execute(interaction) {
-        if (interaction.user.id !== ownerId) {
+        if (interaction.user.id !== OWNER_ID) {
             return interaction.editReply("❌");
         }
 

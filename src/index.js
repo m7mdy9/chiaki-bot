@@ -1,13 +1,6 @@
 process.env.DOTENV_CONFIG_QUIET = 'true';
 require("dotenv").config({quiet:true});
 
-// Correcting the console color codes, as they are usually broken due to the ways .env saves values
-['RED', 'YELLOW', 'GREEN', 'RESET', 'DARK_GREY'].forEach(key => {
-    if (process.env[key]) {
-        process.env[key] = process.env[key].replace(/\\x1b/g, '\x1b');
-    }
-});
-
 const { Client, GatewayIntentBits, Collection, Partials} = require('discord.js');
 const runEventHandler = require("./handlers/eventHandler")
 const { execSync } = require("child_process");
@@ -27,15 +20,19 @@ try {
 process.currentBranch = currentBranch;
 
 const { handleError } = require("./utils/errorHandler");
+const { RedAscii, ResetAscii } = require("./utils/utils.js");
 console.error = (...args)=>{
     handleError(...args)
 }
 
 
-// Assigning token and clientId based on whether the current branch is main or not
-const botToken = (currentBranch != "main") && process.env.TESTING_TOKEN ? process.env.TESTING_TOKEN : process.env.TOKEN 
-const clientId = (currentBranch != "main") && process.env.TESTING_clientId ? process.env.TESTING_clientId : process.env.clientId 
-process.env.mongo = (currentBranch != "main") && process.env.mongoTESTING ? process.env.mongoTESTING : process.env.mongo;
+const isNotMainBranch = currentBranch != "main"
+// Assigning BOT_TOKEN and CLIENT_ID based on whether the current branch is main or not
+
+const BOT_TOKEN = isNotMainBranch && process.env.TESTING_TOKEN ? process.env.TESTING_TOKEN : process.env.BOT_TOKEN 
+const CLIENT_ID = isNotMainBranch && process.env.TESTING_CLIENT_ID ? process.env.TESTING_CLIENT_ID : process.env.CLIENT_ID 
+process.env.MONGODB_KEY = isNotMainBranch && process.env.MONGODB_TESTING_KEY ? process.env.MONGODB_TESTING_KEY : process.env.MONGODB_KEY;
+
 console.log(currentBranch)
 
 // creating our client with our needed intents and initializing an empty discordjs Collection to save our commands in, via the commandHandler.js 
@@ -50,19 +47,20 @@ const client = new Client({
 });
 client.cooldowns = new Collection();
 client.commands = new Collection();
-client.clientId = clientId
-client.botToken = botToken
+client.CLIENT_ID = CLIENT_ID
+client.BOT_TOKEN = BOT_TOKEN
 
 async function startBot(){
     try{
         require("./server.js")
         await runEventHandler(client)
         
-        await client.login(botToken)
+        await client.login(BOT_TOKEN)
 
     } catch(err){
-        console.log(process.env.RED+"Congratulations, the bot failed to start! | "+process.env.RESET)
+        console.log(RedAscii+"Congratulations, the bot failed to start!"+ResetAscii)
         console.originalError(err)
+        console.error("Congratulations, the bot failed to start!", err)
         process.exit(1)
     }
 }

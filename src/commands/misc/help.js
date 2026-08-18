@@ -1,11 +1,11 @@
 const fs = require("fs")
 const path = require("path")
-const { embed_builder, getPermissionNum } = require("../../utils/utils.js")
+const { embed_builder, getPermissionNum, pinkHex } = require("../../utils/utils.js")
 const { selectorTextBuilder, buttonBuilder } = require("../../utils/builders.js")
 const { ButtonStyle } = require("discord.js");
 
 let categoryNames, fullCommandInfo;
-const chiakiColor = '#ffdcfc';
+const chiakiColor = pinkHex;
 
 async function getCommands(type){
         const mainPath = path.dirname(__dirname);

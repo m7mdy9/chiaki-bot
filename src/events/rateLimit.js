@@ -1,6 +1,8 @@
+const { YellowAscii, ResetAscii } = require("../utils/utils")
+
 module.exports = {
     name: 'rateLimit',
     execute(rateLimitInfo){
-        console.warn(`${process.env.YELLOW}Rate Limit hit: ${process.env.RESET}`, rateLimitInfo)
+        console.warn(`${YellowAscii}Rate Limit hit: ${ResetAscii}`, rateLimitInfo)
     }
 }

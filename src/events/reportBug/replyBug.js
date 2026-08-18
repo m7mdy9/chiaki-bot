@@ -1,7 +1,6 @@
 const { reportBugBLModel, reportsModel } = require("../../database/models/index.js");
 const { selectorTextBuilder, modalBuilder, buttonBuilder } = require("../../utils/builders.js");
-const { hiddenFlag, embed_builder, disableAllComponents } = require("../../utils/utils.js");
-const { RED, YELLOW, GREEN, RESET } = process.env;
+const { hiddenFlag, embed_builder, disableAllComponents, YellowAscii, ResetAscii } = require("../../utils/utils.js");
 
 module.exports = {
     name: "interactionCreate",
@@ -60,7 +59,7 @@ module.exports = {
                 try {
                     DMMessage.channel = await interaction.client.channels.fetch(DMMessage.channelId)
                 } catch(err){
-                    console.warn(`${YELLOW}Failed to fetch dm in replyBug.js event${RESET}\nError: `,err)
+                    console.warn(`${YellowAscii}Failed to fetch dm in replyBug.js event${ResetAscii}\nError: `,err)
                 }
             }
             modalInteraction.reply({ content:`Successfully sent message to our team!\nWe will get back to you soon!`,flags:[hiddenFlag]})

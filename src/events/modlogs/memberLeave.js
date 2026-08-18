@@ -1,6 +1,6 @@
 const { basename } = require("discord.js");
 const { modlogsModel } = require("../../database/models");
-const { embed_builder, botHasBasicPerms } = require("../../utils/utils");
+const { embed_builder, botHasBasicPerms, redHex } = require("../../utils/utils");
 const { checkModlogSettings } = require("../../utils/modlogs");
 
 module.exports = {
@@ -24,7 +24,7 @@ module.exports = {
 
             let embedDescription = `<@!${member.id}> left the server`;
 
-            const embed = embed_builder(null,embedDescription, process.env.red)
+            const embed = embed_builder(null,embedDescription, redHex)
             .setTimestamp().setAuthor({ name:`${member.user.username} left` })
             .setThumbnail(member.displayAvatarURL({ size: 64 })).setFooter({ text: `ID: ${member.id}`});
             

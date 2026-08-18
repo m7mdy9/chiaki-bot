@@ -1,12 +1,12 @@
 // Special thanks to LibellantBrit for suggesting this command idea to me!
 
-const { embed_builder,getOptionNum, hiddenFlag } = require("../../../utils/utils.js")
+const { embed_builder,getOptionNum, hiddenFlag, darkRedHex } = require("../../../utils/utils.js")
 const { selectorUserBuilder, buttonBuilder } = require("../../../utils/builders.js")
 const { votingTimeModel } = require("../../../database/models/votingTimes.js")
 const { agenda } = require("../../../agenda/agenda.js")
 const ms = require("ms")
 
-const monokumaRed = process.env.dark_red
+const monokumaRed = darkRedHex
 
 module.exports = {
     name:"start",

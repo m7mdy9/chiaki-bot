@@ -1,10 +1,10 @@
 const { agenda } = require("../agenda.js");
 const { votingTimeModel } = require("../../database/models/votingTimes.js");
 const { votingEntryModel } = require("../../database/models/votingEntry.js");
-const { disableAllComponents, extractEmbedsFromMessage, embed_builder, makeExecutionGif } = require("../../utils/utils.js")
+const { disableAllComponents, extractEmbedsFromMessage, embed_builder, makeExecutionGif, darkRedHexedHex, ResetAscii, YellowAscii, RedAscii } = require("../../utils/utils.js")
 const { Types } = require("mongoose");
 const { EmbedBuilder } = require("discord.js");
-const { dark_red, RED, YELLOW, RESET, DARK_RED_SQUARE, BLACK_SQUARE } = process.env
+const { DARK_RED_SQUARE, BLACK_SQUARE } = process.env
 
 const black_square = `<:black_square:${BLACK_SQUARE}>`
 const dark_red_square = `<:dark_red_square:${DARK_RED_SQUARE}>`
@@ -31,7 +31,7 @@ function defineVotingTimeJob(client){
            const voteDocument = await votingTimeModel.findById(votingId)
 
             if(!message){
-                console.warn(YELLOW+`Voting ${votingId}'s message not found.`+RESET)
+                console.warn(YellowAscii+`Voting ${votingId}'s message not found.`+ResetAscii)
                 voteDocument?.delete();
                 return; 
             }
@@ -77,11 +77,11 @@ function defineVotingTimeJob(client){
             const newEmbed =  EmbedBuilder.from(embed.data).setTitle("VOTING OVER").setFields(newFields)
 
             await message.edit({embeds:[newEmbed], components: disabledRows })
-            const processingMessage = await message.reply({embeds:[embed_builder(null,"**Processing results...**",dark_red)]})
+            const processingMessage = await message.reply({embeds:[embed_builder(null,"**Processing results...**",darkRedHex)]})
 
 
             if(votesById.length < 1){
-                const noVotesEmbed = embed_builder("VOTING RESULTS",null,dark_red).addFields({name:"NO VOTES", value:"\u200b"})
+                const noVotesEmbed = embed_builder("VOTING RESULTS",null,darkRedHex).addFields({name:"NO VOTES", value:"\u200b"})
                 lastEmbeds.push(noVotesEmbed)
             } else {
                 let votingResults = {}
@@ -114,7 +114,7 @@ function defineVotingTimeJob(client){
                     
                 }).slice(0,-1)
 
-                const votesEmbed = embed_builder("VOTING RESULTS",null,dark_red).addFields(votesFields)
+                const votesEmbed = embed_builder("VOTING RESULTS",null,darkRedHex).addFields(votesFields)
                 lastEmbeds.push(votesEmbed)
 
                 const highestVotes = votesById[0]?.voteCount || null
@@ -124,13 +124,13 @@ function defineVotingTimeJob(client){
                 
                 if(isTie){
                     const tiedNames = tiedBlackeneds.map(el => el.name)
-                    const tieEmbed = embed_builder("GAME OVER",`**${tiedNames.join(", ")} were found guilty!**\n**Time for Punishment!**`, dark_red)
+                    const tieEmbed = embed_builder("GAME OVER",`**${tiedNames.join(", ")} were found guilty!**\n**Time for Punishment!**`, darkRedHex)
                     lastEmbeds.push(tieEmbed)
                 } else {
                     const username = votesById[0].name
                     const avatarPath = (await client.users.fetch(votesById[0]._id)).displayAvatarURL({ size: 128 })
 
-                    const oneBlackenedEmbed = embed_builder("GAME OVER",`**${username} was found guilty!**\n**Time for Punishment!**`,dark_red)
+                    const oneBlackenedEmbed = embed_builder("GAME OVER",`**${username} was found guilty!**\n**Time for Punishment!**`,darkRedHex)
                         .setImage("attachment://execute-avatar.gif")
                     const [gifAttachment,_] = await makeExecutionGif(avatarPath, username)
                     files.push(gifAttachment)
@@ -145,7 +145,7 @@ function defineVotingTimeJob(client){
             return processingMessage.edit({ embeds:lastEmbeds, files})
 
         } catch(err){
-            console.error(RED+`Failed to end the voting MessageID:${messageId}`+RESET)
+            console.error(RedAscii+`Failed to end the voting MessageID:${messageId}`+ResetAscii)
             console.error(err)
         }
     },{ lockLifetime: 60000 })

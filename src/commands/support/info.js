@@ -1,4 +1,4 @@
-const { kofiLink, supportServerInvite, embed_builder, kofiLogo } = require('../../utils/utils')
+const { kofiLink, supportServerInvite, embed_builder, kofiLogo, botInvite, pinkHex, RedAscii, ResetAscii } = require('../../utils/utils')
 
 function embed_info(ownerId, client, result, time){
     try{
@@ -8,9 +8,9 @@ function embed_info(ownerId, client, result, time){
         +`\nUptime: **${result} ${time}**`
         +`\nServers: **${client.guilds.cache.size}**`
         +`\n**[Check Chiaki Bot Github Page!](https://github.com/m7mdy9/chiaki-bot)**`
-        +`\n**[[Bot Invite Link]](${process.env.INVITE})**\n**[[Support Server]](${supportServerInvite})**`
+        +`\n**[[Bot Invite Link]](${botInvite})**\n**[[Support Server]](${supportServerInvite})**`
         +`\n\nLiking the bot so far? **[Consider tipping me on Ko-fi ${kofiLogo}](${kofiLink})**`,
-        "#ffdcfc"
+        pinkHex
     )
     return embed1
     } catch(error){
@@ -18,9 +18,9 @@ function embed_info(ownerId, client, result, time){
     }    
 }
 
-const RED = process.env.RED
-const RESET = process.env.RESET
-const ownerId = process.env.ownerId
+const RED = RedAscii
+const RESET = ResetAscii
+const ownerId = process.env.OWNER_ID
 module.exports = {
     name: "info",
     description: "View information about me, my developer and my Github Page!",
@@ -42,7 +42,7 @@ module.exports = {
             const embed = embed_info(ownerId, client, botUptime, suffix)
             return interaction.editReply({ embeds: [embed] })
         } catch (error) {
-            console.error(`${RED}Error in info: ${RESET}`, error)
+            console.error(`${RedAscii}Error in info: ${ResetAscii}`, error)
         }
     }
 }

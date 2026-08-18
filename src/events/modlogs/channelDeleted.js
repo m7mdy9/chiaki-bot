@@ -1,6 +1,6 @@
 const { basename, ChannelType } = require("discord.js");
 const { modlogsModel } = require("../../database/models");
-const { embed_builder, botHasBasicPerms, channelTypeNumToName } = require("../../utils/utils");
+const { embed_builder, botHasBasicPerms, channelTypeNumToName, redHex } = require("../../utils/utils");
 const { checkModlogSettings } = require("../../utils/modlogs");
 
 module.exports = {
@@ -26,7 +26,7 @@ module.exports = {
             let prefix = "";
             if(channel.type != ChannelType.GuildCategory) prefix = "#"
 
-            const embed = embed_builder(`${channelTypeName} Deleted`, `**\`${prefix + channel.name}\` was deleted.**`, process.env.red)
+            const embed = embed_builder(`${channelTypeName} Deleted`, `**\`${prefix + channel.name}\` was deleted.**`, redHex)
             .setFooter({ text: `ID: ${channel.id}` }).setTimestamp()
             .setAuthor({ name: guild.name, iconURL: guild.iconURL({ size: 64 }) })
 

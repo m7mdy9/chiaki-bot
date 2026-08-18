@@ -1,8 +1,7 @@
 const fs = require("fs");
 const path = require("path");
 const { REST, Routes, Collection, SlashCommandBuilder, PermissionsBitField, PermissionFlagsBits } = require("discord.js");
-const { getPermissionNum } = require("../utils/utils");
-const { YELLOW, RED, DARK_GREY, GREEN, RESET } = process.env
+const { getPermissionNum, RedAscii, ResetAscii, DarkGreyAscii, YellowAscii } = require("../utils/utils");
 const currentBranch = process.currentBranch;
 
 const helpCommand = require("../commands/misc/help.js")
@@ -80,7 +79,7 @@ async function loadCommands(client) {
 
         // 'pls dont crash' command block
         if (!command.data.name || !command.data.description || !command.execute) {
-            console.warn(YELLOW+`❌ Skipping "${file}": Missing required "name" or "description" or "execute" properties.`+RESET);
+            console.warn(YellowAscii+`❌ Skipping "${file}": Missing required "name" or "description" or "execute" properties.`+ResetAscii);
             continue;
         }
 
@@ -169,7 +168,7 @@ async function loadCommands(client) {
                 };
             }
             if (!subcommand.data.name || !subcommand.data.description || !subcommand.execute) {
-                console.warn(YELLOW+`❌ Skipping "${file}" in folder "${folder}": Missing required "name" or "description" or "execute" properties.`+RESET);
+                console.warn(YellowAscii+`❌ Skipping "${file}" in folder "${folder}": Missing required "name" or "description" or "execute" properties.`+ResetAscii);
                 continue;
             }
 
@@ -201,18 +200,18 @@ async function loadCommands(client) {
     return commands;
 }
 
-async function deploySlashCommands(client, clientId, token) {
+async function deploySlashCommands(client, CLIENT_ID, token) {
     
     const commands = await loadCommands(client);
     const rest = new REST({ version: "10" }).setToken(token);
 
     try {
-        console.log(DARK_GREY+"Deploying new commands..."+RESET);
-        await rest.put(Routes.applicationCommands(clientId), { body: commands });
-        await rest.put(Routes.applicationGuildCommands(clientId, process.env.TESTING_GUILD), { body: [...testOnlyCommands]})
-        console.log(DARK_GREY+"Slash commands deployed successfully!"+RESET);
+        console.log(DarkGreyAscii+"Deploying new commands..."+ResetAscii);
+        await rest.put(Routes.applicationCommands(CLIENT_ID), { body: commands });
+        await rest.put(Routes.applicationGuildCommands(CLIENT_ID, process.env.TESTING_GUILD), { body: [...testOnlyCommands]})
+        console.log(DarkGreyAscii+"Slash commands deployed successfully!"+ResetAscii);
     } catch (error) {
-        console.error(RED+"❌ Error deploying commands:"+RESET, error);
+        console.error(RedAscii+"❌ Error deploying commands:"+ResetAscii, error);
     }
 }
 

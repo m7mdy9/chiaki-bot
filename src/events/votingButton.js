@@ -1,8 +1,7 @@
 const { votingEntryModel } = require("../database/models/votingEntry.js");
 const { votingTimeModel } = require("../database/models/votingTimes.js");
 const { selectorTextBuilder } = require("../utils/builders.js")
-const { hiddenFlag, embed_builder } = require("../utils/utils.js");
-const { RED, YELLOW, GREEN, RESET } = process.env
+const { hiddenFlag, embed_builder, redHex, darkRedHex, RedAscii, ResetAscii, YellowAscii } = require("../utils/utils.js");
 
 module.exports = {
     name:"interactionCreate",
@@ -24,7 +23,7 @@ module.exports = {
                 const usersNames = votingDocument.usersNames
                 const usersIds = votingDocument.usersIds
 
-                const votePromptEmbed = embed_builder("Voting Time!","Who will you be voting for as the blackened?",process.env.dark_red)
+                const votePromptEmbed = embed_builder("Voting Time!","Who will you be voting for as the blackened?",darkRedHex)
                 const usernameSelector = new selectorTextBuilder(interaction)
                     .createSelector("select_user","Vote for the Blackened", 1,1)
                 usersNames.forEach(user =>{
@@ -35,7 +34,7 @@ module.exports = {
 
                 async function timeoutFunc() {
                     try {
-                        const timeoutEmbed = embed_builder("GAME OVER", "You have ran out of time. (the command timed out, please run it again)", process.env.dark_red)
+                        const timeoutEmbed = embed_builder("GAME OVER", "You have ran out of time. (the command timed out, please run it again)", darkRedHex)
                         await interaction.editReply(
                             {
                                 embeds: [timeoutEmbed],
@@ -44,7 +43,7 @@ module.exports = {
                         );
                     } catch (err) {
                         if (err.code === 10008) {
-                            //return console.warn(YELLOW + "Failed to disable buttons due to interaction deletion." + RESET)
+                            //return console.warn( YellowAscii + "Failed to disable buttons due to interaction deletion." + ResetAscii)
                             return;
                         }
                         console.error("Failed to disable buttons in buttonBuilder: ", err)
@@ -61,7 +60,7 @@ module.exports = {
                             const selectedUserId = usersIds[usersNames.indexOf(selectedUser)]
 
                             await interaction.deleteReply();
-                            const selectedEmbed = embed_builder("Vote Success",`You have voted for **${selectedUser}**`,process.env.red)
+                            const selectedEmbed = embed_builder("Vote Success",`You have voted for **${selectedUser}**`,redHex)
                             int.reply({ embeds:[selectedEmbed], flags:[hiddenFlag]})
 
                             const voteEntryDocument = await votingEntryModel.findOneAndUpdate(
@@ -94,7 +93,7 @@ module.exports = {
                         content:"You have already voted!"
                     })
                 }
-                console.log(process.env.RED+"Error in voting button event!"+process.env.RESET)
+                console.log(RedAscii+"Error in voting button event!"+ResetAscii)
                 console.error(err)
             }
         } else return;
