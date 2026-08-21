@@ -17,11 +17,11 @@ module.exports = {
      */
     async execute(interaction){
         const editReply = (content)=>{interaction.editReply({content})}
+        const botPerms = interaction.appPermissions.has("ManageNicknames");
         if(!botPerms){
             return await editReply("I do not have permissions to change student nicknames.")
         }
 
-        const botPerms = interaction.appPermissions.has("ManageNicknames");
         const targetMember = interaction.options.getMember("member");
         
         // mangable
