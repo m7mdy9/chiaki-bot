@@ -21,8 +21,12 @@ async function handleError(text, ...args){
         detailedError = args.map(arg => (typeof arg == "object" ? JSON.stringify(arg) : String(arg))).join(" ");
     }
 
-    const redText = `${RedAscii}${stripVTControlCharacters(text)}${ResetAscii}`
-    console.originalError(redText, rawError)
+    if(typeof text == 'string'){
+        const redText = `${RedAscii}${stripVTControlCharacters(text)}${ResetAscii}`
+        console.originalError(redText, rawError)
+    } else {
+        console.originalError(text, rawError)
+    }
     
     if(args.length < 1){
         text = ""

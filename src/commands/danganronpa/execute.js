@@ -21,27 +21,27 @@ module.exports = {
      * @param {import('discord.js').ChatInputCommandInteraction} interaction 
      */
     async execute(interaction){
+        const interactionMessage = await interaction.editReply("Please wait while the gif generates...")
+        const timeoutId = setTimeout(async () => {
+            await interactionMessage.edit(`Gif generation is taking longer than expected.\nThe cause may be that the bot is currently hosted on a free host since I can't afford a proper host at the moment.\n\nYou can join our support server (**\`/support server\`**) and ask the main dev to host the bot locally (if he is available) so the command only takes around 4 seconds or less to run.`)
+        }, 7000);
         try{
-            // trying to get member if not we get user, if neither we get the author of the interaction (for displayAvatarURL)
             const targetMember = interaction.options.getMember("student") || interaction.options.getUser("student") || interaction.user
-            // we just get the user if not we get the interaction author, this is for fetching the username, .username wont work with member
             const targetUser = interaction.options.getUser("student") || interaction.user
             
-            // fetching display avatar URL from either the member, user or the author
             const avatarURL = targetMember.displayAvatarURL({size:128, extension: 'png'});
-            // username of the user or author
             const username = targetUser.username
             
             const [gifAttachment, timeTakenToExecute] = await makeExecutionGif(avatarURL, username)
 
-            // sending the gif with the timeTakenToExecute
-            return interaction.editReply({
+            clearTimeout(timeoutId)
+            return interactionMessage.edit({
                 files: [gifAttachment],
                 content:`-# Generated in ${timeTakenToExecute}s`
             })
         } catch(err){
-            // catches the error to avoid crashing 
-            interaction.editReply("Could not generate an execution gif.")
+            clearTimeout(timeoutId)
+            interactionMessage.edit("Could not generate an execution gif.")
             return console.error(`Error in ${__filename}: `,err)
         }
     }
