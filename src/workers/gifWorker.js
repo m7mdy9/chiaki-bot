@@ -141,7 +141,7 @@ async function buildEditedImage(ctx, backgroundImage, avatarImage, frameIndex, u
     ctx.textAlign = 'right'
     ctx.textBaseline = 'alphabetic'
 
-    segmentToUse = ""
+    let segmentToUse = ""
 
     if(username.length > 19){
         username = username.slice(0, 18) + ".."
@@ -175,7 +175,6 @@ async function buildEditedImage(ctx, backgroundImage, avatarImage, frameIndex, u
  * @returns {Uint8Array} - The Uint8Array Buffer of the newly built gif from the parameters given.
 */
 async function fullProcess({avatarURL, username}){
-
     const extractedBackgroundImages = await dissectGif(process.env?.isKoyeb)
     
     const encoder = new GIFEncoder(width, height, 'octree', true)
@@ -184,6 +183,13 @@ async function fullProcess({avatarURL, username}){
     const encoderStream = encoder.createReadStream()
     encoderStream.on("data", (chunk)=> gifChunks.push(chunk))
     
+    encoderStream.on("error", (err) => {
+        if(err.code == "EPIPE"){
+            console.error("Stream closed causing an EPIPE.")
+        }
+        if (err.code !== "EPIPE") console.error(`Error in encoderStream for execute gif: `, err);
+    });
+
     const streamPromise = streamToBuffer(encoderStream);
 
     // Encoder start & options
