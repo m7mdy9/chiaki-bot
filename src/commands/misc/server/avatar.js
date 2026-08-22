@@ -1,5 +1,5 @@
 const { embed_builder } = require('../../../utils/utils.js')
-const { Vibrant } = require('node-vibrant');
+const  Vibrant = require('node-vibrant');
 
 module.exports = {
     name:"avatar",
@@ -9,13 +9,14 @@ module.exports = {
      * @param {import('discord.js').ChatInputCommandInteraction} interaction 
      */
     async execute(interaction){
-        let avatarURL_default = interaction.guild.iconURL({
+        const guild = interaction.guild
+        let avatarURL_default = guild.iconURL({
             extension: 'webp',
-            size: 512,
+            size: 256,
         })
-        let avatarURL_PNG = interaction.guild.iconURL({
+        let avatarURL_PNG = guild.iconURL({
             extension: 'png',
-            size: 512,
+            size: 256,
             forceStatic: true,
         })
         let usedColor = null;
