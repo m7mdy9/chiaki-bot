@@ -24,7 +24,7 @@ module.exports = {
         const interactionMessage = await interaction.editReply("Please wait while the gif generates...")
         const timeoutId = setTimeout(async () => {
             await interaction.followUp(`Gif generation is taking longer than expected.\nThe cause may be that the bot is currently hosted on a free host since I can't afford a proper host at the moment.\n\nYou can join our support server (**\`/support server\`**) and ask the main dev to host the bot locally (if he is available) so the command only takes around 4 seconds or less to run.`)
-        }, 7000);
+        }, 10000);
         try{
             const targetMember = interaction.options.getMember("student") || interaction.options.getUser("student") || interaction.user
             const targetUser = interaction.options.getUser("student") || interaction.user
