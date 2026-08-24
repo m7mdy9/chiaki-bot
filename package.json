@@ -21,7 +21,7 @@
   "scripts": {
     "start": "node src/index.js",
     "deploy": "git push && koyeb service redeploy chiakibot/chiakibot",
-    "pause": "koyeb service pause $npm_package_config_koyeb_full_name",
-    "resume": "koyeb service resume $npm_package_config_koyeb_full_name"
+    "pause": "koyeb service pause chiakibot/chiakibot",
+    "resume": "koyeb service resume chiakibot/chiakibot"
   }
 }
