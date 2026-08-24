@@ -85,6 +85,7 @@ module.exports ={
     name: "help",
     description: "Shows information about awesome commands you can use!",
     setup: getCommands,
+    isInstalled: true,
     /** @param {import('discord.js').ChatInputCommandInteraction} interaction */
     async execute(interaction){
         // const formattedCategoryNames = categoryNames.map(w => w[0].toUpperCase() + w.slice(1))

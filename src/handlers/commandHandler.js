@@ -51,7 +51,7 @@ async function loadCommands(client) {
             await command.setup(client); // passing the client to that function
         }
         const cmdCategory = path.basename(path.dirname(commandsPath))
-        const isFunCommands = ["fun","danganronpa","image"].includes(cmdCategory) || command.name == "avatar" || command.name == "help"
+        const isFunCommands = ["fun","danganronpa","image"].includes(cmdCategory) || command.isInstalled
         
         const integration_types = [0]
         const contexts = [0]

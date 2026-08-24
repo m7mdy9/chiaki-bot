@@ -24,6 +24,7 @@ const ownerId = process.env.OWNER_ID
 module.exports = {
     name: "info",
     description: "View information about me, my developer and my Github Page!",
+    isInstalled: true,
     /** @param {import('discord.js').ChatInputCommandInteraction} interaction */
     async execute(interaction) {
         const client = interaction.client

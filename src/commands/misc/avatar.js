@@ -18,6 +18,7 @@ module.exports = {
             required: false,
         },
     ],
+    isInstalled: true,
     /**
      * @param {import('discord.js').ChatInputCommandInteraction} interaction 
      */

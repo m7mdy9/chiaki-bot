@@ -3,6 +3,7 @@ const { embed_builder, TopggPage, DBLPage } = require("../../utils/utils")
 module.exports = {
     name: "vote",
     description: "Check out our botlist pages and support us by a vote/review!",
+    isInstalled: true,
     /** @param {import('discord.js').ChatInputCommandInteraction} interaction */
     async execute(interaction){
         const votingEmbed = embed_builder(null,
