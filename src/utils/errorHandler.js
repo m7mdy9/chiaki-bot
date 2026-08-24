@@ -10,9 +10,9 @@ const botName = "Chiaki Bot"
 const iconURL = "https://images-ext-1.discordapp.net/external/ljpqgpRph_hDsvuoiseOpu14JjR_MoHy8H5Yo9WlMhE/%3Fsize%3D512/https/cdn.discordapp.com/avatars/1502713354936914080/2b58262a2b3e6f7112ef4b7785b248a9.webp?format=webp"
 
 async function handleError(text, ...args){
-    // if(currentBranch !== "main"){
-    //     return;
-    // }
+    if(currentBranch !== "main"){
+        return;
+    }
 
     const rawError = args.find(arg => arg instanceof Error) || args[0] || text;
 
