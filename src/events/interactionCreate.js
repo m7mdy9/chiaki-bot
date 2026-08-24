@@ -63,7 +63,6 @@ module.exports = {
         const isOwnerOnly = ownerCommands.includes(fullCommand)
         const isHidden = command?.hidden ?? false;
         const isDefer = command?.isDefer ?? true;
-        console.log(command?.isDefer)
 
         try {
         

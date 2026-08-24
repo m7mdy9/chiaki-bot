@@ -1,5 +1,7 @@
 const {DBL_TOKEN, TOPGG_TOKEN} = process.env
+const { createDjsClient } = require("discordbotlist");
 const { webhookLog } = require("./errorHandler");
+const { default: AutoPoster } = require("topgg-autoposter");
 
 
 async function startDBL(client){
@@ -9,6 +11,9 @@ async function startDBL(client){
         const formattedCommands = client.commands.map(cmd => cmd.data)
         await dbl.postBotCommands([...formattedCommands])
         await dbl.startPosting()
+        dbl.once("posted", (stats)=>{
+            webhookLog(`Successfully posted initial DBL Stats:\n\`\`\`js\n${JSON.stringify(stats, null, 2)}\n\`\`\``)
+        })
     } else {
         console.error("Couldn't find DBL_TOKEN")
     }
@@ -21,7 +26,7 @@ async function startTopgg(client){
             console.error("Error in Topgg AP poster:", err)
         })
         topggAp.once("posted", (stats)=>{
-            webhookLog(`Succesfully posted initial Top.gg Stats:\n${JSON.stringify(stats, null, 2)}`)
+            webhookLog(`Succesfully posted initial Top.gg Stats:\n\`\`\`js\n${JSON.stringify(stats, null, 2)}\n\`\`\``)
         })
     } else {
         console.error("Couldn't find TOPGG_TOKEN")

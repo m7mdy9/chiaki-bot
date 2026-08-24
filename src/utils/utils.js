@@ -10,13 +10,19 @@ const { default: AutoPoster } = require("topgg-autoposter")
 
 const {SupportServerId} = process.env
 
-const isNotMainBranch = process.currentBranch != "main"
+const isNotMainBranch = process.env.currentBranch != "main"
+
+const getTestKey = (key)=> {
+    const returnValue = isNotMainBranch ? process.env[`${key}_TESTING`] ?? process.env[key] : process.env[key]
+
+    return returnValue;
+}
 
 const squareEmojis = {
-    pinkSquareId: (isNotMainBranch && process.env.PINK_SQUARE_TESTING) || process.env.PINK_SQUARE,
-    darkRedSquareId: (isNotMainBranch && process.env.DARK_RED_SQUARE_TESTING) || process.env.DARK_RED_SQUARE,
-    blackSquareId: (isNotMainBranch && process.env.BLACK_SQUARE_TESTING) || process.env.BLACK_SQUARE,
-    chiakiThinkId: (isNotMainBranch && process.env.CHIAKI_THINK_TESTING) || process.env.CHIAKI_THINK,
+    pinkSquareId: getTestKey("PINK_SQUARE"),
+    darkRedSquareId: getTestKey("DARK_RED_SQUARE"),
+    blackSquareId: getTestKey("BLACK_SQUARE"),
+    chiakiThinkId: getTestKey("CHIAKI_THINK"),
 };
 
 
@@ -416,6 +422,21 @@ function badWordsResponse(censoredMatch){
             `\n-# If you think that is a mistake, please report it via /report bug and provide sentence you put.`
 }
 
+/**
+ * @param {Date | Number} timestamp1 
+ * @param {Date | Number} timestamp2 - MINUTES ARE ADDED TO TIMESTAMP 2 
+ * @param {Number} minutes - ADDED TO TIMESTAMP 2
+ * @returns {Boolean} true or false
+ */
+const isFirstTimestampBigger = (timestamp1, timestamp2, minutes) =>{
+    const minutesInMs = minutes * 60 * 1000
+    
+    timestamp1 = timestamp1 instanceof Date ? timestamp1.getTime() : timestamp1;
+    timestamp2 = timestamp2 instanceof Date ? timestamp2.getTime() : timestamp2;
+
+    return timestamp1 > timestamp2 + minutesInMs
+}
+
 module.exports = {
     getOptionNum,
     getPermissionNum,
@@ -446,4 +467,5 @@ module.exports = {
     ...squareEmojis,
     SupportServerId,
     botInvite,
+    isFirstTimestampBigger
 }

@@ -2,7 +2,7 @@ const fs = require("fs");
 const path = require("path");
 const { REST, Routes, Collection, SlashCommandBuilder, PermissionsBitField, PermissionFlagsBits } = require("discord.js");
 const { getPermissionNum, RedAscii, ResetAscii, DarkGreyAscii, YellowAscii } = require("../utils/utils");
-const currentBranch = process.currentBranch;
+const currentBranch = process.env.currentBranch;
 
 const helpCommand = require("../commands/misc/help.js")
 

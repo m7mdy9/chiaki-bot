@@ -1,30 +1,27 @@
 process.env.DOTENV_CONFIG_QUIET = 'true';
 require("dotenv").config({quiet:true});
 
-const { Client, GatewayIntentBits, Collection, Partials} = require('discord.js');
-const runEventHandler = require("./handlers/eventHandler")
-const { execSync } = require("child_process");
-console.originalError = console.error;
-
 // checking current branch to see whether we will use the main client id and token or the testing id and token
 let currentBranch = "main"
 try {
     if(process.env?.isKoyeb){
         currentBranch = "main"
     } else {
-        currentBranch = execSync("git branch --show-current").toString().trim()
+        currentBranch = require("child_process").execSync("git branch --show-current").toString().trim()
     }
 } catch(err){
     console.error("Couldn't detect branch, auto set to main.", err)
 }
-process.currentBranch = currentBranch;
+process.env.currentBranch = currentBranch;
 
+
+const { Client, GatewayIntentBits, Collection, Partials} = require('discord.js');
+const runEventHandler = require("./handlers/eventHandler")
 const { handleError } = require("./utils/errorHandler");
-const { RedAscii, ResetAscii } = require("./utils/utils.js");
+console.originalError = console.error;
 console.error = (...args)=>{
     handleError(...args)
 }
-
 
 const isNotMainBranch = currentBranch != "main"
 // Assigning BOT_TOKEN and CLIENT_ID based on whether the current branch is main or not
@@ -58,8 +55,7 @@ async function startBot(){
         await client.login(BOT_TOKEN)
 
     } catch(err){
-        console.log(RedAscii+"Congratulations, the bot failed to start!"+ResetAscii)
-        console.originalError(err)
+        console.originalError("Congratulations, the bot failed to start!", err)
         console.error("Congratulations, the bot failed to start!", err)
         process.exit(1)
     }

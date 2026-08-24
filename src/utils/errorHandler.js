@@ -2,7 +2,7 @@ const { WebhookClient } = require("discord.js");
 const { embed_builder, redHex, RedAscii, ResetAscii } = require("./utils");
 const { stripVTControlCharacters } = require("node:util")
 
-const currentBranch = process.currentBranch;
+const currentBranch = process.env.currentBranch;
 
 const webhook = new WebhookClient({ url: process.env.MAIN_ERR_WEBHOOK })
 

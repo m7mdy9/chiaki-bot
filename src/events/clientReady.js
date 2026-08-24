@@ -21,7 +21,7 @@ module.exports = {
         console.log("Started the agenda scheduler!")
         await webhookLog(`${checkmarkEmoji} Successfully started up **${client.user.tag}**`)
         
-        if(process.currentBranch == "main"){
+        if(process.env.currentBranch == "main"){
             await startDBL(client)
             await startTopgg(client)
         }
