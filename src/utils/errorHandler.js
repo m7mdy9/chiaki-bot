@@ -10,6 +10,10 @@ const botName = "Chiaki Bot"
 const iconURL = "https://images-ext-1.discordapp.net/external/ljpqgpRph_hDsvuoiseOpu14JjR_MoHy8H5Yo9WlMhE/%3Fsize%3D512/https/cdn.discordapp.com/avatars/1502713354936914080/2b58262a2b3e6f7112ef4b7785b248a9.webp?format=webp"
 
 async function handleError(text, ...args){
+    // if(currentBranch !== "main"){
+    //     return;
+    // }
+
     const rawError = args.find(arg => arg instanceof Error) || args[0] || text;
 
     let detailedError = ""
@@ -21,22 +25,21 @@ async function handleError(text, ...args){
         detailedError = args.map(arg => (typeof arg == "object" ? JSON.stringify(arg) : String(arg))).join(" ");
     }
 
+    let consoleError = rawError === text ? "" : rawError
     if(typeof text == 'string'){
         const redText = `${RedAscii}${stripVTControlCharacters(text)}${ResetAscii}`
-        console.originalError(redText, rawError)
+        console.originalError(redText, consoleError)
     } else {
-        console.originalError(text, rawError)
+        console.originalError(text, consoleError)
     }
     
-    if(args.length < 1){
-        text = ""
+    if(args.length < 1 && !detailedError){
+        detailedError = rawError;
+        text = "";
     }
     const formattedText = text ? stripVTControlCharacters(text) : "Chiaki Bot Error";
     const formattedError = detailedError ? stripVTControlCharacters(detailedError).slice(0, 3990) + "...." : "";
 
-    if(currentBranch !== "main"){
-        return;
-    }
 
     try {
         const errorEmbed = embed_builder(formattedText,formattedError, "#e60000").setTimestamp()
