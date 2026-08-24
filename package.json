@@ -15,7 +15,8 @@
     "node-vibrant": "^3.1.6",
     "obscenity": "^0.4.6",
     "piscina": "^5.1.4",
-    "pretty-ms": "^7.0.1"
+    "pretty-ms": "^7.0.1",
+    "topgg-autoposter": "^2.0.2"
   },
   "scripts": {
     "start": "node src/index.js",

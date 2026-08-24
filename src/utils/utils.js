@@ -6,8 +6,9 @@ const {
     emojis, links, hexColors, asciiColors, botInvite
 } = require("./config.json")
 const { createDjsClient } = require("discordbotlist");
+const { default: AutoPoster } = require("topgg-autoposter")
 
-const {DBL_TOKEN, SupportServerId} = process.env
+const {SupportServerId} = process.env
 
 const isNotMainBranch = process.currentBranch != "main"
 
@@ -15,7 +16,9 @@ const squareEmojis = {
     pinkSquareId: (isNotMainBranch && process.env.PINK_SQUARE_TESTING) || process.env.PINK_SQUARE,
     darkRedSquareId: (isNotMainBranch && process.env.DARK_RED_SQUARE_TESTING) || process.env.DARK_RED_SQUARE,
     blackSquareId: (isNotMainBranch && process.env.BLACK_SQUARE_TESTING) || process.env.BLACK_SQUARE,
+    chiakiThinkId: (isNotMainBranch && process.env.CHIAKI_THINK_TESTING) || process.env.CHIAKI_THINK,
 };
+
 
 /**
  * @param {'SUB_COMMAND' | 'SUB_COMMAND_GROUP' | 'STRING' | 
@@ -413,17 +416,6 @@ function badWordsResponse(censoredMatch){
             `\n-# If you think that is a mistake, please report it via /report bug and provide sentence you put.`
 }
 
-async function startDBL(client){
-    if(DBL_TOKEN){
-        const dbl = new createDjsClient(DBL_TOKEN, client);
-        await dbl.postBotStats({ guilds: client.guilds.cache.size, users: client.users.cache.size });
-        const formattedCommands = client.commands.map(cmd => cmd.data)
-        await dbl.postBotCommands([...formattedCommands])
-        await dbl.startPosting()
-    }
-    return;
-}
-
 module.exports = {
     getOptionNum,
     getPermissionNum,
@@ -452,7 +444,6 @@ module.exports = {
     ...hexColors,
     ...asciiColors,
     ...squareEmojis,
-    startDBL,
     SupportServerId,
     botInvite,
 }

@@ -2,7 +2,8 @@ const { agenda } = require("../agenda/agenda.js")
 const { defineVotingTimeJob } = require("../agenda/jobs/votingTimeJob.js")
 const { deploySlashCommands } = require('../handlers/commandHandler.js');
 const { connectDB } = require("../database/connect.js")
-const { startActivity, checkmarkEmoji, startDBL } = require("../utils/utils.js");
+const { startActivity, checkmarkEmoji } = require("../utils/utils.js");
+const { startDBL, startTopgg } = require("../utils/botLists.js")
 const { webhookLog } = require("../utils/errorHandler.js");
 
 module.exports = {
@@ -22,6 +23,7 @@ module.exports = {
         
         if(process.currentBranch == "main"){
             await startDBL(client)
+            await startTopgg(client)
         }
     }
 }

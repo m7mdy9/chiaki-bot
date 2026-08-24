@@ -61,7 +61,9 @@ module.exports = {
 
         const isServerOnly = modCommands.includes(fullCommand) || serverOnlyFlag;
         const isOwnerOnly = ownerCommands.includes(fullCommand)
-        const isHidden = command?.hidden || false;
+        const isHidden = command?.hidden ?? false;
+        const isDefer = command?.isDefer ?? true;
+        console.log(command?.isDefer)
 
         try {
         
@@ -79,8 +81,10 @@ module.exports = {
             
             cooldownTimestamps.set(interaction.user.id, currentMs);
             setTimeout(()=> cooldownTimestamps.delete(interaction.user.id), cooldownAmountMs);
-
-            isHidden ? await interaction.deferReply({ flags: [hiddenFlag] }) : await interaction.deferReply();
+            
+            if(isDefer){
+                isHidden ? await interaction.deferReply({ flags: [hiddenFlag] }) : await interaction.deferReply();
+            }
             
             await command.execute(interaction, client);
         
