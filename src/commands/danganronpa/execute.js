@@ -42,10 +42,16 @@ module.exports = {
         }, 10000);
 
         try{
-            const targetMember = interaction.options.getMember("student") || interaction.options.getUser("student") || interaction.user
-            const targetUser = interaction.options.getUser("student") || interaction.user
+            const authorMember = interaction.guild ? interaction.member : interaction.user;
+            const chosenMember = interaction.options.getMember("student");
+            const chosenUser = interaction.options.getUser("student");
+
+            const displayAvatarURL = chosenMember?.displayAvatarURL?.bind(chosenMember) 
+            || chosenUser?.displayAvatarURL?.bind(chosenUser)
+            || authorMember?.displayAvatarURL?.bind(authorMember);
             
-            const avatarURL = targetMember.displayAvatarURL({size:128, extension: 'png'});
+            const targetUser = interaction.options.getUser("student") || interaction.user
+            const avatarURL = displayAvatarURL({size:128, extension: 'png'});
             const username = targetUser.username
             
             const [gifAttachment, timeTakenToExecute] = await makeExecutionGif(avatarURL, username)
@@ -57,7 +63,7 @@ module.exports = {
             })
         } catch(err){
             clearTimeout(timeoutId)
-            interaction.editReply("Could not generate an execution gif.")
+            interaction.editReply("Could not generate an execution gif.\n-# Please report this issue in our **\`/support server\`** and we will fix it ASAP!")
             return console.error(`Error in ${__filename}: `,err)
         }
     }

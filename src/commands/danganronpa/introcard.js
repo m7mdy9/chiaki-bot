@@ -38,9 +38,19 @@ module.exports = {
         }
 
         const targetUser = chosenUser || interaction?.member || interaction.user;
-        const targetAvatar = targetUser.displayAvatarURL({ size: 512, extension: "png" });
+        const fallBackUser = interaction.options.getUser('student') || interaction.user;
 
-        const targetName = targetUser.displayName;
+        const authorMember = interaction.guild ? interaction.member : interaction.user;
+        const selectedMember = interaction.options.getMember("student");
+        const selecetedUser = interaction.options.getUser("student");
+
+        const displayAvatarURL = selectedMember?.displayAvatarURL?.bind(selectedMember) 
+            || selecetedUser?.displayAvatarURL?.bind(selecetedUser)
+            || authorMember?.displayAvatarURL?.bind(authorMember);
+
+        const targetAvatar = displayAvatarURL({ size: 512, extension: "png" });
+
+        const targetName = targetUser.displayName || fallBackUser.username;
         const targetSecondaryText = chosenString || "Ultimate Discord User";
 
         const attachmentBuffer = await createIntroCard(targetAvatar, targetName, targetSecondaryText)

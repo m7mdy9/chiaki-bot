@@ -90,7 +90,7 @@ module.exports = {
         } catch (error) {
             console.error(`Error executing /${fullCommand}:`, error);
             try {
-                await interaction.editReply("❌ An error occurred while executing this command.");
+                await interaction.editReply("❌ An error occurred while executing this command.\n-# Please report this issue in our **\`/support server\`** and we will fix it ASAP!");
             } catch(err){
                 console.error(`Error with sending the fail message for /${fullCommand}. Error: `,err)
                 return;
