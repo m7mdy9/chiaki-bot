@@ -82,6 +82,7 @@ async function loadCommands(client) {
             console.warn(YellowAscii+`❌ Skipping "${file}": Missing required "name" or "description" or "execute" properties.`+ResetAscii);
             continue;
         }
+        command.fullName = command.data.name;
 
         // we add all command info to the commands collection and we push the command data to the commands array
         client.commands.set(command.data.name, command);
@@ -171,6 +172,7 @@ async function loadCommands(client) {
                 console.warn(YellowAscii+`❌ Skipping "${file}" in folder "${folder}": Missing required "name" or "description" or "execute" properties.`+ResetAscii);
                 continue;
             }
+            subcommand.fullName = `${baseCommand.name} ${subcommand.data.name}`
 
             const subcommandJSON = {
                 type: 1,

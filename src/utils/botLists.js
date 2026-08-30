@@ -2,13 +2,25 @@ const {DBL_TOKEN, TOPGG_TOKEN} = process.env
 const { createDjsClient } = require("discordbotlist");
 const { webhookLog } = require("./errorHandler");
 const { default: AutoPoster } = require("topgg-autoposter");
+const helpCommand = require("../commands/misc/help.js")
 
 
 async function startDBL(client){
     if(DBL_TOKEN){
+        const ownerCommands = (await helpCommand.setup()).get("owner").flatMap(cmd => cmd?.name)
+        
         const dbl = new createDjsClient(DBL_TOKEN, client);
         await dbl.postBotStats({ guilds: client.guilds.cache.size, users: client.users.cache.size });
-        const formattedCommands = client.commands.map(cmd => cmd.data)
+        const formattedCommands = client.commands
+          .filter(cmd => !ownerCommands.includes(cmd.fullName))
+          .map(cmd => {
+            const shallowCmd = {...cmd.data}
+            shallowCmd.name = cmd.fullName;
+              return {
+                ...shallowCmd
+              }
+          })
+       
         await dbl.postBotCommands([...formattedCommands])
         await dbl.startPosting()
         dbl.once("posted", (stats)=>{
