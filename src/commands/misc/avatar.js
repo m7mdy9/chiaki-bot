@@ -24,7 +24,7 @@ module.exports = {
      */
     async execute(interaction){
         const targetMember = interaction.options.get('member')
-        const serverAvatar = interaction.options.getBoolean('serveravatar') || false;
+        const serverAvatar = interaction.options.getBoolean('serveravatar') ?? true;
         let avatarURL_default,avatarURL_PNG;
         
         if(interaction.guild && targetMember.member && serverAvatar){
@@ -32,7 +32,7 @@ module.exports = {
                 extension: 'webp',
                 size: 512,
             })
-            avatarURL_PNG = targetMember.user.displayAvatarURL({
+            avatarURL_PNG = targetMember.member.displayAvatarURL({
                 extension: 'png',
                 size: 512,
                 forceStatic: true,
