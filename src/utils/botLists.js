@@ -6,44 +6,41 @@ const helpCommand = require("../commands/misc/help.js")
 
 
 async function startDBL(client){
-    if(DBL_TOKEN){
-        const ownerCommands = (await helpCommand.setup()).get("owner").flatMap(cmd => cmd?.name)
-        
-        const dbl = new createDjsClient(DBL_TOKEN, client);
-        await dbl.postBotStats({ guilds: client.guilds.cache.size, users: client.users.cache.size });
-        const formattedCommands = client.commands
-          .filter(cmd => !ownerCommands.includes(cmd.fullName))
-          .map(cmd => {
-            const shallowCmd = {...cmd.data}
-            shallowCmd.name = cmd.fullName;
-              return {
-                ...shallowCmd
-              }
-          })
-       
-        await dbl.postBotCommands([...formattedCommands])
-        await dbl.startPosting()
-        dbl.once("posted", (stats)=>{
-            webhookLog(`Successfully posted initial DBL Stats:\n\`\`\`js\n${JSON.stringify(stats, null, 2)}\n\`\`\``)
-        })
-    } else {
-        console.error("Couldn't find DBL_TOKEN")
+    if(!DBL_TOKEN){
+        return console.error("Couldn't find DBL_TOKEN");
     }
+    const ownerCommands = (await helpCommand.setup()).get("owner").flatMap(cmd => cmd?.name)
+    
+    const dbl = new createDjsClient(DBL_TOKEN, client);
+    await dbl.postBotStats({ guilds: client.guilds.cache.size, users: client.users.cache.size });
+    const formattedCommands = client.commands
+      .filter(cmd => !ownerCommands.includes(cmd.fullName))
+      .map(cmd => {
+        const shallowCmd = {...cmd.data}
+        shallowCmd.name = cmd.fullName;
+          return {
+            ...shallowCmd
+          }
+      })
+   
+    await dbl.postBotCommands([...formattedCommands])
+    await dbl.startPosting()
+    dbl.once("posted", (stats)=>{
+        webhookLog(`Successfully posted initial DBL Stats:\n\`\`\`js\n${JSON.stringify(stats, null, 2)}\n\`\`\``)
+    })
 }
 async function startTopgg(client){
-    if(TOPGG_TOKEN){
-        const topggAp = AutoPoster(TOPGG_TOKEN, client)
-        
-        topggAp.on("error", (err)=>{
-            console.error("Error in Topgg AP poster:", err)
-        })
-        topggAp.once("posted", (stats)=>{
-            webhookLog(`Succesfully posted initial Top.gg Stats:\n\`\`\`js\n${JSON.stringify(stats, null, 2)}\n\`\`\``)
-        })
-    } else {
-        console.error("Couldn't find TOPGG_TOKEN")
-    }
-
+    if(!TOPGG_TOKEN){
+        return console.error("Couldn't find TOPGG_TOKEN");
+    }    
+    const topggAp = AutoPoster(TOPGG_TOKEN, client)
+    
+    topggAp.on("error", (err)=>{
+        console.error("Error in Topgg AP poster:", err)
+    })
+    topggAp.once("posted", (stats)=>{
+        webhookLog(`Succesfully posted initial Top.gg Stats:\n\`\`\`js\n${JSON.stringify(stats, null, 2)}\n\`\`\``)
+    })
 }
 
 module.exports = {startTopgg, startDBL}
