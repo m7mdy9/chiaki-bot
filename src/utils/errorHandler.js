@@ -11,7 +11,7 @@ const iconURL = "https://images-ext-1.discordapp.net/external/ljpqgpRph_hDsvuois
 
 async function handleError(text, ...args){
     if(currentBranch !== "main"){
-        console.originalError(...args)
+        console.originalError(text, ...args)
         return;
     }
 

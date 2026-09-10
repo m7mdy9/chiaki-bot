@@ -1,7 +1,7 @@
 const { agenda } = require("../agenda.js");
 const { votingTimeModel } = require("../../database/models/votingTimes.js");
 const { votingEntryModel } = require("../../database/models/votingEntry.js");
-const { disableAllComponents, extractEmbedsFromMessage, embed_builder, makeExecutionGif, darkRedHexedHex, ResetAscii, YellowAscii, RedAscii } = require("../../utils/utils.js")
+const { disableAllComponents, extractEmbedsFromMessage, embed_builder, makeExecutionGif, ResetAscii, YellowAscii, RedAscii, darkRedHex } = require("../../utils/utils.js")
 const { Types } = require("mongoose");
 const { EmbedBuilder } = require("discord.js");
 const { DARK_RED_SQUARE, BLACK_SQUARE } = process.env
@@ -9,11 +9,14 @@ const { DARK_RED_SQUARE, BLACK_SQUARE } = process.env
 const black_square = `<:black_square:${BLACK_SQUARE}>`
 const dark_red_square = `<:dark_red_square:${DARK_RED_SQUARE}>`
 
+const MAX_RETRIES = 3;
+
 /**
  * @param {import("discord.js").Client} client 
  */
 function defineVotingTimeJob(client){
     agenda.define('votingTime', async (job)=>{
+        const failCount = job.attrs.failCount || 0;
         const { votingId, channelId, messageId, users } = job.attrs.data
         const { ids, names } = users
         const usersIds = ids
@@ -147,6 +150,16 @@ function defineVotingTimeJob(client){
         } catch(err){
             console.error(RedAscii+`Failed to end the voting MessageID:${messageId}`+ResetAscii)
             console.error(err)
+
+            if(failCount < MAX_RETRIES){
+                job.schedule('in 2 minutes')
+                await job.save();
+                throw err;
+            } else {
+                const errMsg = "FAILED MAX NUMBER OF RETRIES" 
+                console.error(errMsg)
+                throw new Error(errMsg)
+            }
         }
     },{ lockLifetime: 60000 })
 }

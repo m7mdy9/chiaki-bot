@@ -6,6 +6,8 @@ const { isSlurPresent } = require("../../utils/slurfilter.js")
 
 const warningMessage = `Adding offensive words or breakage of the Discord & Chiaki Bot's ToS may result in a **blacklist** from using this command.`
 const reportMessage = `If you see anyone with an offensive report card, please report them via /report user`
+const flags = [hiddenFlag]
+let finalProfile;
 
 module.exports = {
     name: "reportcard",
@@ -26,7 +28,6 @@ module.exports = {
         const userId = targetUser.id
         const avatarPath = targetUser.displayAvatarURL()
         const username = targetUser.username
-        const flags = [hiddenFlag]
 
         let blacklistedDoc;
         if(isAuthor){
@@ -53,7 +54,6 @@ module.exports = {
         
         /* if there is a reportCardDoc, we set the finalProfile to its content (and if a field is messing we use the defaultProfile)
         Other we jus set the finalProfile to the defaultProfile */
-        let finalProfile;
         if (reportCardDocument) {
             const { birthday, blood, likes, dislikes, talent, notes } = reportCardDocument
             finalProfile = {
@@ -77,8 +77,8 @@ module.exports = {
 
         // if the runner isnt the author of the reportCard, it just sends it without the EDIT button
         const footerMessage = reportCardDocument ?
-        `${isAuthor ? `You` : `This user`} did't set a report card, defaulting to Nagito's Card Info`
-        : reportMessage; 
+        reportMessage :
+        `${isAuthor ? `You` : `This user`} did't set a report card, defaulting to Nagito's Card Info`;
 
         embed.setFooter({ text: footerMessage })
 
@@ -152,7 +152,7 @@ module.exports = {
                         }
 
                         if (selectedOption == "blood") {
-                            await handleBloodSelect(editSelectorInt, originalResponseOptions, handleUpdate);
+                            await handleBloodSelect(editSelectorInt, selectedOption, originalResponseOptions, handleUpdate);
                         }
                     })
             })
@@ -213,7 +213,7 @@ async function handleTextModalSubmit(allFields, modalInteraction, textOption, up
     return modalInteraction.reply({ content: `Set \`${textOption}\` to \`${outputValue}\` successfully.`, flags })
 }
 
-async function handleBloodSelect(bloodInt, originalResponseOptions, updateHandler){
+async function handleBloodSelect(bloodInt, selectedOption, originalResponseOptions, updateHandler){
 
     const bloodSelector = new selectorTextBuilder(bloodInt)
         .createSelector('bloodSelector', 'Select Blood Type', 1, 1)
@@ -231,7 +231,7 @@ async function handleBloodSelect(bloodInt, originalResponseOptions, updateHandle
     const bloodResponseMessage = bloodResponse.resource.message
 
     bloodSelector.startListener(bloodResponseMessage, null,
-        async (bloodSelectorInt)=>{ await handleBloodSubmit(bloodSelectorInt, bloodSelector, originalResponseOptions, updateHandler) })
+        async (bloodSelectorInt)=>{ await handleBloodSubmit(bloodSelectorInt, bloodSelector, selectedOption, originalResponseOptions, updateHandler) })
 }
 
 /** 
@@ -239,15 +239,15 @@ async function handleBloodSelect(bloodInt, originalResponseOptions, updateHandle
  * @param {selectorTextBuilder} bloodSelector
  * @param {Promise<void>} updateHandler 
  * */
-async function handleBloodSubmit(bloodSelectorInt, bloodSelector, originalResponseOptions, updateHandler) {
+async function handleBloodSubmit(bloodSelectorInt, bloodSelector, selectedOption, originalResponseOptions, updateHandler) {
 
     const outputValue = bloodSelectorInt.values[0]
+    await bloodSelectorInt.update(originalResponseOptions)
     await updateHandler(selectedOption, outputValue)
 
     // once it saves in the database, it stops the bloodSelector's event listener to avoid conflicts
     bloodSelector.collector.stop()
 
-    await bloodSelectorInt.update(originalResponseOptions)
     await bloodSelectorInt.followUp({ content: `Set \`${selectedOption}\` to \`${outputValue}\` successfully.`, flags })
 }
 

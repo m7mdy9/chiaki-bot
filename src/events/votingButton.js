@@ -41,10 +41,8 @@ module.exports = {
                         const selectedUserId = usersIds[usersNames.indexOf(selectedUser)]
 
                         await interaction.deleteReply();
-                        const selectedEmbed = embed_builder("Vote Success",`You have voted for **${selectedUser}**`,redHex)
-                        int.reply({ embeds:[selectedEmbed], flags:[hiddenFlag]})
-
-                        await votingEntryModel.findOneAndUpdate(
+                        
+                        const votingEntryDocument = await votingEntryModel.updateOne(
                             {
                                 votingId,
                                 userId,
@@ -55,16 +53,22 @@ module.exports = {
                                     userId,
                                     votedFor: 
                                         {
-                                        name: selectedUser,
+                                            name: selectedUser,
                                         id: selectedUserId,
                                         }
-                                },
+                                    },
                             },
                             {
                                 upsert: true,
-                                returnDocument: "after",
                             }
                         )
+                        
+                        const selectedEmbed = embed_builder("Vote Success",
+                            votingEntryDocument.upsertedCount > 0 ? `You have voted for **${selectedUser}**`
+                            : `You have changed your vote to **${selectedUser}**`
+                            ,redHex)
+                        int.reply({ embeds:[selectedEmbed], flags:[hiddenFlag]})
+                        
                         votingDocument.votersIds.addToSet(userId)
                         await votingDocument.save()
                 },
