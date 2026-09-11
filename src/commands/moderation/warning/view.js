@@ -79,21 +79,21 @@ module.exports = {
             forwardest: embeds.length > 2,
         }
         const row = Buttons.getRow()
-        const buttonDisabler = (index)=> {
-            Buttons.row.components.forEach(el=>{
+        const buttonDisabler = (index) => {
+            Buttons.row.components.forEach(el => {
                 const customId = el.data.custom_id;
-                if(!ButtonDict[customId]){
+                if (!ButtonDict[customId]) {
                     el.setDisabled(true)
                 } else {
-                    if(index == 0 && (customId == "backest" || customId == "back")){
+                    if (index == 0 && (customId == "backest" || customId == "back")) {
                         el.setDisabled(true)
-                    } else if ((index+1) == embeds.length && (customId == "forward" || customId == "forwardest")){
+                    } else if ((index + 1) == embeds.length && (customId == "forward" || customId == "forwardest")) {
                         el.setDisabled(true)
                     } else {
                         el.setDisabled(false)
                     }
                 }
-        })
+            })
         }
         let current_embed = embeds[0]
         buttonDisabler(0)

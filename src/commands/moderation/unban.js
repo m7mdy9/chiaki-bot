@@ -17,11 +17,11 @@ module.exports = {
      * @param {import("discord.js").ChatInputCommandInteraction} interaction 
      */
     async execute(interaction){
-        const editReply = (content)=>{interaction.editReply(content)}
+        const editReply = (content)=>{interaction.editReply({content})}
         try {
             const userHasCorrectPerms = checkMemberPermissions(interaction.member, "BanMembers")
             if(!userHasCorrectPerms){
-                interaction.editReply("You do not have permissions to **Ban/Unban Members**.")
+                interaction.editReply({content: "You do not have permissions to **Ban/Unban Members**."})
                 return; 
             }
             const botPerms = interaction.appPermissions.has("BanMembers")
@@ -30,15 +30,16 @@ module.exports = {
             const targetId = targetUser.user.id
     
             const isBanned = await interaction.guild.bans.fetch(targetId).catch(()=>null)
+            
             if(!botPerms){
-                return await editReply("I do not possess permissions to unban members.\nPlease add the `ManangeBans` permissions to me if you would like to run this command once more.")
+                return editReply("I do not possess permissions to unban members.\nPlease add the `ManangeBans` permissions to me if you would like to run this command once more.")
             } else if(!isBanned){
-                return await editReply("This user is not banned")
-            } else {
-                await interaction.guild.bans.remove(targetId)
-                logModAction(interaction, "unban", interaction.member, targetUser)
-                await interaction.editReply(`Successfully removed the ban for **${targetUser.user.username}**`)
+                return editReply("This user is not banned")
             }
+
+            await interaction.guild.bans.remove(targetId)
+            logModAction(interaction, "unban", interaction.member, targetUser)
+            await interaction.editReply(`Successfully removed the ban for **${targetUser.user.username}**`)
         } catch(err){
             console.error("Error in the Unban command: ",err)
             interaction.editReply("An error has occured, please report this to my developer.")

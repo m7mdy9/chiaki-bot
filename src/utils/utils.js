@@ -359,10 +359,7 @@ function userHasBasicPermissions(targetPermChannel, member){
 function checkMemberPermissions(member, ...args){
     try {
         const memberPermissions = member.permissions
-
-        const hasPermissions = memberPermissions.has(args);
-        console.log(hasPermissions)
-        
+        const hasPermissions = memberPermissions.has(args);        
         return hasPermissions;
     } catch (err){
         console.error("checkMemberPermissions failed...returning false\nError:", err)

@@ -26,11 +26,11 @@ module.exports = {
     async execute(interaction){
         const userHasCorrectPerms = checkMemberPermissions(interaction.member, "ModerateMembers")
         if(!userHasCorrectPerms){
-            interaction.editReply("You do not have permissions to **Moderate Members**.")
+            interaction.editReply({content :"You do not have permissions to **Moderate Members**."})
             return; 
         }
 
-        const editReply = (content)=>{interaction.editReply(content)}
+        const editReply = (content)=>{interaction.editReply({content})}
         const targetMember = interaction.options.getMember("member");
         const reason = interaction.options.getString("reason")
         const guildId = interaction.guildId
@@ -41,44 +41,46 @@ module.exports = {
         const guildOwner = interaction.guild.ownerId
         const isOwner = interaction.member.id === guildOwner
 
-        if(!targetMember){
-            editReply("This student is not participating within this virtual world.")
-        } else if(interaction.member.id === targetMember.id && interaction.member.id != process.env.ownerId){
-            return await editReply("You can not warn yourself.")
-        } else if(interaction.client.user.id === targetMember.id){
-            return await editReply("I can not do this...")
-        } else if(executorRolePos <= targetRolePos && !isOwner){
-            return await editReply("You can not warn someone with a roles higher than or equal to yours.")
-        } else if(targetMember.id === guildOwner && !isOwner){
-            return await editReply("You can not warn the administrator of this world.")
-        } else if(targetMember.user.bot){
-            return await editReply("I can not warn NPCs of the New World Program.")
-        } else {
-            try {
-                const currentCase = await warningModel.countDocuments({guildId, userId: targetMember.id})
-                await warningModel.create({
-                    guildId,
-                    userId: targetMember.id,
-                    modId: interaction.member.id,
-                    reason: reason,
-                    caseNum: (currentCase+1),
-                    timestamp: Date.now(),
-                })
-                await interaction.editReply({
-                    embeds:[embed_builder(null, `Successfully warned **${targetMember.user.username}** for **${reason}**`)]
-                })
-                logModAction(interaction, "warnAdd", interaction.member, targetMember, reason)
-                try {
-                    targetMember.send({
-                    embeds:[embed_builder(null, `You have been warned in **${interaction.guild.name}** for **${reason}**`, '#ff9494').setTimestamp()]
-                })
-                } catch(err){
-                    console.error(`Couldn't message user in warning add.js`,err)
-                }
-            } catch(err){
-                console.error("Error in warning add: ",err)
-                editReply("Couldn't warn this student, they most likely left the server.\n-# If you believe this is an error please report it to my developer.")
-            }
+        const checkList = [
+            { check: !targetMember,
+                returnMessage: "This student is not participating within this virtual world (server)." },
+            { check: interaction.member.id === targetMember?.id && interaction.member.id != process.env.ownerId,
+                returnMessage: "You can not warn yourself." },
+            { check: interaction.client.user.id === targetMember?.id,
+                returnMessage: "I can not do this..." },
+            { check: executorRolePos <= targetRolePos && !isOwner,
+                returnMessage: "You can not warn someone with a roles higher than or equal to yours!" },
+            { check: targetMember?.id === guildOwner && !isOwner, 
+                returnMessage:"You can not warn the administrator of this world.\n-# You can't warn the owner" },
+            { check: targetMember?.user.bot, 
+                returnMessage: "I can not warn NPCs of the New World Program.\n-#I can't warn other bots" },
+        ]
+
+        const failedCheck = checkList.find(rule => rule.check)?.returnMessage
+        if (failedCheck) return editReply(failedCheck);
+
+        try {
+            const currentCase = await warningModel.countDocuments({guildId, userId: targetMember.id})
+            await warningModel.create({
+                guildId,
+                userId: targetMember.id,
+                modId: interaction.member.id,
+                reason: reason,
+                caseNum: (currentCase+1),
+                timestamp: Date.now(),
+            })
+            await interaction.editReply({
+                embeds:[embed_builder(null, `Successfully warned **${targetMember.user.username}** for **${reason}**`)]
+            })
+            logModAction(interaction, "warnAdd", interaction.member, targetMember, reason)
+            
+            targetMember.send({
+                embeds:[embed_builder(null, `You have been warned in **${interaction.guild.name}** for **${reason}**`, '#ff9494').setTimestamp()]
+            }).catch(err => console.error(`Couldn't message user in warning add.js`,err))
+
+        } catch(err){
+            console.error("Error in warning add: ",err)
+            editReply("Couldn't warn this student, they most likely left the server.\n-# If you believe this is an error please report it to my developer.")
         }
     }
 }
