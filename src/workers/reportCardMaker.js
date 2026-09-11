@@ -20,7 +20,7 @@ const loadBackgroundImage = async (imagePath)=>{
     return backgroundImage
 }
 
-async function createReportCard(avatarPath, username, profile){
+async function createReportCard(avatarPath, username, initialProfile){
 
     await loadBackgroundImage(reportCardPath)
     
@@ -66,8 +66,7 @@ async function createReportCard(avatarPath, username, profile){
     const notesCords = {x: 99, y: (2*14+211)-2, get width(){
          return 314 - this.x}, name:"notes"}
     
-    profile["name"] = username
-
+    const profile = { ...initialProfile, name: username }
     const cords = [nameCords, birthdayCords, bloodCords, likesCords, disikesCords, talentCords, notesCords]
 
     cords.forEach(cord =>{

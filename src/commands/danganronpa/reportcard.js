@@ -148,7 +148,7 @@ module.exports = {
                         const textOptions = ["likes", "dislikes", "notes", "talent", "birthday"]
     
                         if (textOptions.includes(selectedOption)) {
-                            await handleTextOption(editSelectorInt, selectedOption, handleUpdate);
+                            await handleTextOption(editSelectorInt, selectedOption, resetSelectChoice, handleUpdate);
                         }
 
                         if (selectedOption == "blood") {
@@ -161,7 +161,7 @@ module.exports = {
 
 // -- handler functions begin here -- //
 
-async function handleTextOption(textOptionInt, textOption, updateHandler){
+async function handleTextOption(textOptionInt, textOption, resetSelectChoice, updateHandler){
     const textFieldModal = new modalBuilder(textOptionInt, "textModal", "Edit Your Report Card")
 
     const minMax = [3, 42]
@@ -175,11 +175,11 @@ async function handleTextOption(textOptionInt, textOption, updateHandler){
     textFieldModal.addComponents(textRow)
     
     await textFieldModal.showModal(null, async (allFields, modalInteraction) => {
-        await handleTextModalSubmit(allFields, modalInteraction, textOption, updateHandler)
+        await handleTextModalSubmit(allFields, modalInteraction, textOption, resetSelectChoice, updateHandler)
     })
 }
 
-async function handleTextModalSubmit(allFields, modalInteraction, textOption, updateHandler) {
+async function handleTextModalSubmit(allFields, modalInteraction, textOption, resetSelectChoice, updateHandler) {
     let outputValue = allFields[textOption]
     let isDateWrong = false;
 
