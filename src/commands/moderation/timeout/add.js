@@ -68,14 +68,22 @@ module.exports = {
         const timeoutable = targetMember.moderatable
 
         const checkList = [
-            { check: !targetMember, returnMessage: "The student is not in this virtual world." },
-            { check: !duration || duration > ms("28d") || duration < ms("30s"), returnMessage: "Provide a valid duration for the timeout that doesn't go over 28 days.\nE.g. 10h, 7 days" },
-            { check: interaction.member.id === targetMember?.id, returnMessage: "You can not time yourself out." },
-            { check: interaction.client.user.id === targetMember?.id, returnMessage: "I can not do this..." },
-            { check: executorRolePos <= targetRolePos && !isOwner, returnMessage: "You can not timeout someone with a roles higher than or equal to yours." },
-            { check: targetRolePos >= interaction.guild.members.me.roles.highest.rawPosition, returnMessage: "I can not timeout someone with higher or equal roles to mine." },
-            { check: targetMember?.id === guildOwner, returnMessage: "You can not timeout the administrator of this world." },
-            { check: targetMember?.user.bot || !timeoutable, returnMessage: "I can not timeout fellow observers." },
+            { check: !targetMember,
+                returnMessage: "The student is not in this virtual world." },
+            { check: !duration || duration > ms("28d") || duration < ms("30s"),
+                returnMessage: "Provide a valid duration for the timeout that doesn't go over 28 days.\nE.g. 10h, 7 days" },
+            { check: interaction.member.id === targetMember?.id,
+                returnMessage: "You can not time yourself out." },
+            { check: interaction.client.user.id === targetMember?.id,
+                returnMessage: "I can not do this..." },
+            { check: executorRolePos <= targetRolePos && !isOwner,
+                returnMessage: "You can not timeout someone with a roles higher than or equal to yours." },
+            { check: targetRolePos >= interaction.guild.members.me.roles.highest.rawPosition,
+                returnMessage: "I can not timeout someone with higher or equal roles to mine." },
+            { check: targetMember?.id === guildOwner,
+                returnMessage: "You can not timeout the administrator of this world." },
+            { check: targetMember?.user.bot || !timeoutable,
+                returnMessage: "I can not timeout fellow observers." },
         ]
 
         const failedCheck = checkList.find(rule => rule.check)?.returnMessage

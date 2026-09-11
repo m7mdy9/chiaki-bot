@@ -58,13 +58,20 @@ module.exports = {
             const isBanned = await interaction.guild.bans.fetch(targetId).catch(()=> false)
 
             const checkList = [
-                { check: !botPerms, returnMessage: "I do not possess permissions to ban members. If you would like to execute the ban command please add the Ban Members my permissions."},
-                { check: targetId === executor.id, returnMessage: "You may not ban yourself."},
-                { check: executorRolePos <= userRolePos && !isExecutorGuildOwner, returnMessage: "You may not ban another student with a higher role or equivelent role to yours!"},
-                { check: isTargetGuildOwner, returnMessage: "You can not ban the owner of this server!"},
-                { check: targetId === interaction.client.user.id, returnMessage: "I can't do it..."},
-                { check: !memberBannable, returnMessage: "I can not ban this student."},
-                { check: isBanned, returnMessage: "This user is already banned."},
+                { check: !botPerms,
+                    returnMessage: "I do not possess permissions to ban members. If you would like to execute the ban command please add the Ban Members my permissions."},
+                { check: targetId === executor.id,
+                    returnMessage: "You may not ban yourself."},
+                { check: executorRolePos <= userRolePos && !isExecutorGuildOwner,
+                    returnMessage: "You may not ban another student with a higher role or equivelent role to yours!"},
+                { check: isTargetGuildOwner,
+                    returnMessage: "You can not ban the owner of this server!"},
+                { check: targetId === interaction.client.user.id,
+                    returnMessage: "I can't do it..."},
+                { check: !memberBannable,
+                    returnMessage: "I can not ban this student."},
+                { check: isBanned,
+                    returnMessage: "This user is already banned."},
             ]
 
             const failedCheck = checkList.find(rule => rule.check)?.returnMessage

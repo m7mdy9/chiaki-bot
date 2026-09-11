@@ -46,29 +46,31 @@ module.exports = {
         const userHighestRolePos = interaction.member.roles.highest.rawPosition
         const targetHighestRolePos = targetUser.roles.highest.rawPosition
 
-        if(!targetUser){
-            return await editReply("This user is not in the server.")
-        }
-        if(targetRolePos >= userHighestRolePos && !isOwner){
-            return await editReply("You may not remove a role higher or equal to yours.")
-        }
-        if(targetHighestRolePos > userHighestRolePos && !isOwner && targetUser.id != interaction.member.id){
-            return await editReply("You may not remove a role to someone with higher roles than you.")
-        }
-        if(targetRolePos >= botHighestRolePos){
-            return await editReply("I can not remove a role higher or equal to my highest role.")
-        }if(targetRole.id == interaction.guild.id){
-            return await editReply("The everyone role can not be removed as it belongs to anyone in the server.")
-        }if(!targetHasRole){
-            return await editReply("This member doesn't have that role.")
-        }
+        const checkList = [
+            { check: !targetUser,
+                returnMessage: "This user is not in the server." },
+            { check: targetRolePos >= userHighestRolePos && !isOwner,
+                returnMessage: "You may not remove a role higher or equal to yours." },
+            { check: targetHighestRolePos > userHighestRolePos && !isOwner && targetUser?.id != interaction.member.id,
+                returnMessage: "You may not remove a role to someone with higher roles than you." },
+            { check: targetRolePos >= botHighestRolePos,
+                returnMessage: "I can not remove a role higher or equal to my highest role." },
+            { check: targetRole?.id == interaction.guild.id,
+                returnMessage: "The everyone role can not be removed as it belongs to anyone in the server." },
+            { check: !targetHasRole,
+                returnMessage: "This member doesn't have that role." },
+        ]
+
+        const failedCheck = checkList.find(rule => rule.check)?.returnMessage
+        if (failedCheck) return editReply(failedCheck)
+
         try {
             await targetUser.roles.remove(targetRole.id)
             await interaction.editReply({embeds:[
                 embed_builder(null, `**${targetUser.user.username}** is no longer the Ultimate **${targetRole.name}**`)
             ]})
         } catch(err){
-            await editReply("Could not remove role from user.\n-#if you think there's an error please use \`/report bug\`")
+            editReply("Could not remove role from user.\n-#if you think there's an error please use \`/report bug\`")
             console.error(`Couldn't remove role in role/remove.js: `,err)
         }
     }

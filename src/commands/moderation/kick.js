@@ -51,13 +51,20 @@ module.exports = {
             } 
 
             const checkList = [
-                { check: !botPerms, returnMessage: "I do not possess permissions to kick members.\nGrant me `Kick Members` permissions, if you would like to run this command once more."},
-                { check: !targetMember, returnMessage: "This user is not in the server."},
-                { check: targetMember?.id === interaction.user.id, returnMessage: "You may not kick yourself."},
-                { check: executorRolePos <= targetMemberRolePos && !isExecutorGuildOwner, returnMessage: "You can not kick someone who has a role higher or equal to yours."},
-                { check: isTargetGuildOWner, returnMessage: "You can not kick the owner of this server."},
-                { check: targetMember?.id === interaction.client.user.id, returnMessage: "I can't do it..."},
-                { check: !targetMember?.kickable, returnMessage: "I can not kick this user."},
+                { check: !botPerms,
+                    returnMessage: "I do not possess permissions to kick members.\nGrant me `Kick Members` permissions, if you would like to run this command once more."},
+                { check: !targetMember,
+                    returnMessage: "This user is not in the server."},
+                { check: targetMember?.id === interaction.user.id,
+                    returnMessage: "You may not kick yourself."},
+                { check: executorRolePos <= targetMemberRolePos && !isExecutorGuildOwner,
+                    returnMessage: "You can not kick someone who has a role higher or equal to yours."},
+                { check: isTargetGuildOWner,
+                    returnMessage: "You can not kick the owner of this server."},
+                { check: targetMember?.id === interaction.client.user.id,
+                    returnMessage: "I can't do it..."},
+                { check: !targetMember?.kickable,
+                    returnMessage: "I can not kick this user."},
             ]
 
             const failedCheck = checkList.find(rule => rule.check)?.returnMessage
