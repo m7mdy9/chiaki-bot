@@ -1,5 +1,7 @@
+const { name, description } = require("../../automatic actions/set/autorole.js")
+
 module.exports = {
-    name: `autorole`,
-    description: `Set roles given to users automatically once they join the server.`,
+    name,
+    description,
     readOnly: true,
 }

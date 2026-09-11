@@ -11,12 +11,10 @@ module.exports = {
         
         try {
             autoroleDoc.roleIds.forEach(async role => {
-                try {
-                    await member.roles.add(role)
-                } catch(err){
+                member.roles.add(role).catch(err => {
                     console.error(`ERR in autoroles.js: `,err)
-                }
-            })
+                });
+            });
         } catch (err){
             console.error(`ERR in autoroles.js, Couldn't give roles to user: `,err)
         }

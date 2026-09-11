@@ -1,11 +1,8 @@
+const { name, description, options } = require("../../automatic actions/set/modlogs.js")
+
 module.exports = {
-    name: "modlogs",
-    description: "Set a channel to log moderation and other actions.",
-    options: [
-        {
-            name: 'channel',
-            description: 'Channel where the logs will be sent.',
-        }
-    ],
+    name,
+    description,
+    options,
     readOnly: true,
 }

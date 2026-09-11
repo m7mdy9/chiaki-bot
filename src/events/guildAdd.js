@@ -28,17 +28,13 @@ module.exports = {
         } else {
             targetChannel = systemChannel;
         }
-        // console.log(targetChannel,guild.channels.cache.values())
-        if(!targetChannel){
-            return;
-        }
 
-        try {
-            await targetChannel.send({ embeds: [introductionEmbed()] })
-            return;
-        } catch(err){
+        if(!targetChannel) return;
+
+        targetChannel.send({ embeds: [introductionEmbed()] }).catch(err => {
             console.error(`Couldn't send intro message in guildId: ${guildId}\nError:`, err)
-        }
+        });
+
     }
 }
 
