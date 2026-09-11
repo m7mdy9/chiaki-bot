@@ -68,3 +68,30 @@
 ## Misc:
 - [x] Create a support server.
 - [x] Create different production and testing bots.
+
+- [ ] Refactor current files (commands, events, etc).
+  - [ ] commandHandler.js
+  - [ ] Report Events
+    - [ ] replyReportUser.js
+    - [ ] reportUserButtons.js
+    - [ ] replyBug.js
+    - [ ] reportBugButtons.js
+  - [ ] help.js
+  - [ ] report/user.js
+  - [ ] report/bug.js
+  - [ ] votingtime/start.js
+  - [ ] set/autorole.js
+  - [ ] set/modlogs.js
+  - [ ] rps.js
+
+- [ ] Create tests for current files (commands, events, etc).
+  - [ ] warning add/remove/view
+  - [ ] timeout add
+  - [ ] role add/info/remove
+  - [ ] purge all/bots/humans/user
+  - [ ] nickname reset/set
+  - [ ] avatar
+  - [ ] server avatar
+  - [ ] introcard
+  - [ ] reportcard
+  - [ ] modlog Events
