@@ -1,11 +1,12 @@
 const banCommand = require("../../../src/commands/moderation/ban.js");
-const { createModerationInt, defaultMockTargetMember } = require("../../testUtils.js");
+const { createModerationInt, createMockTargetMember } = require("../../testUtils.js");
 
 describe("Ban Command", ()=>{
     let interaction;
+    const defaultMockTargetMember = createMockTargetMember()
 
     beforeEach(()=>{
-        interaction = createModerationInt(defaultMockTargetMember)
+        interaction = createModerationInt()
     })
 
     const validationCases = [

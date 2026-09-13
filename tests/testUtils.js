@@ -1,6 +1,8 @@
+const { Collection } = require("discord.js");
 const { mockDeep } = require("jest-mock-extended");
 
-const defaultMockTargetMember = {
+const createMockTargetMember = () => {
+    return {
         id: "target_id",
         kickable: true,
         bannable: true,
@@ -23,12 +25,35 @@ const defaultMockTargetMember = {
             ban: jest.fn().mockResolvedValue(true),
             send: jest.fn().mockResolvedValue(true),
         }
+    }
+}
+
+const createMockClient = () => {
+    return {
+        commands: new Collection(),
+        cooldowns: new Collection(),
+        user: {
+            id: "bot_id",
+            username: "bot_name",
+            displayName: "bot_displayName",
+        },
+        guilds: {
+            cache: new Collection(),
+        },
+        channels: {
+            cache: new Collection(),
+        },
+        users: {
+            cache: new Collection(),
+        }
+    }
 }
 
 function createModerationInt(mockTargetMember){
-    if(!mockTargetMember) mockTargetMember = defaultMockTargetMember;
+    if(!mockTargetMember) mockTargetMember = createMockTargetMember();
     const interaction = mockDeep();
-    
+
+    interaction.client = createMockClient();
     interaction.user.id = "executor_id"
     interaction.member.id = "executor_id"
     interaction.client.user.id = "bot_id"
@@ -55,5 +80,11 @@ function createModerationInt(mockTargetMember){
 
     return interaction;
 }
+function createClient(mockClient) {
+    if(!mockClient) mockClient = createMockClient();
+    const client = mockDeep();
+    Object.assign(client, mockClient)
+    return client;
+}
 
-module.exports = { createModerationInt, defaultMockTargetMember }
+module.exports = { createModerationInt, createClient, createMockTargetMember, createMockClient }

@@ -1,11 +1,11 @@
 const unbanCommand = require("../../../src/commands/moderation/unban.js");
-const { createModerationInt, defaultMockTargetMember } = require("../../testUtils.js");
+const { createModerationInt } = require("../../testUtils.js");
 
-describe("unban Command", ()=>{
+describe("Unban Command", ()=>{
     let interaction;
 
     beforeEach(()=>{
-        interaction = createModerationInt(defaultMockTargetMember)
+        interaction = createModerationInt()
         interaction.guild.bans.fetch = jest.fn().mockResolvedValue(true)
     })
 

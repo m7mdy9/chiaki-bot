@@ -1,8 +1,9 @@
 const kickCommand = require("../../../src/commands/moderation/kick.js");
-const { createModerationInt, defaultMockTargetMember } = require("../../testUtils.js");
+const { createModerationInt, createMockTargetMember } = require("../../testUtils.js");
 
 describe("Kick Command", ()=>{
     let interaction;
+    const defaultMockTargetMember = createMockTargetMember()
 
     beforeEach(()=>{
         interaction = createModerationInt(defaultMockTargetMember)
