@@ -1,24 +1,20 @@
 const fs = require("fs");
 const path = require("path");
-const { REST, Routes, Collection, SlashCommandBuilder, PermissionsBitField, PermissionFlagsBits } = require("discord.js");
+const { REST, Routes, Collection } = require("discord.js");
 const { getPermissionNum, RedAscii, ResetAscii, DarkGreyAscii, YellowAscii } = require("../utils/utils");
 const currentBranch = process.env.currentBranch;
-
-const helpCommand = require("../commands/misc/help.js")
+const fullCommandsPath = path.join(process.cwd(), "/src/commands")
 
 let ignoredCommands = [];
 let testOnlyCommands = [];
 /**
  * @param {import('discord.js').Client} client 
 */
-async function loadCommands(client) {
-    const ownerCommands = (await helpCommand.setup()).get("owner").flatMap(cmd => cmd?.name)
+async function loadCommands(commandsPath, client) {
+    const ownerCommands = getOwnerCommands(commandsPath)
     if(currentBranch == "main"){
         ignoredCommands = ownerCommands
     }
-
-    const targetDir = path.dirname(__dirname);
-    let commandsPath = path.join(targetDir, "commands");
 
     const commandCollectionExists = client.commands instanceof Collection 
     if (!commandCollectionExists) client.commands = new Collection();
@@ -87,21 +83,26 @@ async function loadCommands(client) {
     return commands;
 }
 
-async function deploySlashCommands(client, CLIENT_ID, token) {
-    const commands = await loadCommands(client);
-    const rest = new REST({ version: "10" }).setToken(token);
+async function deploySlashCommands(client, CLIENT_ID, BOT_TOKEN) {
+    const commands = await loadCommands(fullCommandsPath, client);
+    const rest = new REST({ version: "10" }).setToken(BOT_TOKEN);
 
     try {
         console.log(DarkGreyAscii+"Deploying new commands..."+ResetAscii);
         await rest.put(Routes.applicationCommands(CLIENT_ID), { body: commands });
-        await rest.put(Routes.applicationGuildCommands(CLIENT_ID, process.env.TESTING_GUILD), { body: [...testOnlyCommands]})
+        if(process.env.TESTING_GUILD){
+            await rest.put(
+                Routes.applicationGuildCommands(CLIENT_ID, process.env.TESTING_GUILD),
+                { body: [...testOnlyCommands]}
+            )
+        }
         console.log(DarkGreyAscii+"Slash commands deployed successfully!"+ResetAscii);
     } catch (error) {
         console.error(RedAscii+"❌ Error deploying commands:"+ResetAscii, error);
     }
 }
 
-module.exports = { deploySlashCommands };
+module.exports = { deploySlashCommands, loadCommands };
 
 async function handleCommand(file, client){
         const fullPath = file;
@@ -140,7 +141,7 @@ async function handleCommand(file, client){
                 description: command.description || "No description provided",
                 options: command.options || [],
                 default_member_permissions: command?.permissions || null,
-                dm_permission: command?.permissions ? false : true,
+                dm_permission: command?.permissions || command?.isServerOnly ? false : true,
                 contexts,
                 integration_types,
             }
@@ -157,7 +158,8 @@ async function handleCommand(file, client){
 async function handleBasecommands(commands, folder, client){
     const folderPath = folder;
     const folderBasename = path.basename(folder).toLowerCase().replace(/[^a-z0-9_-]/g, '')
-
+    const cmdCategory = path.basename(path.dirname(folderPath));
+    
     if (!fs.lstatSync(folderPath).isDirectory()) return {
         baseCommand: null, 
         baseCommandExists: null,
@@ -184,12 +186,21 @@ async function handleBasecommands(commands, folder, client){
         * is set as the default permission for this basecommand and subcommands below it (if you have a better implementation idea lmk)
     */
     const permissionFile = fs.readdirSync(folderPath).filter(file => path.extname(file) === '' && file.startsWith("!")) || null
-    if (permissionFile.length > 0){
-        baseCommand.default_member_permissions = getPermissionNum(permissionFile[0].slice(1))
-        baseCommand.dm_permission = false
+    if (permissionFile?.length > 0){
+        try {
+            const permissionName = permissionFile[0].slice(1)
+            baseCommand.default_member_permissions = getPermissionNum(permissionName)
+            baseCommand.dm_permission = false
+        } catch(err) {
+            console.error(`FAILED TO SET PERMISSION FOR BASECOMMAND: ${cmdCategory}/${baseCommand.name}.js`, err)
+            return { 
+                baseCommand: null, 
+                baseCommandExists: null,
+                hasSubcommands: null
+            }
+        }
     };
     
-    const cmdCategory = path.basename(path.dirname(folderPath));
     const funCommandExceptions = ["welcome", "votingtime"]
     
     const isFunCommands = ["fun","danganronpa","image"].includes(cmdCategory) && !funCommandExceptions.includes(folderBasename)
@@ -199,10 +210,10 @@ async function handleBasecommands(commands, folder, client){
     const integration_types = [0]
     const contexts = [0]
 
-    if(!(permissionFile.length > 0)){
+    if(!baseCommand.default_member_permissions){
         contexts.push(1)
     }
-    if(isFunCommands && !(permissionFile.length > 0)){
+    if(isFunCommands && !baseCommand.default_member_permissions){
         integration_types.push(1)
         contexts.push(2)
     }
@@ -262,4 +273,31 @@ async function handleSubcommand(folderPath, file, baseCommand, client){
     }
 
     return { subcommand, subcommandJSON }
+}
+
+function getOwnerCommands(commandsPath){
+    const ownerCategory = path.join(commandsPath, "owner")
+    const ownerFs = fs.readdirSync(ownerCategory, { withFileTypes: true })
+    const ownerCommands = ownerFs.filter(file => !file.isDirectory() && file.name.endsWith(".js"))
+        .map(dirent => path.join(dirent.parentPath, dirent.name))
+    const ownerFolders = ownerFs.filter(file => file.isDirectory())
+        .map(dirent => path.join(dirent.parentPath, dirent.name))
+    let fullOwnerComamnds = [];
+    for (const command of ownerCommands){
+        const commandRequire = require(command)
+        const commandName = commandRequire.name || path.basename(command, ".js")
+        fullOwnerComamnds.push(commandName)
+    }
+    for (const folder of ownerFolders){
+        const subFiles = fs.readdirSync(folder, { withFileTypes: true })
+          .filter(file => !file.isDirectory() && file.name.endsWith(".js")).map(dirent => path.join(dirent.parentPath, dirent.name));
+        const baseCommandName = path.basename(folder) 
+        for (const file of subFiles){
+            const fileRequire = require(file);
+            const subCommandName = fileRequire.name || path.basename(file, ".js");
+            fullOwnerComamnds.push(`${baseCommandName} ${subCommandName}`)
+        }
+    }
+
+    return fullOwnerComamnds
 }

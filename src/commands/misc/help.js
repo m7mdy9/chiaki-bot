@@ -1,13 +1,12 @@
 const fs = require("fs")
 const path = require("path")
-const { embed_builder, getPermissionNum, pinkHex } = require("../../utils/utils.js")
+const { embed_builder, pinkHex } = require("../../utils/utils.js")
 const { selectorTextBuilder, buttonBuilder } = require("../../utils/builders.js")
-const { ButtonStyle } = require("discord.js");
 
 let categoryNames, fullCommandInfo;
 const chiakiColor = pinkHex;
 
-async function getCommands(type){
+async function getCommands(){
         const mainPath = path.dirname(__dirname);
         const categoryPaths = fs.readdirSync(mainPath, { withFileTypes: true}).flatMap(el =>{
             if (el.isDirectory()) return path.join(el.parentPath, el.name) 
@@ -15,7 +14,6 @@ async function getCommands(type){
         categoryNames = categoryPaths.flatMap(el => path.basename(el))
         fullCommandInfo = new Map();
         for (const category of categoryPaths){
-            // console.log(category)
             const categoryName = path.basename(category)
             const commands = []
             const subFolders = [];
@@ -30,7 +28,7 @@ async function getCommands(type){
                     let formattedOptions = [];
                     const formatTemplate = ["name", "description"];
                     if (data.options){
-                        for (obj of data.options){
+                        for (const obj of data.options){
                             formattedOptions.push(Object.fromEntries(
                                 Object.entries(obj).filter(([key]) => formatTemplate.includes(key))
                             ))
@@ -59,7 +57,7 @@ async function getCommands(type){
                         let formattedOptions = [];
                         const formatTemplate = ["name", "description"];
                         if (data.options) {
-                            for (obj of data.options) {
+                            for (const obj of data.options) {
                                 formattedOptions.push(Object.fromEntries(
                                     Object.entries(obj).filter(([key]) => formatTemplate.includes(key))
                                 ))
@@ -70,13 +68,11 @@ async function getCommands(type){
                             description: data.description || "No description provided.",
                             options: formattedOptions || null,
                         }
-                        // console.log(commandInfo)
                         commands.push(commandInfo)
                     }
                 }
             }
             fullCommandInfo.set(categoryName, commands)
-            // console.log(fullCommandInfo)
         }
         return fullCommandInfo;
 }
