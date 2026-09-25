@@ -74,6 +74,12 @@ describe("commandHandler test", ()=>{
         expect(permissioncmd.contexts.includes(1)).toBeFalsy();
     })
 
+    test("Subcommands with invalid permissions are skipped", ()=>{
+        const wrongPermcmd = commands.find(el => el.name == "wrong")
+
+        expect(wrongPermcmd).toBeFalsy();
+    })
+
     test("Read Only commands are skipped", ()=>{
         const readonlycmd = commands.find(el => el.name == "readonlycmd")
 
