@@ -3,3 +3,4 @@ node_modules/
 chiaki_half_body_sprites/
 test.js
 test/
+.env*
