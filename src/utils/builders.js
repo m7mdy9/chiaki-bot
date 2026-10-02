@@ -58,12 +58,11 @@ function returnDefaultTimeout(context, className) {
  */
 function validateUser(mainInt, func){
     return async(int)=>{
-        if(!mainInt){
+        const isValidUser = mainInt ? intAuthorValidate(mainInt, int) : true;
+        if(isValidUser){
             await func(int)
         }
-        if (!intAuthorValidate(mainInt, int)) return;
-        
-        await func(int)
+        return;
     }
 }
 
