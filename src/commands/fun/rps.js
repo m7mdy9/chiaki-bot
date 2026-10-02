@@ -129,13 +129,13 @@ module.exports = {
             const formattedOppChoice = oppChoice.charAt(0).toUpperCase() + oppChoice.slice(1)
 
             switch (rpsEndResult) {
-                case 0:
+                case resultObj.tie:
                     formattedResult = `🥈 **Draw!** Nobody wins :(`
                     break;
-                case 1:
+                case resultObj.player1Win:
                     formattedResult = `🏆️ **<@!${intUser.id}> wins!**`
                     break;
-                case 2:
+                case resultObj.player2Win:
                     formattedResult = `🏆️ **<@!${targetUser.id}> wins!**`
                     break;
             }
