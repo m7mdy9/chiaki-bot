@@ -17,10 +17,14 @@ process.env.currentBranch = currentBranch;
 
 const { Client, GatewayIntentBits, Collection, Partials} = require('discord.js');
 const runEventHandler = require("./handlers/eventHandler")
-const { handleError } = require("./utils/errorHandler");
+const { handleError, handleWarn } = require("./utils/errorHandler");
 console.originalError = console.error;
+console.originalWarn = console.warn;
 console.error = (...args)=>{
     handleError(...args)
+}
+console.warn = (...args)=>{
+    handleWarn(...args)
 }
 
 const isNotMainBranch = currentBranch != "main"
