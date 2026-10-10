@@ -5,7 +5,7 @@ const { stripVTControlCharacters } = require("node:util")
 const currentBranch = "main";
 
 const webhook = new WebhookClient({ url: process.env.MAIN_ERR_WEBHOOK })
-const warnWebhook = new WebhookClient({ url: "https://discord.com/api/webhooks/1558482209609089097/D3uopUaG8jcfqxOhPJQIVYyANTS2Tv_QNnY5L44E51ieztTFWrB55whPCB6LmSN4Npv4" })
+const warnWebhook = new WebhookClient({ url: process.env.WARNING_WEBHOOK })
 
 const botName = "Chiaki Bot"
 const iconURL = "https://images-ext-1.discordapp.net/external/ljpqgpRph_hDsvuoiseOpu14JjR_MoHy8H5Yo9WlMhE/%3Fsize%3D512/https/cdn.discordapp.com/avatars/1502713354936914080/2b58262a2b3e6f7112ef4b7785b248a9.webp?format=webp"
