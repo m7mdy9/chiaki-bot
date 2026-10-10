@@ -88,6 +88,10 @@ module.exports = {
             await command.execute(interaction, client);
         
         } catch (topLevelError) {
+            if (topLevelError.code === 10008){
+                console.warn(`Encountered Unknown Message Error while executing /${fullCommand}`, topLevelError)
+                return;
+            }
             console.error(`Error executing /${fullCommand}:`, topLevelError);
             interaction.editReply("❌ An error occurred while executing this command.\n-# Please report this issue in our **\`/support server\`** and we will fix it ASAP!")
               .catch(intError => {

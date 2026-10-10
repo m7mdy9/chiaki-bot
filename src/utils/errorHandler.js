@@ -1,52 +1,45 @@
 const { WebhookClient } = require("discord.js");
-const { embed_builder, redHex, RedAscii, ResetAscii } = require("./utils");
+const { embed_builder, RedAscii, ResetAscii, YellowAscii } = require("./utils");
 const { stripVTControlCharacters } = require("node:util")
 
-const currentBranch = process.env.currentBranch;
+const currentBranch = "main";
 
 const webhook = new WebhookClient({ url: process.env.MAIN_ERR_WEBHOOK })
+const warnWebhook = new WebhookClient({ url: "https://discord.com/api/webhooks/1558482209609089097/D3uopUaG8jcfqxOhPJQIVYyANTS2Tv_QNnY5L44E51ieztTFWrB55whPCB6LmSN4Npv4" })
 
 const botName = "Chiaki Bot"
 const iconURL = "https://images-ext-1.discordapp.net/external/ljpqgpRph_hDsvuoiseOpu14JjR_MoHy8H5Yo9WlMhE/%3Fsize%3D512/https/cdn.discordapp.com/avatars/1502713354936914080/2b58262a2b3e6f7112ef4b7785b248a9.webp?format=webp"
 
 async function handleError(text, ...args){
-    if(currentBranch !== "main"){
-        console.originalError(text, ...args)
-        return;
-    }
-
-    const rawError = args.find(arg => arg instanceof Error) || args[0] || text;
-
-    let detailedError = ""
-    if(rawError instanceof Error){
-        detailedError = rawError.stack || rawError.message
-    } else if(typeof rawError == "object"){
-        detailedError = JSON.stringify(rawError, null, 2)
-    } else {
-        detailedError = args.map(arg => (typeof arg == "object" ? JSON.stringify(arg) : String(arg))).join(" ");
-    }
-
-    let consoleError = rawError === text ? "" : rawError
-    if(typeof text == 'string'){
-        const redText = `${RedAscii}${stripVTControlCharacters(text)}${ResetAscii}`
-        console.originalError(redText, consoleError)
-    } else {
-        console.originalError(text, consoleError)
-    }
+    const resultOfArgs = handleLogArgs("error", text, args)
+    if(!resultOfArgs) return;
     
-    if(args.length < 1 && !detailedError){
-        detailedError = rawError;
-        text = "";
-    }
-    const formattedText = text ? stripVTControlCharacters(text) : "Chiaki Bot Error";
-    const formattedError = detailedError ? stripVTControlCharacters(detailedError).slice(0, 3990) + "...." : "";
-
+    const { formattedText, formattedLog } = resultOfArgs
 
     try {
-        const errorEmbed = embed_builder(formattedText,formattedError, "#e60000").setTimestamp()
+        const errorEmbed = embed_builder(formattedText,formattedLog, "#e60000").setTimestamp()
         .setAuthor({ name: botName, iconURL:iconURL })
 
         await webhook.send({
+            embeds:[errorEmbed]
+        })
+    } catch(secondError){
+        console.originalError("VITAL ERROR: FAILED TO LOG ERROR, INFO:\n",secondError.stack)
+        
+    }
+}
+
+async function handleWarn(text, ...args){
+    const resultOfArgs = handleLogArgs("warn", text, args)
+    if(!resultOfArgs) return;
+    
+    const { formattedText, formattedLog } = resultOfArgs
+
+    try {
+        const errorEmbed = embed_builder(formattedText,formattedLog, "#ffda37").setTimestamp()
+        .setAuthor({ name: botName, iconURL:iconURL })
+
+        await warnWebhook.send({
             embeds:[errorEmbed]
         })
     } catch(secondError){
@@ -74,4 +67,56 @@ async function webhookLog(text){
     }
 }
 
-module.exports = { handleError, webhookLog }
+module.exports = { handleError, handleWarn, webhookLog }
+
+/**
+ * @param {"warn" | "error"} logType 
+ */
+function handleLogArgs(logType = "warn", text, args){
+    let originalLog, consoleColor;
+    if(logType == "error"){
+        originalLog = console.originalError;
+        consoleColor = RedAscii;
+    } else {
+        originalLog = console.originalWarn;
+        consoleColor = YellowAscii;
+    }
+
+    if(currentBranch !== "main"){
+        originalLog(text, ...args)
+        return;
+    }
+
+    const rawError = args.find(arg => arg instanceof Error) || args[0] || text;
+
+    let detailedLog = ""
+    if(rawError instanceof Error){
+        detailedLog = rawError.stack || rawError.message
+    } else if(typeof rawError == "object"){
+        detailedLog = JSON.stringify(rawError, null, 2)
+    } else {
+        detailedLog = args.map(arg => (typeof arg == "object" ? JSON.stringify(arg) : String(arg))).join(" ");
+    }
+
+    let logForConsole = rawError === text ? "" : rawError
+    if(typeof text == 'string'){
+        const coloredText = `${consoleColor}${stripVTControlCharacters(text)}${ResetAscii}`
+        originalLog(coloredText, logForConsole)
+    } else {
+        originalLog(text, logForConsole)
+    }
+    
+    if(args.length < 1 && !detailedLog){
+        detailedLog = rawError;
+        text = "";
+    }
+    const formattedText = text ? stripVTControlCharacters(text) : `Chiaki Bot ${logType.toUpperCase()}`;
+    let formattedLog;
+    if(detailedLog){
+        formattedLog = formattedLog > 3989 ? stripVTControlCharacters(detailedLog).slice(0, 3990) + "...." : detailedLog;
+    } else {
+        formattedLog = ""
+    }
+
+    return { formattedText, formattedLog }
+}
